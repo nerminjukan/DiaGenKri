@@ -11,7 +11,7 @@
         <ul>
             <?php if(isset($_SESSION["uporabnik"])): ?>
             <?php else: ?>
-                <li style="display: inline"><a href="../../../DiaGenKri/public/logIn">PRIJAVA</a></li>
+                <li style="display: inline"><a href="../../../DiaGenKri/public/login">PRIJAVA</a></li>
                 <li style="display: inline"><a href="../../../DiaGenKri/public/register">REGISTRACIJA</a></li>
             <?php endif; ?>
         </ul>
