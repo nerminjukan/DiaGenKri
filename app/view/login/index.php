@@ -20,7 +20,7 @@
                 <div style = "background-color:#333333; color:#FFFFFF; padding:3px;"><b>Registracija v sistem</b></div>
 
                 <div style = "margin:30px">
-                    <form action = "<?= "login/loginUser/" ?>" method = "post" content="">
+                    <form action = "<?= "logIn/loginUser/" ?>" method = "post" content="">
                         <label>E-mail  :</label><br><input type = "email" name = "email" class = "box"/><br /><br />
                         <label>Password  :</label><br><input type = "password" name="password" class = "box" /><br/><br />
                         <input type = "submit" value = " Oddaj "/><br />

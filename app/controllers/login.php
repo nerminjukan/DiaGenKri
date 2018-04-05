@@ -5,13 +5,13 @@ session_start();
 require_once '../app/database/DBfunctions.php';
 require_once("../app/core/ViewHelper.php");
 
-class Login extends Controller
+class LogIn extends Controller
 {
     public function index($name = ''){
         $user = $this->model('User');
         $user->name = $name;
 
-        $this->view('login/index', ['name' => $user->name]);
+        $this->view('LogIn/index', ['name' => $user->name]);
     }
 
     public function loginUser(){
@@ -28,20 +28,14 @@ class Login extends Controller
                 $_SESSION["user"] = $_POST["email"];
                 echo isset($_SESSION["user"]);
                 ViewHelper::redirect('../../home');
-                ?>
-                <script type="text/javascript">console.log("login successful")</script>
-                <?php
             }
             else{
-                ?>
-                <script type="text/javascript">console.log("login failed")</script>
-                <?php
-                ViewHelper::redirect('../../login');
+                ViewHelper::redirect('../../LogIn');
 
             }
         } else {
             echo "NE DELA";
-            ViewHelper::redirect('../../login');
+            ViewHelper::redirect('../../LogIn');
         }
         $_POST["email"] = "";
         $_POST["password"] = "";
