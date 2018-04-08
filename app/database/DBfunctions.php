@@ -51,4 +51,29 @@ class DBfunctions {
         }
     }
 
+     public static function checkLogin($eposta, $geslo){
+        $db = DBconnect::getInstance();
+
+        $statement = $db->prepare("SELECT COUNT(id) AS id FROM diagenkri.user WHERE `e-mail` = :email");
+        $statement->bindParam(":email", $eposta);
+        $statement->execute();
+        $anwser = $statement->fetch(PDO::FETCH_NUM);
+        if($anwser[0] == 1){
+            $checkPass = $db->prepare("SELECT password FROM diagenkri.user WHERE `e-mail` = :email");
+            $checkPass->bindParam(":email", $eposta);
+            $checkPass->execute();
+            $result = $checkPass->fetch(PDO::FETCH_NUM);
+            $preveri = password_verify($geslo, $result[0]);
+            if($preveri){
+                $updateAccess = $db->prepare("UPDATE diagenkri.user_profile SET `lastaccess` = :time WHERE `e-mail` = :email");
+                $updateAccess->bindParam(":time", date("Y-m-d H:i:s"));
+                $updateAccess->bindParam(":email", $eposta);
+                $updateAccess->execute();
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+
 }
