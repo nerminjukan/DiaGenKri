@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="sl">
 <head>
-    <title>LogIn Example</title>
+    <title>Register</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -20,7 +20,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">DiaGenKri</a>
+            <a class="navbar-brand" href="../../../DiaGenKri/public/home">DiaGenKri</a>
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
@@ -31,31 +31,37 @@
     </div>
 </nav>
 
-<div>
-    <article>
-        <div align = "center">
-            <div style = "width:300px; border: solid 1px #333333; " align = "left">
-                <div style = "background-color:#333333; color:#FFFFFF; padding:3px;"><b>Registracija v sistem</b></div>
-
-                <div style = "margin:30px">
-                    <form action = "<?= "register/add/" ?>" method = "post" content="">
-                        <label>Name      :</label><br><input type = "text" name = "name" class = "box"/><br /><br />
-                        <label>Surname  :</label><br><input type = "text" name = "surname" class = "box" /><br/><br />
-                        <label>E-mail  :</label><br><input type = "email" name = "email" class = "box"/><br /><br />
-                        <label>Date of birth  :</label><input type = "date" name = "dateofbirth" class = "box"/><br /><br />
-                        <label>Place of birth  :</label><input type = "text" name = "placeofbirth" class = "box" /><br/><br />
-                        <label>Password  :</label><br><input type = "password" name="password1" class = "box" /><br/><br />
-                        <label>Password (repeat)  :</label><input type = "password" name="password2" class = "box" /><br/><br />
-                        <input type = "submit" value = " Oddaj "/><br />
-                    </form>
-
-                    <div style = "font-size:11px; color:#cc0000; margin-top:10px"></div>
-
-                </div>
-
-            </div>
-
+<div class="container">
+    <form action = "<?= "register/add/" ?>" method = "post" content="">
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type ="text" class="form-control" id="name" name ="name"/>
         </div>
-    </article>
+        <div class="form-group">
+            <label for="surname">Surname:</label>
+            <input type ="text" class="form-control" id="surname" name ="surname"/>
+        </div>
+        <div class="form-group">
+            <label for="email">E-mail:</label>
+            <input type = "email" class="form-control" id="email" name = "email"/>
+        </div>
+        <div class="form-group">
+            <label for="dateofbirth">Date of birth:</label>
+            <input type="date" class="form-control" id="dateofbirth" name="dateofbirth"/>
+        </div>
+        <div class="form-group">
+            <label for="placeofbirth">Place of birth:</label>
+            <input type="text" class="form-control" id="placeofbirth" name="placeofbirth"/>
+        </div>
+        <div class="form-group">
+            <label for="password1">Password:</label>
+            <input type="password" class="form-control" id="password1" name="password1"/>
+        </div>
+        <div class="form-group">
+            <label for="password2">Password (repeat):</label>
+            <input type="password" class="form-control" id="password2" name="password2"/>
+        </div>
+        <button class="btn btn-default" type="submit" value ="Oddaj">Submit</button>
+    </form>
 </div>
 
