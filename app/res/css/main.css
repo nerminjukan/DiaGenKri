@@ -47,5 +47,6 @@
 
 /* Increase spacing for checkbox form group */
 .check-box-spacing{
-    padding: 30px;
+    margin-left: 10px;
+    margin-right: 10px;
 }

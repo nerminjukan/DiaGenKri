@@ -75,60 +75,60 @@ $data = DBfunctions::getUserData();
                     $confirmPR = $value["confirmPR"];
 
                     if($admin == 1){
-                        $adminString = "<div class=\"form-check form-check-inline form-group\">
+                        $adminString = "<div class=\"form-check form-check-inline form-group check-box-spacing\">
   <input class=\"form-check-input\" type=\"checkbox\" checked=\"checked\" id=\"inlineCheckbox1\" value=\"option1\" disabled>
   <label class=\"form-check-label active\" for=\"inlineCheckbox1\">Admin</label>
 </div> | ";
                     }else{
-                        $adminString = "<div class=\"form-check form-check-inline form-group\">
+                        $adminString = "<div class=\"form-check form-check-inline form-group check-box-spacing\">
   <input class=\"form-check-input\" type=\"checkbox\" id=\"inlineCheckbox1\" value=\"option1\" disabled>
-  <label class=\"form-check-label\" for=\"inlineCheckbox1\">Admin</label>
+  <label class=\"form-check-label active\" for=\"inlineCheckbox1\">Admin</label>
 </div> | ";
                     }
 
                     if($readPR == 1){
-                        $readString = "<div class=\"form-check form-check-inline form-group\">
+                        $readString = "<div class=\"form-check form-check-inline form-group check-box-spacing\">
   <input class=\"form-check-input\" type=\"checkbox\" checked=\"checked\" id=\"inlineCheckbox1\" value=\"option1\" disabled>
   <label class=\"form-check-label active\" for=\"inlineCheckbox1\">Read</label>
 </div> | ";
                     }else{
-                        $readString = "<div class=\"form-check form-check-inline form-group\">
+                        $readString = "<div class=\"form-check form-check-inline form-group check-box-spacing\">
   <input class=\"form-check-input\" type=\"checkbox\" id=\"inlineCheckbox1\" value=\"option1\" disabled>
   <label class=\"form-check-label active\" for=\"inlineCheckbox1\">Read</label>
 </div> | ";
                     }
 
                     if($editPR == 1){
-                        $editString = "<div class=\"form-check form-check-inline form-group\">
+                        $editString = "<div class=\"form-check form-check-inline form-group check-box-spacing\">
   <input class=\"form-check-input\" type=\"checkbox\" checked=\"checked\" id=\"inlineCheckbox1\" value=\"option1\" disabled>
   <label class=\"form-check-label active\" for=\"inlineCheckbox1\">Edit</label>
 </div> | ";
                     }else{
-                        $editString = "<div class=\"form-check form-check-inline form-group\">
+                        $editString = "<div class=\"form-check form-check-inline form-group check-box-spacing\">
   <input class=\"form-check-input\" type=\"checkbox\" id=\"inlineCheckbox1\" value=\"option1\" disabled>
   <label class=\"form-check-label active\" for=\"inlineCheckbox1\">Edit</label>
 </div> | ";
                     }
 
                     if($deletePR == 1){
-                        $deleteString = "<div class=\"form-check form-check-inline form-group\">
+                        $deleteString = "<div class=\"form-check form-check-inline form-group check-box-spacing\">
   <input class=\"form-check-input\" type=\"checkbox\" checked=\"checked\" id=\"inlineCheckbox1\" value=\"option1\" disabled>
   <label class=\"form-check-label active\" for=\"inlineCheckbox1\">Delete</label>
 </div> | ";
                     }else{
-                        $deleteString = "<div class=\"form-check form-check-inline form-group\">
+                        $deleteString = "<div class=\"form-check form-check-inline form-group check-box-spacing\">
   <input class=\"form-check-input\" type=\"checkbox\" id=\"inlineCheckbox1\" value=\"option1\" disabled>
   <label class=\"form-check-label active\" for=\"inlineCheckbox1\">Delete</label>
 </div> | ";
                     }
 
                     if($addPR == 1){
-                        $addString = "<div class=\"form-check form-check-inline form-group\">
+                        $addString = "<div class=\"form-check form-check-inline form-group check-box-spacing\">
   <input class=\"form-check-input\" type=\"checkbox\" checked=\"checked\" id=\"inlineCheckbox1\" value=\"option1\" disabled>
   <label class=\"form-check-label active\" for=\"inlineCheckbox1\">Add</label>
 </div> | ";
                     }else{
-                        $addString = "<div class=\"form-check form-check-inline form-group\">
+                        $addString = "<div class=\"form-check form-check-inline form-group check-box-spacing\">
   <input class=\"form-check-input\" type=\"checkbox\" id=\"inlineCheckbox1\" value=\"option1\" disabled>
   <label class=\"form-check-label active\" for=\"inlineCheckbox1\">Add</label>
 </div> | ";
@@ -140,13 +140,13 @@ $data = DBfunctions::getUserData();
   <label class=\"form-check-label active\" for=\"inlineCheckbox1\">Confirm</label>
 </div>";
                     }else{
-                        $confirmString = "<div class=\"form-check form-check-inline form-group\">
+                        $confirmString = "<div class=\"form-check form-check-inline form-group check-box-spacing\">
   <input class=\"form-check-input\" type=\"checkbox\" id=\"inlineCheckbox1\" value=\"option1\" disabled>
   <label class=\"form-check-label active\" for=\"inlineCheckbox1\">Confirm</label>
 </div>";
                     }
 
-                    echo "<tr><td>$name $surname</td><td>$email</td><td>$fow</td><td><form class='form-inline'" . $adminString . $readString . $editString . $deleteString . $addString . $confirmString . "</form></td></tr>";
+                    echo "<tr><td>$name $surname</td><td>$email</td><td>$fow</td><td><form class='form-inline'>" . $adminString . $readString . $editString . $deleteString . $addString . $confirmString . "</form></td></tr>";
 
                     }
                 ?>
