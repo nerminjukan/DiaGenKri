@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gostitelj: 127.0.0.1
--- Čas nastanka: 23. mar 2018 ob 09.24
+-- Čas nastanka: 13. apr 2018 ob 10.03
 -- Različica strežnika: 10.1.22-MariaDB
 -- Različica PHP: 7.1.4
 
@@ -33,8 +33,6 @@ CREATE TABLE `user` (
   `name` varchar(50) NOT NULL,
   `surname` varchar(50) NOT NULL,
   `e-mail` varchar(100) NOT NULL,
-  `dateofbirth` date DEFAULT NULL,
-  `placeofbirth` varchar(50) DEFAULT NULL,
   `password` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -76,7 +74,7 @@ ALTER TABLE `user_profile`
 -- AUTO_INCREMENT tabele `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 --
 -- Omejitve tabel za povzetek stanja
 --
@@ -85,7 +83,7 @@ ALTER TABLE `user`
 -- Omejitve za tabelo `user_profile`
 --
 ALTER TABLE `user_profile`
-  ADD CONSTRAINT `user_profile_ibfk_1` FOREIGN KEY (`e-mail`) REFERENCES `user` (`e-mail`);
+  ADD CONSTRAINT `user_profile_ibfk_1` FOREIGN KEY (`e-mail`) REFERENCES `user` (`e-mail`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
