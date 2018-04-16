@@ -18,4 +18,11 @@ class administrate extends Controller
 
         $this->view('administrate/index', ['name' => $user->name]);
     }
+
+    public function change($name = ''){
+        $user = $this->model('User');
+        $user->name = $name;
+
+        $this->view('administrate/change', ['name' => $user->name]);
+    }
 }

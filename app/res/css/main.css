@@ -46,7 +46,27 @@
     }
 
 /* Increase spacing for checkbox form group */
-.check-box-spacing{
-    margin-left: 10px;
-    margin-right: 10px;
-}
+    .check-box-spacing{
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+/* Create a scrollable table */
+    tr {
+        width: 100%;
+        display: inline-table;
+        height:30px;
+        table-layout: fixed;
+    }
+
+    table{
+        height:350px;
+        display: -moz-groupbox;
+    }
+
+    tbody{
+        overflow-y: scroll;
+        height: 300px;
+        width: 100%;
+        position: absolute;
+    }
+
