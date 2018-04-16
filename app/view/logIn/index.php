@@ -1,3 +1,8 @@
+<?php
+    if(isset($_SESSION["user"])){
+        header("Location: ../../../DiaGenKri/public/home");
+    }
+?>
 <!DOCTYPE html>
 <html lang="sl">
 <head>
@@ -43,20 +48,22 @@
             <div>
                 <article>
                     <div align = "center">
-                        <div style = "width:300px; border: solid 1px #333333; " align = "left">
-                            <div style = "background-color:#333333; color:#FFFFFF; padding:3px;"><b>Registracija v sistem</b></div>
-
-                            <div style = "margin:30px">
-                                <form action = "<?= "logIn/loginUser/" ?>" method = "post" content="">
-                                    <label>E-mail  :</label><br><input type = "email" name = "email" class = "box"/><br /><br />
-                                    <label>Password  :</label><br><input type = "password" name="password" class = "box" /><br/><br />
-                                    <input type = "submit" value = " Oddaj "/><br />
-                                </form>
-
-                                <div style = "font-size:11px; color:#cc0000; margin-top:10px"></div>
-
-                            </div>
-
+                        <div style = "width:300px; margin-top: 0.8em" align = "left">
+                            <form action = "<?= "logIn/loginUser/" ?>" method = "post" content="">
+                                <div class="form-group">
+                                <label for="login-email">E-pošta</label>
+                                <input type="email" name = "email" class="form-control" id="login-email" aria-describedby="emailHelp" placeholder="e-poštni naslov" value="<?php if(isset($_COOKIE["email"])){echo $_COOKIE["email"];} ?>">
+                                <label for="login-password" style="margin-top: 0.8em">Geslo</label>
+                                <input type="password" name = "password" class="form-control" id="login-password" placeholder="geslo"
+                                value = "<?php if(isset($_COOKIE["password"])){echo $_COOKIE["password"];} ?>">
+                              </div>
+                              <div class="form-check">
+                                <input type="checkbox" name = "remember-me" class="form-check-input" id="remember-me-input"
+                                <?php if(isset($_COOKIE["email"])){ ?> checked <?php } ?>>
+                                <label class="form-check-label" for="remember-me-input">Ostani prijavljen</label>
+                              </div>
+                              <button type="submit" class="btn btn-primary" style="margin-top: 0.8em">Prijavi se</button>
+                            </form>
                         </div>
 
                     </div>

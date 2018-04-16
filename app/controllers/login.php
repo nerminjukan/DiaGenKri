@@ -21,12 +21,23 @@ class LogIn extends Controller
         $_POST["email"] = htmlspecialchars($_POST["email"]);
         $_POST["password"] = htmlspecialchars($_POST["password"]);
 
+        // var_dump($_POST);
+        // exit();
+
 
         if ($validData) {
             $result = DBfunctions::checkLogin($_POST["email"], $_POST["password"]);
             if($result){
                 $_SESSION["user"] = $_POST["email"];
-                echo isset($_SESSION["user"]);
+
+                // check if user is remembered
+                if (!empty($_POST["remember-me"])){
+                    setcookie("email", $_POST["email"], time() + (7 * 24 * 60 * 60), "/");
+                    setcookie("password", $_POST["password"], time() + (7 * 24 * 60 * 60), "/");
+                } else {
+                    setcookie("email", $_POST["email"], 1, "/");
+                    setcookie("password", $_POST["password"], 1, "/");
+                }
                 ViewHelper::redirect('../../home');
             }
             else{
@@ -39,5 +50,10 @@ class LogIn extends Controller
         }
         $_POST["email"] = "";
         $_POST["password"] = "";
+    }
+
+    public function logOutUser(){
+        session_destroy();
+        ViewHelper::redirect('../../home');
     }
 }

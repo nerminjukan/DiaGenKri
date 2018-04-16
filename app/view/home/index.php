@@ -26,8 +26,13 @@
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
+                <?php if(isset($_SESSION["user"])): ?>
+                <li><a href="logIn/logOutUser/"><span class="glyphicon glyphicon-user"></span> Log out</a>
+                </li>
+                <?php else: ?>
                 <li><a href="../../../DiaGenKri/public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
                 <li><a href="../../../DiaGenKri/public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
+                <?php endif; ?>
             </ul>
         </div>
     </div>
@@ -53,6 +58,7 @@
             <div class="col-sm-4 row-increased-top">
                 <a href="#" title=""><img src="../../../DiaGenKri/app/res/photos/sample.jpg" class="img-responsive img-thumbnail"></a>
             </div>
+            
         </div>
         <div class="col-sm-2 sidenav">
             <div class="well">
