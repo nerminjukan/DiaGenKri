@@ -10,7 +10,7 @@ require_once "DBconnect.php";
 
 class DBfunctions {
 
-    public static function getUserData(){
+    public static function getUsersData(){
         $db = DBconnect::getInstance();
 
         $statement1 = $db->prepare("SELECT diagenkri.user.`e-mail`, diagenkri.user.name, diagenkri.user.surname, diagenkri.user_profile.*
@@ -118,6 +118,20 @@ class DBfunctions {
         $statement->execute();
         return true;
 
+    }
+
+    public static function getUserProfile($email){
+        $db = DBconnect::getInstance();
+
+        $statement1 = $db->prepare("SELECT diagenkri.user.`e-mail`, diagenkri.user.name, diagenkri.user.surname, diagenkri.user_profile.*
+                                              FROM diagenkri.user JOIN diagenkri.user_profile ON diagenkri.user.`e-mail`=diagenkri.user_profile.`e-mail`
+                                              WHERE diagenkri.user.`e-mail`= :email");
+        $statement1->bindParam(":email", $email);
+        $statement1->execute();
+
+        $result1 = $statement1->fetchAll(PDO::FETCH_ASSOC);
+
+        return $result1;
     }
 
 }
