@@ -14,6 +14,16 @@ class LogIn extends Controller
         $this->view('LogIn/index', ['name' => $user->name]);
     }
 
+    private function storeCookie() {
+        $rememberKey = hash('sha512',openssl_random_pseudo_bytes(50));
+        $stmt = $db->prepare("INSERT INTO sessions (user_id,remember_key) VALUES (:user_id,:remember_key)");
+        $stmt->bindParam(":user_id",$dbId);
+        $stmt->bindParam(":remember_key",$rememberKey);
+        $stmt->execute();
+        setcookie ('rememberMe[0]', $dbId, time() + (86400 * 365), "/");
+        setcookie ('rememberMe[1]', $rememberKey, time() + (86400 * 365), "/");    
+    }
+
     public function loginUser(){
         $validData = isset($_POST["email"]) && !empty($_POST["email"]) &&
                      isset($_POST["password"]) && !empty($_POST["password"]);

@@ -87,4 +87,23 @@ class DBfunctions {
         return false;
     }
 
+    // returns true if hashed cookie is in database
+    public static function isRemembered($token){
+        $db = DBconnect::getInstance();
+
+        $hashed_cookie = "";
+        
+        if ($token !== $hashed_cookie)
+            return false;
+
+        return true;
+    }
+
+
+
+
+
+
+
+
 }
