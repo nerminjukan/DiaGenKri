@@ -55,7 +55,6 @@
         width: 100%;
         display: inline-table;
         height:30px;
-        table-layout: fixed;
     }
 
     table{

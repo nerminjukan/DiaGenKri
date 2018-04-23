@@ -143,7 +143,7 @@ $data = DBfunctions::getUserData();
 </div>";
                     }
 
-                    echo "<tr><td>$name $surname</td><td>$email</td><td>$fow</td><td style=\"white-space: nowrap; width: 50%\"><form class='form-inline'>" . $adminString . $readString . $editString . $deleteString . $addString . $confirmString . "</form></td></tr>";
+                    echo "<tr><td style=\"white-space: nowrap; width: 25%\">$name $surname</td><td>$email</td><td style=\"white-space: nowrap; width: 50%\"><form class='form-inline'>" . $adminString . $readString . $editString . $deleteString . $addString . $confirmString . "</form></td></tr>";
 
                 }
                 ?>
@@ -156,14 +156,14 @@ $data = DBfunctions::getUserData();
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Modal Header</h4>
+                        <h4 class="modal-title">Administration warning</h4>
                     </div>
                     <div class="modal-body">
-                        <p>This is a small modal.</p>
+                        <p>You are about to enter the page for changing user privileges. Please proceed with caution, as changes to user rights may affect the content of the application. Do you wish to continue?</p>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-info row-increased-bottom btn-block" data-dismiss="modal">Cancel</button>
-                        <a href="../../../DiaGenKri/public/administrate/change" class="btn btn-danger row-increased-bottom btn-block">Continue</a>
+                        <a href="../../../DiaGenKri/public/administrate/change" class="btn btn-warning row-increased-bottom btn-block">Yes, continue</a>
+                        <button class="btn btn-info row-increased-bottom btn-block" data-dismiss="modal">No, cancel</button>
                     </div>
                 </div>
             </div>
