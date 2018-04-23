@@ -73,7 +73,7 @@ $data = DBfunctions::getUserData();
 
                         if($admin == 1){
                             $adminString = "<div class=\"form-check form-check-inline form-group check-box-spacing\">
-  <input class=\"form-check-input\" type=\"checkbox\" checked=\"checked\" id=\"inlineCheckbox1\" value=\"option1\" >
+  <input class=\"form-check-input\" type=\"checkbox\" checked=\"checked\" id=\"inlineCheckbox1\" value=\"option1\">
   <label class=\"form-check-label active\" for=\"inlineCheckbox1\">Admin</label>
 </div> | ";
                         }else{
@@ -153,7 +153,7 @@ $data = DBfunctions::getUserData();
 
             <div class="btn-group col-md-3">
                 <a href="../../../DiaGenKri/public/administrate/save" type="button" class="btn btn-success row-increased-bottom">Save</a>
-                <a href="../../../DiaGenKri/public/administrate/index" type="button" class="btn btn-danger row-increased-bottom">Cancel</a>
+                <a href="../../../DiaGenKri/public/administrate" type="button" class="btn btn-danger row-increased-bottom">Cancel</a>
             </div>
         </div>
     </div>

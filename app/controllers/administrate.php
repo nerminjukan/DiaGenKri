@@ -10,7 +10,7 @@
 require_once '../app/database/DBfunctions.php';
 require_once("../app/core/ViewHelper.php");
 
-class administrate extends Controller
+class Administrate extends Controller
 {
     public function index($name = ''){
         $user = $this->model('User');
@@ -24,5 +24,12 @@ class administrate extends Controller
         $user->name = $name;
 
         $this->view('administrate/change', ['name' => $user->name]);
+    }
+
+    public function save($name = ''){
+        $user = $this->model('User');
+        $user->name = $name;
+
+        ViewHelper::redirect('../../public/administrate');
     }
 }
