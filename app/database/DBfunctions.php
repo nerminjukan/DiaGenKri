@@ -9,6 +9,19 @@
 require_once "DBconnect.php";
 
 class DBfunctions {
+
+    public static function getUserData(){
+        $db = DBconnect::getInstance();
+
+        $statement1 = $db->prepare("SELECT diagenkri.user.`e-mail`, diagenkri.user.name, diagenkri.user.surname, diagenkri.user_profile.*
+                                              FROM diagenkri.user JOIN diagenkri.user_profile ON diagenkri.user.`e-mail`=diagenkri.user_profile.`e-mail`;");
+
+        $statement1->execute();
+
+        $result1 = $statement1->fetchAll(PDO::FETCH_ASSOC);
+
+        return $result1;
+    }
     
     public static function makeProfile($email){
         $db = DBconnect::getInstance();
@@ -22,7 +35,7 @@ class DBfunctions {
         $statement->execute();
     }
 
-    public static function insert($name, $surname, $email, $dateofbirth, $placeofbirth, $password) {
+    public static function insert($name, $surname, $email, $password) {
         $db = DBconnect::getInstance();
 
         $statement1 = $db->prepare("SELECT `e-mail` FROM diagenkri.user WHERE `e-mail` = :eposta");
@@ -34,13 +47,11 @@ class DBfunctions {
 
             $hashed_pass = password_hash($password, PASSWORD_DEFAULT);
 
-            $statement = $db->prepare("INSERT INTO diagenkri.user (name, surname, `e-mail`, dateofbirth, placeofbirth, password)
-            VALUES (:name, :surname, :email, :dateofbirth, :placeofbirth, :password)");
+            $statement = $db->prepare("INSERT INTO diagenkri.user (name, surname, `e-mail`, password)
+            VALUES (:name, :surname, :email, :password)");
             $statement->bindParam(":name", $name);
             $statement->bindParam(":surname", $surname);
             $statement->bindParam(":email", $email);
-            $statement->bindParam(":dateofbirth", $dateofbirth);
-            $statement->bindParam(":placeofbirth", $placeofbirth);
             $statement->bindParam(":password", $hashed_pass);
             $statement->execute();
             self::makeProfile($email);
@@ -75,5 +86,24 @@ class DBfunctions {
         }
         return false;
     }
+
+    // returns true if hashed cookie is in database
+    public static function isRemembered($token){
+        $db = DBconnect::getInstance();
+
+        $hashed_cookie = "";
+        
+        if ($token !== $hashed_cookie)
+            return false;
+
+        return true;
+    }
+
+
+
+
+
+
+
 
 }

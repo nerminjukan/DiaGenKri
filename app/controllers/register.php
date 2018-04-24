@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 /**
  * Created by PhpStorm.
  * User: Nermin
@@ -25,16 +27,12 @@ class Register extends Controller
         $validData = isset($_POST["name"]) && !empty($_POST["name"]) &&
             isset($_POST["surname"]) && !empty($_POST["surname"]) &&
             isset($_POST["email"]) && !empty($_POST["email"]) &&
-            isset($_POST["dateofbirth"]) && !empty($_POST["dateofbirth"]) &&
-            isset($_POST["placeofbirth"]) && !empty($_POST["placeofbirth"]) &&
             isset($_POST["password1"]) && !empty($_POST["password1"]) &&
             isset($_POST["password2"]) && !empty($_POST["password2"]);
 
         $_POST["name"] = htmlspecialchars($_POST["name"]);
         $_POST["surname"] = htmlspecialchars($_POST["surname"]);
         $_POST["email"] = htmlspecialchars($_POST["email"]);
-        $_POST["dateofbirth"] = htmlspecialchars($_POST["dateofbirth"]);
-        $_POST["placeofbirth"] = htmlspecialchars($_POST["placeofbirth"]);
         $_POST["password1"] = htmlspecialchars($_POST["password1"]);
         $_POST["password2"] = htmlspecialchars($_POST["password2"]);
 
@@ -46,7 +44,7 @@ class Register extends Controller
 
 
         if ($validData) {
-            $res = DBfunctions::insert($_POST["name"], $_POST["surname"], $_POST["email"], $_POST["dateofbirth"], $_POST["placeofbirth"], $_POST["password1"]);
+            $res = DBfunctions::insert($_POST["name"], $_POST["surname"], $_POST["email"], $_POST["password1"]);
             if($res){
                 ViewHelper::redirect('../../home');
             }
@@ -59,8 +57,6 @@ class Register extends Controller
         $_POST["name"] = "";
         $_POST["surname"] = "";
         $_POST["email"] = "";
-        $_POST["dateofbirth"] = "";
-        $_POST["placeofbirth"] = "";
         $_POST["password1"] = "";
         $_POST["password2"] = "";
     }
