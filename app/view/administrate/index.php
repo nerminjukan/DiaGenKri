@@ -3,7 +3,7 @@
 require_once '../app/database/DBfunctions.php';
 include_once '../app/controllers/administrate.php';
 
-$data = DBfunctions::getUserData();
+$data = DBfunctions::getUsersData();
 
 
 
@@ -50,15 +50,15 @@ $data = DBfunctions::getUserData();
 <div class="container-fluid text-center">
     <div class="row content">
         <div class="col-sm-12 text-left">
-            <table class="table table-hover table-responsive table-striped">
+            <table class="table table-sc table-hover table-responsive table-striped">
                 <thead>
-                <tr style="text-align: center">
+                <tr class="tr-sc" style="text-align: center">
                     <th>User</th>
                     <th>E-mail</th>
                     <th style="width: auto">Privileges</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody class="tbody-sc">
                 <?php foreach ($data as $key => $value){
                     $name = $value["name"];
                     $surname = $value["surname"];
@@ -143,7 +143,7 @@ $data = DBfunctions::getUserData();
 </div>";
                     }
 
-                    echo "<tr><td style=\"white-space: nowrap; width: 25%\">$name $surname</td><td>$email</td><td style=\"white-space: nowrap; width: 50%\"><form class='form-inline'>" . $adminString . $readString . $editString . $deleteString . $addString . $confirmString . "</form></td></tr>";
+                    echo "<tr class='tr-sc'><td style=\"white-space: nowrap; width: 25%\">$name $surname</td><td>$email</td><td style=\"white-space: nowrap; width: 50%\"><form class='form-inline'>" . $adminString . $readString . $editString . $deleteString . $addString . $confirmString . "</form></td></tr>";
 
                 }
                 ?>

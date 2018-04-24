@@ -26,14 +26,12 @@ class Administrate extends Controller
         $this->view('administrate/change', ['name' => $user->name]);
     }
 
-    public function save($name = ''){
+    public function savePR($name = ''){
         if(isset($_POST["userChange"])){
             $email = $_POST["userChange"];
             unset($_POST["userChange"]);
 
             DBfunctions::saveAdimistrationChanges($email, $_POST);
-
-            //print_r($_POST);
 
             ViewHelper::redirect('../../public/administrate/change');
         }
