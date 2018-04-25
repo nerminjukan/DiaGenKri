@@ -1,4 +1,7 @@
 Options -MultiViews
+
+DirectoryIndex index.php
+
 RewriteEngine On
 
 RewriteBase /diagenkri/public/

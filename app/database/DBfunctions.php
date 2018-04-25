@@ -10,7 +10,7 @@ require_once "DBconnect.php";
 
 class DBfunctions {
 
-    public static function getUserData(){
+    public static function getUsersData(){
         $db = DBconnect::getInstance();
 
         $statement1 = $db->prepare("SELECT diagenkri.user.`e-mail`, diagenkri.user.name, diagenkri.user.surname, diagenkri.user_profile.*
@@ -85,6 +85,53 @@ class DBfunctions {
             return false;
         }
         return false;
+    }
+
+
+    // MAY NEED OPTIMIZATION
+    public static function saveAdimistrationChanges($email, $permissionsArray){
+        $db = DBconnect::getInstance();
+
+        $insert= [];
+
+        for($x=1;$x<=6;$x++){
+            if(isset($_POST['option' . $x]) && $_POST['option' .$x] == 'on'){
+                $insert[$x] = 1;
+            }
+            else{
+                $insert[$x] = 0;
+            }
+        }
+
+
+        $statement = $db->prepare("UPDATE diagenkri.user_profile SET `admin` = :admin, `readPR` = :readPR, `editPR` = :editPR,
+                                             `deletePR` = :deletePR, `addPR` = :addPR, `confirmPR` = :confirmPR
+                                             WHERE `e-mail` = :email");
+        $statement->bindParam(":admin", $insert[1]);
+        $statement->bindParam(":readPR", $insert[2]);
+        $statement->bindParam(":editPR", $insert[3]);
+        $statement->bindParam(":deletePR", $insert[4]);
+        $statement->bindParam(":addPR", $insert[5]);
+        $statement->bindParam(":confirmPR", $insert[6]);
+        $statement->bindParam(":email", $email);
+
+        $statement->execute();
+        return true;
+
+    }
+
+    public static function getUserProfile($email){
+        $db = DBconnect::getInstance();
+
+        $statement1 = $db->prepare("SELECT diagenkri.user.`e-mail`, diagenkri.user.name, diagenkri.user.surname, diagenkri.user_profile.*
+                                              FROM diagenkri.user JOIN diagenkri.user_profile ON diagenkri.user.`e-mail`=diagenkri.user_profile.`e-mail`
+                                              WHERE diagenkri.user.`e-mail`= :email");
+        $statement1->bindParam(":email", $email);
+        $statement1->execute();
+
+        $result1 = $statement1->fetchAll(PDO::FETCH_ASSOC);
+
+        return $result1;
     }
 
 }
