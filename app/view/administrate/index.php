@@ -1,5 +1,11 @@
 <?php
 
+
+if(!isset($_SESSION["user"])){
+    header("Location: ../../../DiaGenKri/public/home");
+}
+
+
 require_once '../app/database/DBfunctions.php';
 include_once '../app/controllers/administrate.php';
 
@@ -40,8 +46,13 @@ $data = DBfunctions::getUsersData();
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
+                <?php if(isset($_SESSION["user"])): ?>
+                <li><a href="logIn/logOutUser/"><span class="glyphicon glyphicon-user"></span> Log out</a>
+                </li>
+                <?php else: ?>
                 <li><a href="../../../DiaGenKri/public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
                 <li><a href="../../../DiaGenKri/public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
+                <?php endif; ?>
             </ul>
         </div>
     </div>

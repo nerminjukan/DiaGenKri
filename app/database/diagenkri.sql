@@ -45,6 +45,7 @@ CREATE TABLE `user` (
 CREATE TABLE `user_profile` (
   `e-mail` varchar(100) NOT NULL,
   `lastaccess` datetime NOT NULL,
+  `hashed-cookie` char(128),
   `fieldofwork` varchar(100) DEFAULT NULL,
   `admin` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

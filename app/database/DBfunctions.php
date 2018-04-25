@@ -87,7 +87,6 @@ class DBfunctions {
         return false;
     }
 
-
     // MAY NEED OPTIMIZATION
     public static function saveAdimistrationChanges($email, $permissionsArray){
         $db = DBconnect::getInstance();
@@ -133,5 +132,6 @@ class DBfunctions {
 
         return $result1;
     }
+
 
 }

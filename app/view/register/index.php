@@ -1,3 +1,9 @@
+<?php
+    if(isset($_SESSION["user"])){
+        header("Location: ../../../DiaGenKri/public/home");
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="sl">
 <head>
