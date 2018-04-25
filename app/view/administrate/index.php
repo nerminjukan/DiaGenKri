@@ -9,7 +9,7 @@ if(!isset($_SESSION["user"])){
 require_once '../app/database/DBfunctions.php';
 include_once '../app/controllers/administrate.php';
 
-$data = DBfunctions::getUserData();
+$data = DBfunctions::getUsersData();
 
 
 
@@ -18,8 +18,9 @@ $data = DBfunctions::getUserData();
 
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
-    <title>Home</title>
+    <title>Administration</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -28,6 +29,7 @@ $data = DBfunctions::getUserData();
     <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css"
 
 </head>
+
 <header class="col-12 spacing-increased">
     <h1>User administration</h1>
 </header>
@@ -58,21 +60,16 @@ $data = DBfunctions::getUserData();
 
 <div class="container-fluid text-center">
     <div class="row content">
-        <div class="col-sm-2 sidenav">
-            <h3>LINKS</h3>
-            <p><a href="http://www.limfom-levkemija.org/domov.html">L&L</a></p>
-        </div>
-        <div class="col-sm-8 text-left">
-            <table class="table table-hover row-increased-top">
+        <div class="col-sm-12 text-left">
+            <table class="table table-sc table-hover table-responsive table-striped">
                 <thead>
-                <tr>
+                <tr class="tr-sc" style="text-align: center">
                     <th>User</th>
                     <th>E-mail</th>
-                    <th>Field of work</th>
-                    <th>Privileges</th>
+                    <th style="width: auto">Privileges</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody class="tbody-sc">
                 <?php foreach ($data as $key => $value){
                     $name = $value["name"];
                     $surname = $value["surname"];
@@ -157,19 +154,29 @@ $data = DBfunctions::getUserData();
 </div>";
                     }
 
-                    echo "<tr><td>$name $surname</td><td>$email</td><td>$fow</td><td><form class='form-inline'>" . $adminString . $readString . $editString . $deleteString . $addString . $confirmString . "</form></td></tr>";
+                    echo "<tr class='tr-sc'><td style=\"white-space: nowrap; width: 25%\">$name $surname</td><td>$email</td><td style=\"white-space: nowrap; width: 50%\"><form class='form-inline'>" . $adminString . $readString . $editString . $deleteString . $addString . $confirmString . "</form></td></tr>";
 
-                    }
+                }
                 ?>
                 </tbody>
             </table>
+            <button type="button" class="btn btn-info row-increased-bottom row-increased-top" data-toggle="modal" data-target="#editModal">Change</button>
         </div>
-        <div class="col-sm-2 sidenav">
-            <div class="well">
-                <p>ADS</p>
-            </div>
-            <div class="well">
-                <p>ADS</p>
+        <div class="modal fade" id="editModal" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Administration warning</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>You are about to enter the page for changing user privileges. Please proceed with caution, as changes to user rights may affect the content of the application. Do you wish to continue?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="../../../DiaGenKri/public/administrate/change" class="btn btn-warning row-increased-bottom btn-block">Yes, continue</a>
+                        <button class="btn btn-info row-increased-bottom btn-block" data-dismiss="modal">No, cancel</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
