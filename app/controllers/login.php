@@ -1,6 +1,10 @@
 <?php
 
-session_start();
+$status = session_status();
+if($status == PHP_SESSION_NONE){
+    //There is no active session
+    session_start();
+}
 
 require_once '../app/database/DBfunctions.php';
 require_once("../app/core/ViewHelper.php");
@@ -24,6 +28,11 @@ class LogIn extends Controller
         setcookie ('rememberMe[1]', $rememberKey, time() + (86400 * 365), "/");    
     }
 
+    // get name of user with that email and display it at login
+    public function getNameOfUser($email){
+
+    }
+
     public function loginUser(){
         $validData = isset($_POST["email"]) && !empty($_POST["email"]) &&
                      isset($_POST["password"]) && !empty($_POST["password"]);
@@ -39,6 +48,13 @@ class LogIn extends Controller
             $result = DBfunctions::checkLogin($_POST["email"], $_POST["password"]);
             if($result){
                 $_SESSION["user"] = $_POST["email"];
+
+                // get name of that user
+                $name = DBfunctions::getUser($_POST["email"]);
+                // var_dump("dumping in login", $name[0]);
+                // exit();
+                $_SESSION["user-name"] = $name[0];
+                $_SESSION["user-surname"] = $name[1];
 
                 // check if user is remembered
                 if (!empty($_POST["remember-me"])){

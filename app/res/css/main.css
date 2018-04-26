@@ -31,22 +31,68 @@
     }
 
 /* Increase spacing between rows */
-    .row-increased-top{
+    .row-increased-top {
         margin-top : 20px;
     }
 
 /* Increase spacing for lead titles */
-    .spacing-increased{
+    .spacing-increased {
         padding-left: 15px;
     }
 
 /* Increase spacing for lead titles */
-    .row-increased-bottom{
+    .row-increased-bottom {
         margin-bottom: 20px;
     }
 
 /* Increase spacing for checkbox form group */
-.check-box-spacing{
-    margin-left: 10px;
-    margin-right: 10px;
+    .check-box-spacing {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+/* Create a scrollable table */
+    .tr-sc {
+        width: 100%;
+        display: inline-table;
+        height:30px;
+    }
+
+    .table-sc {
+        height:350px;
+        display: -moz-groupbox;
+    }
+
+    .tbody-sc {
+        overflow-y: scroll;
+        height: 300px;
+        width: 100%;
+        position: absolute;
+    }
+
+/* Crop the image to size */
+.center-cropped {
+    object-fit: none; /* Do not scale the image */
+    object-position: center; /* Center the image within the element */
+    height: 200px;
+    width: 170px;
 }
+
+.navbar-login
+{
+    width: 15em;
+    padding: 1em;
+    padding-bottom: 0px;
+}
+
+.navbar-login-session
+{
+    padding: 1em;
+    padding-bottom: 0px;
+    padding-top: 0px;
+}
+
+.icon-size
+{
+    font-size: 5em;
+}
+
