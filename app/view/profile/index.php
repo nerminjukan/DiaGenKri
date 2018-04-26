@@ -8,10 +8,10 @@ if(!isset($_SESSION["user"])){
 require_once '../app/database/DBfunctions.php';
 include_once '../app/controllers/administrate.php';
 
+// TEMPORARY
+$userMail = 'nermin.jukan@mail.si';
 // ENTER USER EMAIL PARAMETER FROM SESSION AS ARG
-$data = DBfunctions::getUserProfile('nermin.jukan@mail.si');
-
-
+$data = DBfunctions::getUserProfile($userMail);
 
 
 ?>
@@ -106,7 +106,36 @@ $data = DBfunctions::getUserProfile('nermin.jukan@mail.si');
     <div class="row content">
         <div class="col-sm-4">
             <picture>
-                <img class="row-increased-top img-responsive img-thumbnail" src="../../../DiaGenKri/app/res/photos/avatar.jpg" style="max-width: 50%">
+                <?php
+                    if(file_exists("../app/res/photos/profilePhotos/" . $userMail . ".jpg")){
+                        $picture = "../app/res/photos/profilePhotos/" . $userMail . ".jpg";
+                        echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 50%\">";
+                    }
+                    elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".JPG")){
+                        $picture = "../app/res/photos/profilePhotos/" . $userMail . ".JPG";
+                        echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 50%\">";
+                    }
+                    elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".png")){
+                        $picture = "../app/res/photos/profilePhotos/" . $userMail . ".png";
+                        echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 50%\">";
+                    }
+                    elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".PNG")){
+                        $picture = "../app/res/photos/profilePhotos/" . $userMail . ".PNG";
+                        echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 50%\">";
+                    }
+                    elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".jpeg")){
+                        $picture = "../app/res/photos/profilePhotos/" . $userMail . ".jpeg";
+                        echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 50%\">";
+                    }
+                    elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".JPEG")){
+                        $picture = "../app/res/photos/profilePhotos/" . $userMail . ".JPEG";
+                        echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 50%\">";
+                    }
+                    else{
+                        echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=\"../../../DiaGenKri/app/res/photos/avatar.jpg\" style=\"max-width: 50%\">";
+                    }
+                ?>
+
             </picture>
         </div>
         <div class="col-sm-8 text-left">
