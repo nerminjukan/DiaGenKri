@@ -77,3 +77,24 @@
     width: 170px;
 }
 
+
+.navbar-login
+{
+    width: 15em;
+    padding: 1em;
+    padding-bottom: 0px;
+}
+
+.navbar-login-session
+{
+    padding: 1em;
+    padding-bottom: 0px;
+    padding-top: 0px;
+}
+
+.icon-size
+{
+    font-size: 5em;
+}
+
+

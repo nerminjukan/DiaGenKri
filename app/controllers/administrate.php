@@ -1,13 +1,16 @@
 <?php
-
-session_start();
-
 /**
  * Created by PhpStorm.
  * User: Nermin
  * Date: 13. 04. 2018
  * Time: 10:32
  */
+
+$status = session_status();
+if($status == PHP_SESSION_NONE){
+    //There is no active session
+    session_start();
+}
 
 require_once '../app/database/DBfunctions.php';
 require_once("../app/core/ViewHelper.php");

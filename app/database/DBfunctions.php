@@ -93,6 +93,7 @@ class DBfunctions {
 
         $insert= [];
 
+
         for($x=1;$x<=6;$x++){
             if(isset($_POST['option' . $x]) && $_POST['option' .$x] == 'on'){
                 $insert[$x] = 1;
@@ -114,6 +115,7 @@ class DBfunctions {
         $statement->bindParam(":confirmPR", $insert[6]);
         $statement->bindParam(":email", $email);
 
+
         $statement->execute();
         return true;
 
@@ -133,5 +135,19 @@ class DBfunctions {
         return $result1;
     }
 
+    // returns name and surname of user with $email
+    public static function getUser($email){
+        $db = DBconnect::getInstance();
+
+        $statement1 = $db->prepare("SELECT `name`, `surname` FROM diagenkri.user WHERE `e-mail` = :eposta");
+        $statement1->bindParam(":eposta", $email);
+        $statement1->execute();
+        $result1 = $statement1->fetch(PDO::FETCH_NUM);
+
+
+        // var_dump($result1);
+        // exit();
+        return $result1;
+    }
 
 }
