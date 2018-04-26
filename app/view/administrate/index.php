@@ -10,7 +10,6 @@ include_once '../app/controllers/administrate.php';
 
 $data = DBfunctions::getUsersData();
 
-
 ?>
 
 <!DOCTYPE html>

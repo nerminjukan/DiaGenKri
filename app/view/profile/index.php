@@ -4,6 +4,7 @@ if(!isset($_SESSION["user"])){
     header("Location: ../../../DiaGenKri/public/home");
 }
 
+
 require_once '../app/database/DBfunctions.php';
 include_once '../app/controllers/administrate.php';
 
