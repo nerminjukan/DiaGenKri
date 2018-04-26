@@ -55,7 +55,35 @@ $data = DBfunctions::getUserProfile($userMail);
                         <div id="image-preview-div" style="display: block">
                             <label for="exampleInputFile">Current image:</label>
                             <br>
-                            <img class="center-cropped row-increased-top img-responsive img-thumbnail" id="preview-img" src="../../../DiaGenKri/app/res/photos/avatar.jpg" style="background-image: url('http://placehold.it/200x200');">
+                            <?php
+                            if(file_exists("../app/res/photos/profilePhotos/" . $userMail . ".jpg")){
+                                $picture = "../../../DiaGenKri/app/res/photos/profilePhotos/" . $userMail . ".jpg";
+                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 50%\" id=\"preview-img\">";
+                            }
+                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".JPG")){
+                                $picture = "../../../DiaGenKri/app/res/photos/profilePhotos/" . $userMail . ".JPG";
+                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 50%\" id=\"preview-img\">";
+                            }
+                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".png")){
+                                $picture = "../../../DiaGenKri/app/res/photos/profilePhotos/" . $userMail . ".png";
+                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 50%\" id=\"preview-img\">";
+                            }
+                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".PNG")){
+                                $picture = "../../../DiaGenKri/app/res/photos/profilePhotos/" . $userMail . ".PNG";
+                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 50%\" id=\"preview-img\">";
+                            }
+                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".jpeg")){
+                                $picture = "../../../DiaGenKri/app/res/photos/profilePhotos/" . $userMail . ".jpeg";
+                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 50%\" id=\"preview-img\">";
+                            }
+                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".JPEG")){
+                                $picture = "../../../DiaGenKri/app/res/photos/profilePhotos/" . $userMail . ".JPEG";
+                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 50%\" id=\"preview-img\">";
+                            }
+                            else{
+                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=\"../../../DiaGenKri/app/res/photos/avatar.jpg\" style=\"max-width: 50%\" id=\"preview-img\">";
+                            }
+                            ?>
                             <br>
                         </div>
 
@@ -136,19 +164,19 @@ $data = DBfunctions::getUserProfile($userMail);
                         }
 
                         echo "<tr><th class='th-st'>Name: </th><td>" .                                  "<div class=\"form-group\">
-                                                                                                        <input type=\"text\" class=\"form-control\" id=\"name\" placeholder=\"Enter name\" name=\"name\">
+                                                                                                        <input type=\"text\" class=\"form-control\" id=\"name\" placeholder=" . $name . " name=\"name\">
                                                                                                         </div>" . "</td></tr>" . "</td></tr>" .
 
                             "<tr><th class='th-st'>Surname: </th><td style=\"white-space: nowrap\">" . "<div class=\"form-group\">
-                                                                                                        <input type=\"text\" class=\"form-control\" id=\"surname\" placeholder=\"Enter surname\" name=\"surname\">
+                                                                                                        <input type=\"text\" class=\"form-control\" id=\"surname\" placeholder=" . $surname . " name=\"surname\">
                                                                                                         </div>" . "</td></tr>" .
 
                             "<tr><th class='th-st'>E-mail: </th><td>" .                                 "<div class=\"form-group\">
-                                                                                                        <input type=\"email\" class=\"form-control\" id=\"email\" placeholder=\"Enter email\" name=\"email\">
+                                                                                                        <input type=\"email\" class=\"form-control\" id=\"email\" placeholder=" . $email . " \"Enter email\" name=\"email\">
                                                                                                         </div>" . "</td></tr>" . "</td></tr>" .
 
                             "<tr><th class='th-st'>Field of work: </th><td>" .                          "<div class=\"form-group\">
-                                                                                                        <input type=\"text\" class=\"form-control\" id=\"fow\" placeholder=\"Enter your field of work\" name=\"fow\">
+                                                                                                        <input type=\"text\" class=\"form-control\" id=\"fow\" placeholder=" . $fow . " name=\"fow\">
                                                                                                         </div>" . "</td></tr>" . "</td></tr>" . "</td></tr>" .
 
                             "<tr><th class='th-st'>Administration rights: </th><td style=\"white-space: nowrap\">" . $adminString . $readString . $editString . $deleteString . $addString . $confirmString . "</td></tr>";
@@ -170,6 +198,6 @@ $data = DBfunctions::getUserProfile($userMail);
     <p>©DiaGenKri</p>
 </footer>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquerymin.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 <script src="../../../DiaGenKri/app/res/js/upload-image.js"></script>

@@ -33,9 +33,9 @@ class profile extends Controller
 
             print_r($_POST);
 
-            //DBfunctions::saveAdimistrationChanges($email, $_POST);
+            //DBfunctions::saveProfileChanges($email, $_POST);
 
-            //ViewHelper::redirect('../../public/profile');
+            //ViewHelper::redirect('../../public/profile/edit');
         }
         else{
             // TO DO
@@ -51,18 +51,16 @@ class profile extends Controller
         $uploadDir = '../app/res/photos/profilePhotos/';
         $uploadFile = $uploadDir . basename($_FILES['file']['name']);
         if(move_uploaded_file ( $_FILES['file']['tmp_name'], $uploadFile)){
-            $newName = $uploadDir . "user_" . $_POST['userMail'];
+            $format = pathinfo($_FILES['file']['name'], PATHINFO_EXTENSION);
+                $newName = $uploadDir . $_POST['userMail'];
             $newName = rtrim($newName, '/');
+            $newName = $newName . '.' . $format;
             if(rename($uploadFile, $newName)){
                 echo rtrim($_POST['userMail'], '/') . "<br>";
                 echo $newName;
             }
 
-
-
-            //DBfunctions::saveAdimistrationChanges($email, $_POST);
-
-            //ViewHelper::redirect('../../public/profile/edit');
+            ViewHelper::redirect('../../public/profile/edit');
         }
         else{
             echo "nOooo";
