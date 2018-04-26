@@ -3,11 +3,10 @@
 require_once '../app/database/DBfunctions.php';
 include_once '../app/controllers/administrate.php';
 
+// TEMPORARY
+$userMail = 'nermin.jukan@mail.si';
 // ENTER USER EMAIL PARAMETER FROM SESSION AS ARG
-$data = DBfunctions::getUserProfile('nermin.jukan@mail.si');
-
-
-
+$data = DBfunctions::getUserProfile($userMail);
 
 ?>
 
@@ -62,6 +61,8 @@ $data = DBfunctions::getUserProfile('nermin.jukan@mail.si');
 
                         <div class="form-group">
                             <input class="form-control" type="file" name="file" id="file" required>
+                            <label hidden for="userMail"></label>
+                            <input hidden type="text" id="userMail" name="userMail" <?php echo "value=" . $userMail;?>/>
                         </div>
                         <button class="btn btn-md btn-primary" id="upload-button" type="submit" disabled>Upload image</button>
                     </form>

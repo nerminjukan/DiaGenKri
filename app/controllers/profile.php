@@ -43,18 +43,26 @@ class profile extends Controller
 
     }
 
+    // TO DO:
+    // SAVE IMAGE PATH TO DB UNDER USER PROFILE TABLE
+    // LOAD IMAGE PATH FROM DB AS SRC TO IMG BLOCK IN PROFILE VIEW (in /profile/index.php and /profile/edit.php)
     public function saveImage($name = ''){
-        //print_r($_FILES);
-        //phpinfo();
-        if(move_uploaded_file ( $_FILES['name'], '../res/photos')){
-            //$email = $_POST["userChange"];
-            //unset($_POST["userChange"]);
-            echo "JAAA";
+        //print_r($_POST);
+        $uploadDir = '../app/res/photos/profilePhotos/';
+        $uploadFile = $uploadDir . basename($_FILES['file']['name']);
+        if(move_uploaded_file ( $_FILES['file']['tmp_name'], $uploadFile)){
+            $newName = $uploadDir . "user_" . $_POST['userMail'];
+            $newName = rtrim($newName, '/');
+            if(rename($uploadFile, $newName)){
+                echo rtrim($_POST['userMail'], '/') . "<br>";
+                echo $newName;
+            }
+
 
 
             //DBfunctions::saveAdimistrationChanges($email, $_POST);
 
-            //ViewHelper::redirect('../../public/profile');
+            //ViewHelper::redirect('../../public/profile/edit');
         }
         else{
             echo "nOooo";
