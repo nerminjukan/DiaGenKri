@@ -4,15 +4,13 @@ if(!isset($_SESSION["user"])){
     header("Location: ../../../DiaGenKri/public/home");
 }
 
-
 require_once '../app/database/DBfunctions.php';
 include_once '../app/controllers/administrate.php';
 
-// TEMPORARY
-$userMail = 'nermin.jukan@mail.si';
+// SET USER MAIL
+$userMail = $_SESSION['user'];
 // ENTER USER EMAIL PARAMETER FROM SESSION AS ARG
 $data = DBfunctions::getUserProfile($userMail);
-
 
 ?>
 
