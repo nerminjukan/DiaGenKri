@@ -45,6 +45,7 @@ $data = DBfunctions::getUsersData();
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
                 <?php if(isset($_SESSION["user"])): ?>
+                <li><a href="../../../DiaGenKri/public/visualisation"><span class="glyphicon glyphicon-pencil"></span> Visualisation</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <span class="glyphicon glyphicon-user"></span> 
@@ -58,12 +59,12 @@ $data = DBfunctions::getUsersData();
                         <li>
                             <div class="navbar-login">
                                 <div class="row">
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-4" id="login-size">
                                         <p class="text-center">
                                             <span class="glyphicon glyphicon-user icon-size"></span>
                                         </p>
                                     </div>
-                                    <div class="col-lg-8">
+                                    <div class="col-lg-8" id="login-size">
                                         <p class="text-left"><strong><?php
                                             echo $_SESSION["user-name"] . " " . $_SESSION["user-surname"];
                                         ?>

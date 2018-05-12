@@ -14,12 +14,12 @@ if(!isset($_SESSION["user"])){
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="../../../DiaGenKri/app/res/js/raphael/raphael.min.js"></script>
-    <script src="../../../DiaGenKri/app/res/js/visualisation.js"></script>
+    <script src="../../../DiaGenKri/app/res/js/david/david.js"></script>
     <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css"
 
 </head>
 <header class="col-12 spacing-increased">
-    <h1>Visualisation</h1>
+    <h1>Visualisation - david</h1>
 </header>
 
 <nav class="navbar navbar-inverse">
@@ -35,7 +35,6 @@ if(!isset($_SESSION["user"])){
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
                 <?php if(isset($_SESSION["user"])): ?>
-                    <li><a href="../../../DiaGenKri/public/visualisation/david"><span class="glyphicon glyphicon-pencil"></span> david</a></li>
                     <li><a href="../../../DiaGenKri/public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">

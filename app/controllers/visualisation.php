@@ -24,4 +24,12 @@ class visualisation extends Controller
         $this->view('visualisation/index', ['name' => $user->name]);
     }
 
+    public function david($name = ''){
+        $user = $this->model('User');
+        $user->name = $name;
+
+        $this->view('visualisation/david', ['name' => $user->name]);
+        //ViewHelper::redirect('../../public/profile');
+    }
+
 }

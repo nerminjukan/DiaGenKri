@@ -78,9 +78,9 @@
 }
 
 
+/* Size for login */
 .navbar-login
 {
-    width: 15em;
     padding: 1em;
     padding-bottom: 0px;
 }
@@ -96,5 +96,17 @@
 {
     font-size: 5em;
 }
+
+/* login divs */
+#login-size{
+    width: 100%;
+}
+
+/* raphael js css*/
+#content{
+    height: 100%;
+    padding: 0;
+}
+
 
 
