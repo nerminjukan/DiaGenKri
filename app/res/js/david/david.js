@@ -57,11 +57,53 @@ Raphael.fn.connection = function (obj1, obj2, line, id_c, bg) {
     }
 };
 
+// dragging shapes
+Raphael.st.draggable = function() {
+  var me = this,
+      lx = 0,
+      ly = 0,
+      ox = 0,
+      oy = 0,
+      moveFnc = function(dx, dy) {
+          lx = dx + ox;
+          ly = dy + oy;
+          me.transform('t' + lx + ',' + ly);
+      },
+      startFnc = function() {
+      	console.log("[dragging shapes] works");
+      },
+      endFnc = function() {
+          ox = lx;
+          oy = ly;
+      };
+  
+  this.drag(moveFnc, startFnc, endFnc);
+};
+
+class Shape{
+	constructor(id_shape, array_connections){
+		this.id_shape = id_shape;
+		this.array_connections = array_connections;
+	}
+
+	// checks whether two shapes are connected
+	checkConnection(id_neighbour){
+		for (let i = array_connections.length - 1; i >= 0; i--)
+			if(array_connections[i].id === id_neighbour)
+				return true;
+		return false;
+	}
+}
+
 // array for shapes(circles, rectangles)
 let shapes = [];
 // array for connection between shapes
 let connections = [];
+// id of connections
+let id = 0;
 
+
+// ############## START OF REMOVE ##############
 // on double click remove "double clicked" shape
 function doubleClick(){
     console.log("shape to be removed:", this.id);
@@ -112,9 +154,74 @@ function removeConnections(c_ids){
         }
     }   
 }
-window.onload = function () {
-    var r = Raphael(document.getElementById('content'), width, height);
 
+// ############## END OF REMOVE ##############
+
+// ############## START OF CONNECTING SHAPES ##############
+let line_first_shape_id = null, 
+line_second_shape_id = null; // when thoose are both something but null, connect two shapes
+function connectTwoShapes(){
+	if(!line_first_shape_id){
+		line_first_shape_id = this.id;
+		console.log("[connect shapes] got first shape:", this.id);
+		return "first";
+	}
+
+	if(!line_second_shape_id){
+		if(this.id === line_first_shape_id){
+			console.log("[connect shapes] same shapes, choose different!");
+			return "error";
+		}
+		line_second_shape_id = this.id;
+		console.log("[connect shapes] got second shape:", this.id);
+	}
+
+	// check if two shapes are already connected
+	// TODO;
+
+	// get indexes of shapes to be connected
+	let indexes = getIndexesOfTwoShapes(line_first_shape_id, line_second_shape_id);
+	//console.log("first", indexes.f, "second", indexes.s);
+
+	// reset variables for shapes
+	line_first_shape_id = null;
+	line_second_shape_id = null;
+
+	// get reference to paper from data of element
+	paper = shapes[indexes.f].data("paper");
+	//console.log("[connect shapes] paper canvas:", paper.canvas);
+
+	// connect shapes
+    connections.push(paper.connection(shapes[indexes.f], shapes[indexes.s], "#000", id++));
+    console.log("[connect shapes] DONE");
+}
+
+// returns indexes of shapes with ids as paramters
+function getIndexesOfTwoShapes(shape1_id, shape2_id){
+	let first = null, 
+	second = null;
+	for(let i = 0; i < shapes.length; i++){
+		if(shapes[i].id === shape1_id)
+			first = i;
+
+		if(shapes[i].id === shape2_id)
+			second = i;
+
+		// if both are set just stop
+		if(first && second){
+			//console.log("[connect shapes - get index] done finding indexes");
+			break; 
+		}
+	}
+	console.log("[connect shapes - get index] indexes of shapes:", first, second);
+	return {
+		f: first,
+		s: second
+	};
+}
+
+// ############## END OF CONNECTING SHAPES ##############
+window.onload = function () {
     var dragger = function () {
         this.ox = this.type == "rect" ? this.attr("x") : this.attr("cx");
         this.oy = this.type == "rect" ? this.attr("y") : this.attr("cy");
@@ -136,6 +243,9 @@ window.onload = function () {
         height = positionInfo.height,
         width = positionInfo.width;
 
+    var r = Raphael(document.getElementById('content'), width, height);
+	console.log("[main] paper canvas:", r.canvas);
+
     // TESTING    
     connections = [];
     shapes = [  r.ellipse(190, 100, 30, 20),
@@ -143,15 +253,21 @@ window.onload = function () {
                 r.rect(290, 180, 60, 40, 2),
                 r.ellipse(450, 100, 20, 20)
             ];
+
+    // create set for objects
+  	// var mySet = r.set();
+
     // create shapes
     for (var i = 0, ii = shapes.length; i < ii; i++) {
         var color = Raphael.getColor();
         shapes[i].attr({fill: color, stroke: color, "fill-opacity": 0, "stroke-width": 2, cursor: "move"});
+        // save reference to paper
+        shapes[i].data("paper", r);
         shapes[i].drag(move, dragger, up);
-        shapes[i].dblclick(doubleClick);
+        //shapes[i].dblclick(doubleClick);
+        shapes[i].dblclick(connectTwoShapes);
     }
     // add connections between shapes
-    let id = 0;
     connections.push(r.connection(shapes[0], shapes[1], "#000", id++));
     connections.push(r.connection(shapes[1], shapes[2], "#000", id++));
     connections.push(r.connection(shapes[1], shapes[3], "#000", id++));
@@ -159,6 +275,15 @@ window.onload = function () {
 
     for(let i = 0; i < connections.length; i++)
         console.log(connections[i].from.id, ":", connections[i].to.id, connections[i].id);
+
+    // mySet.push(r.circle(50, 50, 50).attr('fill', 'red'));
+	// mySet.push(r.circle(50, 50, 40).attr('fill', 'white'));
+	// mySet.push(r.circle(50, 50, 30).attr('fill', 'red'));
+	// mySet.push(r.circle(50, 50, 20).attr('fill', 'white'));
+	// mySet.push(r.circle(50, 50, 10).attr('fill', 'red'));
+  
+  	// make set draggable
+  	// mySet.draggable();
 
 
     // connections.push(r.connection(shapes[1], shapes[2], "#fff", "#fff|5"));
