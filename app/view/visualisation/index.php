@@ -8,7 +8,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="../../../DiaGenKri/app/res/js/raphael/raphael.min.js"></script>
-    <script src="../../../DiaGenKri/app/res/js/visualisation.js"></script>
+    <script src="../../../DiaGenKri/app/res/js/nermin/nermin.js"></script>
     <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css"
 
 </head>
@@ -88,11 +88,7 @@
 </nav>
 <div class="container-fluid text-center">
     <div class="row content">
-        <div class="col-sm-2 sidenav">
-            <h3>LINKS</h3>
-            <p><a href="http://www.limfom-levkemija.org/domov.html">L&L</a></p>
-        </div>
-        <div class="col-sm-8" id="content">
+        <div class="col-sm-10" id="content" style="padding-right: 0px; padding-left: 0px; height: 100%">
 
         </div>
         <div class="col-sm-2 sidenav">
