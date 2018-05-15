@@ -101,6 +101,8 @@ let shapes = [];
 let connections = [];
 // id of connections
 let id = 0;
+// if adding connections is possible
+let add_connection = false;
 
 
 // ############## START OF REMOVE ##############
@@ -161,6 +163,8 @@ function removeConnections(c_ids){
 let line_first_shape_id = null, 
 line_second_shape_id = null; // when thoose are both something but null, connect two shapes
 function connectTwoShapes(){
+	if(!add_connection)
+		return;
 	if(!line_first_shape_id){
 		line_first_shape_id = this.id;
 		console.log("[connect shapes] got first shape:", this.id);
@@ -194,6 +198,9 @@ function connectTwoShapes(){
 	// connect shapes
     connections.push(paper.connection(shapes[indexes.f], shapes[indexes.s], "#000", id++));
     console.log("[connect shapes] DONE");
+
+    // reset adding connections
+    addConnection();
 }
 
 // returns indexes of shapes with ids as paramters
@@ -218,6 +225,26 @@ function getIndexesOfTwoShapes(shape1_id, shape2_id){
 		f: first,
 		s: second
 	};
+}
+
+// when add connection is true, you can actually add connection
+function addConnection(){
+	add_connection = !add_connection;
+	if(add_connection){
+		document.getElementById("add_connection_button").classList.remove("btn");
+		document.getElementById("add_connection_button").classList.remove("btn-primary");
+		document.getElementById("add_connection_button").classList.add("button_checked");
+	}
+	else{
+		document.getElementById("add_connection_button").classList.remove("button_checked");
+		document.getElementById("add_connection_button").classList.add("btn-primary");
+		document.getElementById("add_connection_button").classList.add("btn");
+
+	}
+	// reset variables for shapes
+	line_first_shape_id = null;
+	line_second_shape_id = null;
+	console.log("adding connection?", add_connection);
 }
 
 // ############## END OF CONNECTING SHAPES ##############
@@ -251,7 +278,9 @@ window.onload = function () {
     shapes = [  r.ellipse(190, 100, 30, 20),
                 r.rect(290, 80, 60, 40, 10),
                 r.rect(290, 180, 60, 40, 2),
-                r.ellipse(450, 100, 20, 20)
+                r.ellipse(450, 100, 20, 20),
+                r.rect(100, 400, 60, 40, 2),
+                r.rect(400, 250, 60, 40, 2)
             ];
 
     // create set for objects
@@ -264,8 +293,8 @@ window.onload = function () {
         // save reference to paper
         shapes[i].data("paper", r);
         shapes[i].drag(move, dragger, up);
-        //shapes[i].dblclick(doubleClick);
-        shapes[i].dblclick(connectTwoShapes);
+        shapes[i].dblclick(doubleClick);
+        shapes[i].click(connectTwoShapes);
     }
     // add connections between shapes
     connections.push(r.connection(shapes[0], shapes[1], "#000", id++));

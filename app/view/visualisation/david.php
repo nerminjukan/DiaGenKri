@@ -103,7 +103,7 @@ if(!isset($_SESSION["user"])){
         </div>
         <div class="col-sm-2 sidenav">
             <div class="well">
-                <p>ADS</p>
+                <button onclick="addConnection()" id = "add_connection_button" class="btn btn-primary">add connection</button>
             </div>
             <div class="well">
                 <p>ADS</p>

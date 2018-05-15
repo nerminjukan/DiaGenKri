@@ -98,15 +98,29 @@
 }
 
 /* login divs */
-#login-size{
+#login-size {
     width: 100%;
 }
 
 /* raphael js css*/
-#content{
+#content {
     height: 100%;
     padding: 0;
 }
+
+/* if button is checked */
+.button_checked {
+    padding: 6px 12px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: #fff;
+    background-color: #286090;
+    border-color: #204d74;
+}
+
+/*#add_connection_button {
+    white-space: pre-wrap;
+}*/
 
 
 
