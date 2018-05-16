@@ -1,5 +1,5 @@
 // connection implementation between two objects
-Raphael.fn.connection = function (obj1, obj2, line, id_c, bg) {
+Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000", bg) {
     if (obj1.line && obj1.from && obj1.to) {
         line = obj1;
         obj1 = line.from;
@@ -46,10 +46,13 @@ Raphael.fn.connection = function (obj1, obj2, line, id_c, bg) {
         line.bg && line.bg.attr({path: path});
         line.line.attr({path: path});
     } else {
-        var color = typeof line == "string" ? line : "#000";
+        let color = color_user;
+        let line_path = this.path(path).attr({stroke: color, fill: "none", "stroke-width": 3});
+	    line_path.mouseover(deleteConnection);
+	    line_path.mouseout(noDelete);
         return {
             bg: bg && bg.split && this.path(path).attr({stroke: bg.split("|")[0], fill: "none", "stroke-width": bg.split("|")[1] || 3}),
-            line: this.path(path).attr({stroke: color, fill: "none"}),
+            line: line_path,
             from: obj1,
             to: obj2,
             id: id_c
@@ -103,9 +106,12 @@ let connections = [];
 let id = 0;
 // if adding connections is possible
 let add_connection = false;
+// if removing connection is possible - that's when user's mouse is on the line and user pressed some key(- minus key for now)
+// following variable represents id of path(connection) to be removed
+let remove_connectionn_id = null;
 
 
-// ############## START OF REMOVE ##############
+// ############## START OF REMOVE SHAPE ##############
 // on double click remove "double clicked" shape
 function doubleClick(){
     console.log("shape to be removed:", this.id);
@@ -146,7 +152,7 @@ function removeConnections(c_ids){
         for(let j = connections.length - 1; j >= 0; j--){
             // if id of connection and if of connections to be removed matches
             if(connections[j].id === c_ids[i]){
-                console.log("remove connection on index", j, " with id:", connections[j].id, "that is connecting:", connections[j].from.id,
+                console.log("remove connection on index", j, " with id of path:", connections[j].line.id, "that is connecting:", connections[j].from.id,
                     "and", connections[j].to.id);
                 connections[j].line.remove();
                 connections.splice(j, 1);
@@ -157,9 +163,30 @@ function removeConnections(c_ids){
     }   
 }
 
-// ############## END OF REMOVE ##############
+// ############## END OF REMOVE SHAPE ##############
 
-// ############## START OF CONNECTING SHAPES ##############
+// ############## START OF REMOVE CONNECTION ##############
+function deleteConnection(){
+	console.log("path:",this.id);
+	this.attr("stroke-width", 5);
+	remove_connectionn_id = this.id;
+}
+
+function noDelete(){
+	this.attr("stroke-width", 3);
+	remove_connectionn_id = null;
+}
+
+// returns index of connection with id as parameter
+function getConnectionIndex(id){
+	for(let i = 0; i < connections.length; i++)
+		if(connections[i].line.id === id)
+			return i;
+	return null;
+}
+// ############## END OF REMOVE CONNECTION ##############
+
+// ############## START OF CONNECTING TWO SHAPES ##############
 let line_first_shape_id = null, 
 line_second_shape_id = null; // when thoose are both something but null, connect two shapes
 function connectTwoShapes(){
@@ -247,7 +274,7 @@ function addConnection(){
 	console.log("adding connection?", add_connection);
 }
 
-// ############## END OF CONNECTING SHAPES ##############
+// ############## END OF CONNECTING TWO SHAPES ##############
 window.onload = function () {
     var dragger = function () {
         this.ox = this.type == "rect" ? this.attr("x") : this.attr("cx");
@@ -300,7 +327,7 @@ window.onload = function () {
     connections.push(r.connection(shapes[0], shapes[1], "#000", id++));
     connections.push(r.connection(shapes[1], shapes[2], "#000", id++));
     connections.push(r.connection(shapes[1], shapes[3], "#000", id++));
-    connections.push(r.connection(shapes[2], shapes[3], "#000", id++));
+    connections.push(r.connection(shapes[2], shapes[3], "#000", id++, "#4286f4"));
 
     for(let i = 0; i < connections.length; i++)
         console.log(connections[i].from.id, ":", connections[i].to.id, connections[i].id);
@@ -318,3 +345,18 @@ window.onload = function () {
     // connections.push(r.connection(shapes[1], shapes[2], "#fff", "#fff|5"));
     // connections.push(r.connection(shapes[1], shapes[3], "#000", "#fff"));
 };
+
+$('html').keyup(function(e){
+    if(e.keyCode == 173) {
+    	if(remove_connectionn_id){
+    		console.log("minus pressed, delete path with id", remove_connectionn_id);
+    		let index = getConnectionIndex(remove_connectionn_id);
+    		// remove line and than delete whole connection from array
+    		connections[index].line.remove();
+    		connections.splice(index, 1);
+    		remove_connectionn_id = null;
+    	}
+    	else
+    		console.log("just minus pressed, delete nothing");
+    }
+});
