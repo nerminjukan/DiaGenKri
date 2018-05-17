@@ -8,6 +8,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="../../../DiaGenKri/app/res/js/raphael/raphael.min.js"></script>
+    <script src="../../../DiaGenKri/app/res/js/raphael/raphael.free_transform.js"></script>
     <script src="../../../DiaGenKri/app/res/js/nermin/nermin.js"></script>
     <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css"
 

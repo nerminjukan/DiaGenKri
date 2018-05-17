@@ -5,22 +5,23 @@ start = function () {
 // storing original coordinates
 this.ox = this.attr("x");
 this.oy = this.attr("y");
-this.attr({opacity: 1});
+this.attr({opacity: 1, text: "test"});
 if (this.attr("y") < 60 &&  this.attr("x") < 60)
-    this.attr({fill: "#000"});
+    this.attr({fill: "#3fb118"});
 };
 
 move = function (dx, dy) {
     // move will be called with dx and dy
     //var ale =
     //console.log(this.node);
+    //paper.freeTransform(this);
     if(this.ox + this.node.width.baseVal.value + dx < document.getElementById('content').clientWidth &&
         this.oy + dy >= 0 && this.oy + this.node.height.baseVal.value + dy < document.getElementById('content').clientHeight &&
         this.ox + dx >= 0){
         //var r = this.oy - Math.abs(dy);
         //console.log("res: " + r + ", dy: " + dy);
         this.attr({x: this.ox + dx, y: this.oy + dy});
-        if (this.attr("fill") !== "#000") this.attr({fill: "#000"});
+        if (this.attr("fill") !== "#7fb501") this.attr({fill: "#7fb501", text: "test"});
     }
     else{
         console.log(dy);
@@ -32,8 +33,12 @@ move = function (dx, dy) {
 up = function () {
     // restoring state
     this.attr({opacity: .5});
-    if (this.attr("y") < 60 && this.attr("x") < 60)
-        this.attr({fill: "#AEAEAE"});
+    console.log("X: " + this.attr("x") + " Y: " + this.attr("y"));
+    if (this.attr("x") < 211){
+        this.remove();
+    }
+
+
 };
 
 
@@ -42,6 +47,9 @@ var clone_handler = function() {
     //console.log(Object.getOwnPropertyNames(x));
     //console.log(x.node);
     x.drag(move, start, up);
+    //var ft = paper.freeTransform(x, {rotate: "false"});
+    //ft.hideHandles();
+
     //x.hover(hv_on, hv_off);
 };
 
@@ -53,6 +61,12 @@ $(function(){
         document.getElementById('content').clientHeight - 20);
 
     var field = paper.rect(50, 50, 100, 50).attr({fill: "black"});
+    var eltext = paper.set();
+    el = paper.ellipse(0, 0, 30, 20);
+    text = paper.text(0, 0, "ellipse").attr({fill: '#ff0000'})
+    eltext.push(el);
+    eltext.push(text);
+    eltext.translate(100,100)
 
 
     //alert( 'Size: ' + paper.width + 'x' + paper.height );
