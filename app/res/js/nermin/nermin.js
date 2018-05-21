@@ -1,77 +1,84 @@
 
 var paper;
 
-start = function () {
-// storing original coordinates
-this.ox = this.attr("x");
-this.oy = this.attr("y");
-this.attr({opacity: 1, text: "test"});
-if (this.attr("y") < 60 &&  this.attr("x") < 60)
-    this.attr({fill: "#3fb118"});
-};
+var set;
 
-move = function (dx, dy) {
-    // move will be called with dx and dy
-    //var ale =
-    //console.log(this.node);
-    //paper.freeTransform(this);
-    if(this.ox + this.node.width.baseVal.value + dx < document.getElementById('content').clientWidth &&
-        this.oy + dy >= 0 && this.oy + this.node.height.baseVal.value + dy < document.getElementById('content').clientHeight &&
-        this.ox + dx >= 0){
-        //var r = this.oy - Math.abs(dy);
-        //console.log("res: " + r + ", dy: " + dy);
-        this.attr({x: this.ox + dx, y: this.oy + dy});
-        if (this.attr("fill") !== "#7fb501") this.attr({fill: "#7fb501", text: "test"});
+var canvasElements = [];
+
+function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+function alertMe(ev, tar) {
+    console.log(ev.target.id + ", " + tar.id);
+    console.log(ev.screenY);
+    var pos = $("#content").position();
+    console.log("x: " +pos.top);
+    console.log("y: " +pos.left);
+}
+
+function startDrag(ev) {
+    ev.dataTransfer.setData('Text/html', ev.target.id);
+}
+
+function shapeDraw(arg, ev) {
+
+    var shape;
+
+    if(arg === "aSquare"){
+       shape =  paper.rect(ev.offsetX, ev.offsetY, 100, 50).attr({fill: "black"});
+       var resizable = paper.rect(ev.offsetX+10, ev.offsetY+10, 20, 20).attr({fill: "white"});
+
+       set.push(shape);
+       set.push(resizable);
+    }
+    else if(arg === "aDecision"){
+        shape = paper.rect(ev.offsetX, ev.offsetY, 75, 75).attr({fill: "white"});
+        shape.rotate(45);
+    }
+    else if(arg === "aLink"){
+        shape = paper.path("M" + ev.offsetX+","+ev.offsetY+"H10").attr({stroke: "pink", "stroke-width":4});
+        shape.rotate(45);
     }
     else{
-        console.log(dy);
+        return null;
     }
 
-
-};
-
-up = function () {
-    // restoring state
-    this.attr({opacity: .5});
-    console.log("X: " + this.attr("x") + " Y: " + this.attr("y"));
-    if (this.attr("x") < 211){
-        this.remove();
-    }
+    shape.click(function () {
+        var el = paper.getById(shape.id);
+        el.attr({fill: getRandomColor()});
+        el.attr({stroke: getRandomColor()});
+    });
 
 
-};
+
+    return shape;
+}
 
 
-var clone_handler = function() {
-    var x = this.clone();
-    //console.log(Object.getOwnPropertyNames(x));
-    //console.log(x.node);
-    x.drag(move, start, up);
-    //var ft = paper.freeTransform(x, {rotate: "false"});
-    //ft.hideHandles();
+function mainDraw(ev) {
+    var data = ev.dataTransfer.getData("text/html");
+    var shape = shapeDraw(data, ev);
+    canvasElements.push(shape);
 
-    //x.hover(hv_on, hv_off);
-};
-
+}
 
 $(function(){
-    paper = Raphael(document.getElementById('content'), "100%", "100%", 0, 0);
+    paper = Raphael(document.getElementById('content'), 1000, 1000, 0, 0);
+    set = paper.set();
 
-    var toolBorder = paper.rect(10, 10, 200,
-        document.getElementById('content').clientHeight - 20);
-
-    var field = paper.rect(50, 50, 100, 50).attr({fill: "black"});
-    var eltext = paper.set();
-    el = paper.ellipse(0, 0, 30, 20);
-    text = paper.text(0, 0, "ellipse").attr({fill: '#ff0000'})
-    eltext.push(el);
-    eltext.push(text);
-    eltext.translate(100,100)
+    document.addEventListener("dragover", function (ev) {
+        ev.preventDefault();
+    }, false);
 
 
-    //alert( 'Size: ' + paper.width + 'x' + paper.height );
-
-    field.mousemove(clone_handler);
 });
+
+
 
 

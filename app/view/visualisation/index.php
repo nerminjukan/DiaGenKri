@@ -25,7 +25,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="../../../DiaGenKri/public/home">DiaGenKri</a>
+            <a draggable="false" class="navbar-brand" href="../../../DiaGenKri/public/home">DiaGenKri</a>
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
@@ -89,16 +89,50 @@
 </nav>
 <div class="container-fluid text-center">
     <div class="row content">
-        <div class="col-sm-10" id="content" style="padding-right: 0px; padding-left: 0px; height: 100%">
+        <div class="col-sm-2 sidenav">
+            <h2>Toolbar</h2>
+            <a ondragstart="startDrag(event)" draggable="true"  id="aSquare" href="javascript:void(0);" style="overflow: hidden; width: 40px; height: 40px; padding: 1px; display: inline-block; cursor: move">
+                <svg class="draggable" id="svgtag"  style="width: 36px; height: 36px; display: block; position: relative; overflow: hidden; left: 2px; top: 2px">
+                    <g>
+                        <g></g>
+                        <g>
+                            <g transform="translate(2,10)" style="visibility: visible;">
+                                <rect id="rectID"  class="draggable" height="16" width="31" fill="#ffffff" stroke="#000000" pointer-events="all"></rect>
+                            </g>
+                        </g>
+                    </g>
+                </svg>
+            </a>
+            <a ondragstart="startDrag(event)" draggable="true"  id="aLink" href="javascript:void(0);" style="overflow: hidden; width: 40px; height: 40px; padding: 1px; display: inline-block; cursor: move">
+                <svg class="draggable" id="svgtag"  style="width: 36px; height: 36px; display: block; position: relative; overflow: hidden; left: 2px; top: 2px">
+                    <g>
+                        <g></g>
+                        <g>
+                            <g transform="translate(0.5,0.5)" style="visibility: visible;">
+                                <line x1="5" y1="5" x2="30" y2="30" id="lineID" class="draggable" stroke="#000000" pointer-events="all"></line>
+                            </g>
+                        </g>
+                    </g>
+                </svg>
+            </a>
+            <a ondragstart="startDrag(event)" draggable="true"  id="aDecision" href="javascript:void(0);" style="overflow: hidden; width: 40px; height: 40px; padding: 1px; display: inline-block; cursor: move">
+                <svg class="draggable" id="svgtag"  style="width: 36px; height: 36px; display: block; position: relative; overflow: hidden; left: 2px; top: 2px">
+                    <g>
+                        <g></g>
+                        <g>
+                            <g transform="translate(18, 8)" style="visibility: visible;">
+                                <rect id="rhombusID" transform="rotate(45)" class="draggable" height="15" width="15" fill="#ffffff" stroke="#000000" pointer-events="all"></rect>
+                            </g>
+                        </g>
+                    </g>
+                </svg>
+            </a>
+        </div>
+        <div ondrop="mainDraw(event)" class="col-sm-8" id="content">
 
         </div>
         <div class="col-sm-2 sidenav">
-            <div class="well">
-                <p>ADS</p>
-            </div>
-            <div class="well">
-                <p>ADS</p>
-            </div>
+            <h2>Settings</h2>
         </div>
     </div>
 </div>
