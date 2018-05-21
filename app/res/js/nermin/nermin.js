@@ -1,9 +1,15 @@
 
 var paper;
 
-var set;
+var IDinput;
 
-var canvasElements = [];
+var IDtext;
+
+var active;
+
+var id = 0;
+
+var canvasSets = [];
 
 function getRandomColor() {
     var letters = '0123456789ABCDEF';
@@ -29,13 +35,18 @@ function startDrag(ev) {
 function shapeDraw(arg, ev) {
 
     var shape;
+    var set = paper.set();
 
     if(arg === "aSquare"){
-       shape =  paper.rect(ev.offsetX, ev.offsetY, 100, 50).attr({fill: "black"});
+       shape =  paper.rect(ev.offsetX, ev.offsetY, 100, 50).attr({fill: "black"}).data('setID', id);
        var resizable = paper.rect(ev.offsetX+10, ev.offsetY+10, 20, 20).attr({fill: "white"});
+       var txt = paper.text(ev.offsetX+60, ev.offsetY+30, "TEST").attr({'fill': 'red'});
 
        set.push(shape);
        set.push(resizable);
+       set.push(txt);
+       canvasSets.push(set);
+       id++;
     }
     else if(arg === "aDecision"){
         shape = paper.rect(ev.offsetX, ev.offsetY, 75, 75).attr({fill: "white"});
@@ -49,10 +60,17 @@ function shapeDraw(arg, ev) {
         return null;
     }
 
+    active = shape;
+
+    IDinput.setAttribute('value', shape.id);
+    IDtext.removeAttribute('disabled');
+
     shape.click(function () {
         var el = paper.getById(shape.id);
         el.attr({fill: getRandomColor()});
         el.attr({stroke: getRandomColor()});
+
+        IDinput.setAttribute('value', shape.id);
     });
 
 
@@ -64,13 +82,26 @@ function shapeDraw(arg, ev) {
 function mainDraw(ev) {
     var data = ev.dataTransfer.getData("text/html");
     var shape = shapeDraw(data, ev);
-    canvasElements.push(shape);
+    //canvasElements.push(shape);
 
+}
+
+
+function setText(ev) {
+    var id = IDinput.value;
+
+    var set = canvasSets[paper.getById(id).data('setID')];
+    console.log(set);
+    var t = set.pop();
+    t.attr({text: IDtext.value});
+    set.push(t);
 }
 
 $(function(){
     paper = Raphael(document.getElementById('content'), 1000, 1000, 0, 0);
     set = paper.set();
+    IDinput = document.getElementById('IDinput');
+    IDtext = document.getElementById('IDtext');
 
     document.addEventListener("dragover", function (ev) {
         ev.preventDefault();

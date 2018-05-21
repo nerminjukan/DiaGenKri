@@ -133,6 +133,12 @@
         </div>
         <div class="col-sm-2 sidenav">
             <h2>Settings</h2>
+            <form>
+                <label for="IDinput">Element ID</label>
+                    <input id="IDinput" disabled type="text" name="fname"><br>
+                <label for="IDtext">Text</label>
+                    <input disabled onblur="setText(event)" id="IDtext" type="text">
+            </form>
         </div>
     </div>
 </div>
