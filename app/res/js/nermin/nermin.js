@@ -36,11 +36,12 @@ function shapeDraw(arg, ev) {
 
     var shape;
     var set = paper.set();
+    var txt;
 
     if(arg === "aSquare"){
        shape =  paper.rect(ev.offsetX, ev.offsetY, 100, 50).attr({fill: "black"}).data('setID', id);
        var resizable = paper.rect(ev.offsetX+10, ev.offsetY+10, 20, 20).attr({fill: "white"});
-       var txt = paper.text(ev.offsetX+60, ev.offsetY+30, "TEST").attr({'fill': 'red'});
+       txt = paper.text(ev.offsetX+60, ev.offsetY+30, "TEST").attr({'fill': 'red'});
 
        set.push(shape);
        set.push(resizable);
@@ -49,8 +50,15 @@ function shapeDraw(arg, ev) {
        id++;
     }
     else if(arg === "aDecision"){
-        shape = paper.rect(ev.offsetX, ev.offsetY, 75, 75).attr({fill: "white"});
+        shape = paper.rect(ev.offsetX, ev.offsetY, 75, 75).attr({fill: "white"}).data('setID', id);
         shape.rotate(45);
+
+        txt = paper.text(ev.offsetX+40, ev.offsetY+40, "TEST").attr({'fill': 'red'});
+        set.push(shape);
+        set.push(resizable);
+        set.push(txt);
+        canvasSets.push(set);
+        id++;
     }
     else if(arg === "aLink"){
         shape = paper.path("M" + ev.offsetX+","+ev.offsetY+"H10").attr({stroke: "pink", "stroke-width":4});
@@ -64,12 +72,15 @@ function shapeDraw(arg, ev) {
 
     IDinput.setAttribute('value', shape.id);
     IDtext.removeAttribute('disabled');
+    IDtext.value = "";
 
     shape.click(function () {
         var el = paper.getById(shape.id);
         el.attr({fill: getRandomColor()});
         el.attr({stroke: getRandomColor()});
 
+
+        IDtext.value = getText(shape.id);
         IDinput.setAttribute('value', shape.id);
     });
 
@@ -86,12 +97,19 @@ function mainDraw(ev) {
 
 }
 
+function getText(id) {
+    var set = canvasSets[paper.getById(id).data('setID')];
+    var t = set.pop();
+    var txt = t.attr('text');
+    set.push(t);
+    return txt;
+}
+
 
 function setText(ev) {
     var id = IDinput.value;
 
     var set = canvasSets[paper.getById(id).data('setID')];
-    console.log(set);
     var t = set.pop();
     t.attr({text: IDtext.value});
     set.push(t);
