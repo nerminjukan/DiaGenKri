@@ -99,18 +99,35 @@ class Shape{
 }
 
 // raphael paper reference
-let r;
+let paper;
 // array for shapes(circles, rectangles)
 let shapes = [];
 // array for connection between shapes
 let connections = [];
 // id of connections
-let id = 0;
+let id_connection = 0;
 // if adding connections is possible
 let add_connection = false;
 // if removing connection is possible - that's when user's mouse is on the line and user pressed some key(- minus key for now)
 // following variable represents id of path(connection) to be removed
 let remove_connectionn_id = null;
+
+var dragger = function () {
+        this.ox = this.type == "rect" ? this.attr("x") : this.attr("cx");
+        this.oy = this.type == "rect" ? this.attr("y") : this.attr("cy");
+        this.animate({"fill-opacity": .2}, 500);
+    },
+        move = function (dx, dy) {
+            var att = this.type == "rect" ? {x: this.ox + dx, y: this.oy + dy} : {cx: this.ox + dx, cy: this.oy + dy};
+            this.attr(att);
+            for (var i = connections.length; i--;) {
+                paper.connection(connections[i]);
+            }
+            //paper.safari();
+        },
+        up = function () {
+            this.animate({"fill-opacity": 0}, 500);
+        }
 
 
 // ############## START OF REMOVE SHAPE ##############
@@ -323,75 +340,69 @@ function zoom(og_width, og_height, map_width, map_height){
         zoom = zoom_width;
     else
         zoom = zoom_height;
-    r.setViewBox($("#canvas").offset().left, $("#canvas").offset().top, (map_width/zoom), (map_height/zoom));
+    paper.setViewBox($("#canvas").offset().left, $("#canvas").offset().top, (map_width/zoom), (map_height/zoom));
 }
 // ************* end of some other functions
 window.onload = function () {
     // set focus to div with paper
     // $('#content').focus();
 
-    var dragger = function () {
-        this.ox = this.type == "rect" ? this.attr("x") : this.attr("cx");
-        this.oy = this.type == "rect" ? this.attr("y") : this.attr("cy");
-        this.animate({"fill-opacity": .2}, 500);
-    },
-        move = function (dx, dy) {
-            var att = this.type == "rect" ? {x: this.ox + dx, y: this.oy + dy} : {cx: this.ox + dx, cy: this.oy + dy};
-            this.attr(att);
-            for (var i = connections.length; i--;) {
-                r.connection(connections[i]);
-            }
-            //r.safari();
-        },
-        up = function () {
-            this.animate({"fill-opacity": 0}, 500);
-        },
-        element = document.getElementById('content'),
+
+    IDinput = document.getElementById('IDinput');
+    IDtext = document.getElementById('IDtext');
+
+    // drag and drop is possible "everywhere"
+    document.addEventListener("dragover", function (ev) {
+        ev.preventDefault();
+    }, false);
+
+    
+    let element = document.getElementById('content'),
         positionInfo = element.getBoundingClientRect(),
         height = positionInfo.height,
         width = positionInfo.width;
 
-    r = Raphael(document.getElementById('content'), 2000, 2000);
-    r.rect(0, 0, 2000, 2000).attr({"stroke-width": 10});
-	console.log("[main] paper canvas:", r.canvas);
+    paper = Raphael(document.getElementById('content'), 2000, 2000);
+    paper.rect(0, 0, 2000, 2000).attr({"stroke-width": 10});
+	console.log("[main] paper canvas:", paper.canvas);
 
     // TESTING    
     connections = [];
-    shapes = [  r.ellipse(r.width/2, r.height/2, 30, 20),
-                r.rect(290, 80, 60, 40, 10),
-                r.rect(290, 180, 60, 40, 2),
-                r.ellipse(450, 100, 20, 20),
-                r.rect(r.width/2, r.height/2, 60, 40, 4),
-                r.rect(400, 250, 60, 40, 2)
+    shapes = [  paper.ellipse(paper.width/2, paper.height/2, 30, 20),
+                paper.rect(290, 80, 60, 40, 10),
+                paper.rect(290, 180, 60, 40, 2),
+                paper.ellipse(450, 100, 20, 20),
+                paper.rect(paper.width/2, paper.height/2, 60, 40, 4),
+                paper.rect(400, 250, 60, 40, 2)
             ];
 
     // create set for objects
-  	var mySet = r.set();
+  	var mySet = paper.set();
 
     // create shapes
     for (var i = 0, ii = shapes.length; i < ii; i++) {
         var color = Raphael.getColor();
         shapes[i].attr({fill: color, stroke: color, "fill-opacity": 0, "stroke-width": 2, cursor: "move"});
         // save reference to paper
-        shapes[i].data("paper", r);
+        shapes[i].data("paper", paper);
         shapes[i].drag(move, dragger, up);
         shapes[i].dblclick(doubleClick);
         shapes[i].click(connectTwoShapes);
     }
     // add connections between shapes
-    connections.push(r.connection(shapes[0], shapes[1], "#000", id++));
-    connections.push(r.connection(shapes[1], shapes[2], "#000", id++));
-    connections.push(r.connection(shapes[1], shapes[3], "#000", id++));
-    connections.push(r.connection(shapes[2], shapes[3], "#000", id++, "#4286f4"));
+    connections.push(paper.connection(shapes[0], shapes[1], "#000", id_connection++));
+    connections.push(paper.connection(shapes[1], shapes[2], "#000", id_connection++));
+    connections.push(paper.connection(shapes[1], shapes[3], "#000", id_connection++));
+    connections.push(paper.connection(shapes[2], shapes[3], "#000", id_connection++, "#4286f4"));
 
     for(let i = 0; i < connections.length; i++)
         console.log(connections[i].from.id, ":", connections[i].to.id, connections[i].id);
 
-    mySet.push(r.circle(50, 50, 50).attr('fill', 'red'));
-	mySet.push(r.circle(50, 50, 40).attr('fill', 'white'));
-	mySet.push(r.circle(50, 50, 30).attr('fill', 'red'));
-	mySet.push(r.circle(50, 50, 20).attr('fill', 'white'));
-	mySet.push(r.circle(50, 50, 10).attr('fill', 'red'));
+    mySet.push(paper.circle(50, 50, 50).attr('fill', 'red'));
+	mySet.push(paper.circle(50, 50, 40).attr('fill', 'white'));
+	mySet.push(paper.circle(50, 50, 30).attr('fill', 'red'));
+	mySet.push(paper.circle(50, 50, 20).attr('fill', 'white'));
+	mySet.push(paper.circle(50, 50, 10).attr('fill', 'red'));
   
   	// make set draggable
   	mySet.draggable();
@@ -400,8 +411,8 @@ window.onload = function () {
     scrollTo("content", shapes[0]);
 
 
-    // connections.push(r.connection(shapes[1], shapes[2], "#fff", "#fff|5"));
-    // connections.push(r.connection(shapes[1], shapes[3], "#000", "#fff"));
+    // connections.push(paper.connection(shapes[1], shapes[2], "#fff", "#fff|5"));
+    // connections.push(paper.connection(shapes[1], shapes[3], "#000", "#fff"));
 };
 
 $('html').keyup(function(e){
@@ -420,3 +431,221 @@ $('html').keyup(function(e){
     		console.log("just minus pressed, delete nothing");
     }
 });
+
+
+
+
+function addToShapes(shape){
+    shape.attr({fill: "blue", stroke: "blue", "fill-opacity": 1, "stroke-width": 2, cursor: "move"});
+    // save reference to paper
+    shape.data("paper", paper);
+    //shape.drag(move, dragger, up);
+    shape.dblclick(doubleClick);
+    shape.click(connectTwoShapes);
+    shapes.push(shape)
+}
+
+////////
+
+// HTML input ID input field
+var IDinput;
+
+// HTML input Text field
+var IDtext;
+
+// the currently handled shape -> makes it globally accessible (idea)
+var active;
+
+// counter and ID number for sets inserted into 'canvasSets'
+var id = 0;
+
+// holds all the sets of elements indexied by 'id'
+var canvasSets = [];
+
+// helper function for 'element.click' event handler
+function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+// inserts element information from Toolbar into dataTransfer, enables identification of dropped element onto canvas
+function startDrag(ev) {
+    ev.dataTransfer.setData('Text/html', ev.target.id);
+}
+
+// the actual drawing function, determines which shape to draw
+function shapeDraw(arg, ev) {
+
+    // create local variables
+    var shape;
+    var set = paper.set();
+    var txt;
+    var fts;
+
+    // draws a rectangle
+    if(arg === "aSquare"){
+        // create element and draw it on canvas
+        shape =  paper.rect(ev.offsetX, ev.offsetY, 100, 50).attr({fill: "black"}).data('setID', id);
+        // creates a 'details' rectangle
+        var resizable = paper.rect(ev.offsetX+10, ev.offsetY+10, 20, 20).attr({fill: "white"});
+        // adds a text field
+        txt = paper.text(ev.offsetX+60, ev.offsetY+30, "TEST").attr({'fill': 'red'});
+
+        // adds a dblclick handler to the 'details' rectangle
+        resizable.click(function () {
+            console.log("I am going to hide links soon.")
+        });
+
+        // adds a dblclick handler to the text field
+        txt.dblclick(function () {
+           IDtext.focus();
+        });
+
+        // adds the elements to a set
+        set.push(shape);
+        set.push(resizable);
+        set.push(txt);
+        set.draggable();
+
+        // saves the set ito a global array
+        canvasSets.push(set);
+        // increments the global id
+        id++;
+    }
+    // draws a decision node, similar process as for rectangle element, doesn't include the 'details' element
+    else if(arg === "aDecision"){
+        shape = paper.rect(ev.offsetX, ev.offsetY, 75, 75).attr({fill: "white"}).data('setID', id);
+        shape.rotate(45);
+        txt = paper.text(ev.offsetX+40, ev.offsetY+40, "TEST").attr({'fill': 'red'});
+
+        txt.dblclick(function () {
+            IDtext.focus();
+        });
+
+        set.push(shape);
+        set.push(txt);
+
+        canvasSets.push(set);
+        id++;
+    }
+    // draws a link (for testing purposes)
+    else if(arg === "aLink"){
+        var x = ev.offsetX + 90;
+        var y = ev.offsetY + 10;
+        shape = paper.path("M" + ev.offsetX+" "+ev.offsetY+"L" + x + " " + y).attr({stroke: "pink", "stroke-width":4}).data('setID', id);
+        shape.rotate(45);
+
+        txt = paper.text(ev.offsetX+40, ev.offsetY+40, "TEST").attr({'fill': 'red'});
+
+        set.push(shape);
+
+        canvasSets.push(set);
+        id++;
+    }
+    // if the shape is not recognised, nothing is drawn
+    else{
+        return null;
+    }
+
+    addToShapes(shape);
+
+    // saves the current shape to a global spoce
+    active = shape;
+
+    // sets the values in IDinput and IDtext to the currently active shape's values
+    IDinput.setAttribute('value', shape.id);
+    // when creating
+    IDtext.removeAttribute('disabled');
+    IDtext.value = "";
+
+    // shape click event handler
+    shape.click(function () {
+
+        // saves the current shape to a global spoce
+        active = shape;
+
+        // change colours (testing purposes)
+        var el = paper.getById(shape.id);
+        el.attr({fill: getRandomColor()});
+        el.attr({stroke: getRandomColor()});
+
+        // read and set the element's values for IDtext and IDinput
+        IDtext.value = getText(shape.id);
+        IDinput.setAttribute('value', shape.id);
+    });
+
+
+
+    // return shape (no actual use)
+    return shape;
+}
+
+// event handler for 'ondrop' event of canvas
+// reads the received data and forwards the info to 'shapeDraw'
+function mainDraw(ev) {
+    var data = ev.dataTransfer.getData("text/html");
+    shapeDraw(data, ev);
+
+}
+
+// acces the correct set from canvasSets and extract the text element 't', change the element's value
+function getText(id) {
+    var set = canvasSets[paper.getById(id).data('setID')];
+    console.log("[getText] set:", set);
+
+    var t = set.pop();
+    var txt = t.attr('text');
+    set.push(t);
+    return txt;
+}
+
+// 'onblur' event handler for IDtext input field, changes the text in the corresponding element (set of elements)
+function setText() {
+    var id = IDinput.value;
+    var set = canvasSets[paper.getById(id).data('setID')];
+    console.log("[setText] set:", set);
+    var t = set.pop();
+    t.attr({text: IDtext.value});
+    set.push(t);
+}
+
+// de-selects any selected element and hides handles
+function looseFocus(ev){
+    if(ev.target.childElementCount > 0){
+        // for(var i = 0; i < canvasHandles.length; i++){
+        //     // canvasHandles[i].hideHandles();
+        // }
+    }
+
+}
+
+// initial setup function, createc the canvas as 'paper' sets some global variables, adds 'dragover' event handler for canvas
+// $(function(){
+//     //set = paper.set();
+//     IDinput = document.getElementById('IDinput');
+//     IDtext = document.getElementById('IDtext');
+
+//     document.addEventListener("dragover", function (ev) {
+//         ev.preventDefault();
+//     }, false);
+
+// });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

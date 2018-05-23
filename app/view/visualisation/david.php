@@ -15,6 +15,7 @@ if(!isset($_SESSION["user"])){
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="../../../DiaGenKri/app/res/js/raphael/raphael.min.js"></script>
     <script src="../../../DiaGenKri/app/res/js/david/david.js"></script>
+
     <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css"
 
 </head>
@@ -95,19 +96,58 @@ if(!isset($_SESSION["user"])){
 <div class="container-fluid text-center">
     <div class="row content">
         <div class="col-sm-2 sidenav">
-            <h3>LINKS</h3>
-            <p><a href="http://www.limfom-levkemija.org/domov.html">L&L</a></p>
+            <h2>Toolbar</h2>
+            <a ondragstart="startDrag(event)" draggable="true"  id="aSquare" href="javascript:void(0);" style="overflow: hidden; width: 40px; height: 40px; padding: 1px; display: inline-block; cursor: move">
+                <svg class="draggable" id="svgtag"  style="width: 36px; height: 36px; display: block; position: relative; overflow: hidden; left: 2px; top: 2px">
+                    <g>
+                        <g></g>
+                        <g>
+                            <g transform="translate(2,10)" style="visibility: visible;">
+                                <rect id="rectID"  class="draggable" height="16" width="31" fill="#ffffff" stroke="#000000" pointer-events="all"></rect>
+                            </g>
+                        </g>
+                    </g>
+                </svg>
+            </a>
+            <a ondragstart="startDrag(event)" draggable="true"  id="aLink" href="javascript:void(0);" style="overflow: hidden; width: 40px; height: 40px; padding: 1px; display: inline-block; cursor: move">
+                <svg class="draggable" id="svgtag"  style="width: 36px; height: 36px; display: block; position: relative; overflow: hidden; left: 2px; top: 2px">
+                    <g>
+                        <g></g>
+                        <g>
+                            <g transform="translate(0.5,0.5)" style="visibility: visible;">
+                                <line x1="5" y1="5" x2="30" y2="30" id="lineID" class="draggable" stroke="#000000" pointer-events="all"></line>
+                            </g>
+                        </g>
+                    </g>
+                </svg>
+            </a>
+            <a ondragstart="startDrag(event)" draggable="true"  id="aDecision" href="javascript:void(0);" style="overflow: hidden; width: 40px; height: 40px; padding: 1px; display: inline-block; cursor: move">
+                <svg class="draggable" id="svgtag"  style="width: 36px; height: 36px; display: block; position: relative; overflow: hidden; left: 2px; top: 2px">
+                    <g>
+                        <g></g>
+                        <g>
+                            <g transform="translate(18, 8)" style="visibility: visible;">
+                                <rect id="rhombusID" transform="rotate(45)" class="draggable" height="15" width="15" fill="#ffffff" stroke="#000000" pointer-events="all"></rect>
+                            </g>
+                        </g>
+                    </g>
+                </svg>
+            </a>
         </div>
-        <div class="col-sm-8" id="content">
+        <div onclick="looseFocus(event)" ondrop="mainDraw(event)" class="col-sm-8" id="content">
 
         </div>
         <div class="col-sm-2 sidenav">
             <div class="well">
                 <button onclick="addConnection()" id = "add_connection_button" class="btn btn-primary">add connection</button>
             </div>
-            <div class="well">
-                <p>ADS</p>
-            </div>
+            <h2>Settings</h2>
+            <form>
+                <label for="IDinput">Element ID</label>
+                    <input id="IDinput" disabled type="text" name="fname"><br>
+                <label for="IDtext">Text</label>
+                    <input disabled onblur="setText()" id="IDtext" type="text">
+            </form>
         </div>
     </div>
 </div>
