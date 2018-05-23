@@ -106,6 +106,7 @@
 #content {
     height: 100%;
     padding: 0;
+    overflow: auto;
 }
 
 /* if button is checked */
