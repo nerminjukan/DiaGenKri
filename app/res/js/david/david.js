@@ -8,13 +8,13 @@ Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000", b
     var bb1 = obj1.getBBox(),
         bb2 = obj2.getBBox(),
         p = [{x: bb1.x + bb1.width / 2, y: bb1.y - 1},
-        {x: bb1.x + bb1.width / 2, y: bb1.y + bb1.height + 1},
-        {x: bb1.x - 1, y: bb1.y + bb1.height / 2},
-        {x: bb1.x + bb1.width + 1, y: bb1.y + bb1.height / 2},
-        {x: bb2.x + bb2.width / 2, y: bb2.y - 1},
-        {x: bb2.x + bb2.width / 2, y: bb2.y + bb2.height + 1},
-        {x: bb2.x - 1, y: bb2.y + bb2.height / 2},
-        {x: bb2.x + bb2.width + 1, y: bb2.y + bb2.height / 2}],
+            {x: bb1.x + bb1.width / 2, y: bb1.y + bb1.height + 1},
+            {x: bb1.x - 1, y: bb1.y + bb1.height / 2},
+            {x: bb1.x + bb1.width + 1, y: bb1.y + bb1.height / 2},
+            {x: bb2.x + bb2.width / 2, y: bb2.y - 1},
+            {x: bb2.x + bb2.width / 2, y: bb2.y + bb2.height + 1},
+            {x: bb2.x - 1, y: bb2.y + bb2.height / 2},
+            {x: bb2.x + bb2.width + 1, y: bb2.y + bb2.height / 2}],
         d = {}, dis = [];
     for (var i = 0; i < 4; i++) {
         for (var j = 4; j < 8; j++) {
@@ -48,8 +48,8 @@ Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000", b
     } else {
         let color = color_user;
         let line_path = this.path(path).attr({stroke: color, fill: "none", "stroke-width": 3});
-	    line_path.mouseover(deleteConnection);
-	    line_path.mouseout(noDelete);
+        line_path.mouseover(deleteConnection);
+        line_path.mouseout(noDelete);
         return {
             bg: bg && bg.split && this.path(path).attr({stroke: bg.split("|")[0], fill: "none", "stroke-width": bg.split("|")[1] || 3}),
             line: line_path,
@@ -62,40 +62,40 @@ Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000", b
 
 // dragging shapes
 Raphael.st.draggable = function() {
-  var me = this,
-      lx = 0,
-      ly = 0,
-      ox = 0,
-      oy = 0,
-      moveFnc = function(dx, dy) {
-          lx = dx + ox;
-          ly = dy + oy;
-          me.transform('t' + lx + ',' + ly);
-      },
-      startFnc = function() {
-      	console.log("[dragging shapes] works");
-      },
-      endFnc = function() {
-          ox = lx;
-          oy = ly;
-      };
-  
-  this.drag(moveFnc, startFnc, endFnc);
+    var me = this,
+        lx = 0,
+        ly = 0,
+        ox = 0,
+        oy = 0,
+        moveFnc = function(dx, dy) {
+            lx = dx + ox;
+            ly = dy + oy;
+            me.transform('t' + lx + ',' + ly);
+        },
+        startFnc = function() {
+            console.log("[dragging shapes] works");
+        },
+        endFnc = function() {
+            ox = lx;
+            oy = ly;
+        };
+
+    this.drag(moveFnc, startFnc, endFnc);
 };
 
 class Shape{
-	constructor(id_shape, array_connections){
-		this.id_shape = id_shape;
-		this.array_connections = array_connections;
-	}
+    constructor(id_shape, array_connections){
+        this.id_shape = id_shape;
+        this.array_connections = array_connections;
+    }
 
-	// checks whether two shapes are connected
-	checkConnection(id_neighbour){
-		for (let i = array_connections.length - 1; i >= 0; i--)
-			if(array_connections[i].id === id_neighbour)
-				return true;
-		return false;
-	}
+    // checks whether two shapes are connected
+    checkConnection(id_neighbour){
+        for (let i = array_connections.length - 1; i >= 0; i--)
+            if(array_connections[i].id === id_neighbour)
+                return true;
+        return false;
+    }
 }
 
 // raphael paper reference
@@ -117,17 +117,17 @@ var dragger = function () {
         this.oy = this.type == "rect" ? this.attr("y") : this.attr("cy");
         this.animate({"fill-opacity": .2}, 500);
     },
-        move = function (dx, dy) {
-            var att = this.type == "rect" ? {x: this.ox + dx, y: this.oy + dy} : {cx: this.ox + dx, cy: this.oy + dy};
-            this.attr(att);
-            for (var i = connections.length; i--;) {
-                paper.connection(connections[i]);
-            }
-            //paper.safari();
-        },
-        up = function () {
-            this.animate({"fill-opacity": 0}, 500);
+    move = function (dx, dy) {
+        var att = this.type == "rect" ? {x: this.ox + dx, y: this.oy + dy} : {cx: this.ox + dx, cy: this.oy + dy};
+        this.attr(att);
+        for (var i = connections.length; i--;) {
+            paper.connection(connections[i]);
         }
+        //paper.safari();
+    },
+    up = function () {
+        this.animate({"fill-opacity": 0}, 500);
+    }
 
 
 // ############## START OF REMOVE SHAPE ##############
@@ -144,10 +144,16 @@ function doubleClick(){
     // remove shape
     // get index of shape in order to splice array
     index = -1;
-    for(let i = 0; i < shapes.length; i++){
-        if(shapes[i].id === this.id)
-            index = i;
-    }
+    /*for(let i = 0; i < shapes.length; i++){
+     if(shapes[i].id === this.id)
+     index = i;
+     }*/
+    var toRemove = canvasSets[getSet(this.id)];
+
+    canvasSets.splice(getSet(this.id), 1);
+    toRemove.forEach(function (e) {
+        e.remove();
+    });
     if (index > -1) {
         console.log("removing", this.id);
         shapes.splice(index, 1);
@@ -183,70 +189,70 @@ function removeConnections(c_ids){
                 console.log("successfuly removed");
             }
         }
-    }   
+    }
 }
 
 // ############## END OF REMOVE SHAPE ##############
 
 // ############## START OF REMOVE CONNECTION ##############
 function deleteConnection(){
-	console.log("path:",this.id);
-	this.attr("stroke-width", 5);
-	remove_connectionn_id = this.id;
+    console.log("path:",this.id);
+    this.attr("stroke-width", 5);
+    remove_connectionn_id = this.id;
 }
 
 function noDelete(){
-	this.attr("stroke-width", 3);
-	remove_connectionn_id = null;
+    this.attr("stroke-width", 3);
+    remove_connectionn_id = null;
 }
 
 // returns index of connection with id as parameter
 function getConnectionIndex(id){
-	for(let i = 0; i < connections.length; i++)
-		if(connections[i].line.id === id)
-			return i;
-	return null;
+    for(let i = 0; i < connections.length; i++)
+        if(connections[i].line.id === id)
+            return i;
+    return null;
 }
 // ############## END OF REMOVE CONNECTION ##############
 
 // ############## START OF CONNECTING TWO SHAPES ##############
-let line_first_shape_id = null, 
-line_second_shape_id = null; // when thoose are both something but null, connect two shapes
+let line_first_shape_id = null,
+    line_second_shape_id = null; // when thoose are both something but null, connect two shapes
 function connectTwoShapes(){
     console.log("id of shape:", this.id);
-	if(!add_connection)
-		return;
-	if(!line_first_shape_id){
-		line_first_shape_id = this.id;
-		console.log("[connect shapes] got first shape:", this.id);
-		return "first";
-	}
+    if(!add_connection)
+        return;
+    if(!line_first_shape_id){
+        line_first_shape_id = this.id;
+        console.log("[connect shapes] got first shape:", this.id);
+        return "first";
+    }
 
-	if(!line_second_shape_id){
-		if(this.id === line_first_shape_id){
-			console.log("[connect shapes] same shapes, choose different!");
-			return "error";
-		}
-		line_second_shape_id = this.id;
-		console.log("[connect shapes] got second shape:", this.id);
-	}
+    if(!line_second_shape_id){
+        if(this.id === line_first_shape_id){
+            console.log("[connect shapes] same shapes, choose different!");
+            return "error";
+        }
+        line_second_shape_id = this.id;
+        console.log("[connect shapes] got second shape:", this.id);
+    }
 
-	// check if two shapes are already connected
-	// TODO;
+    // check if two shapes are already connected
+    // TODO;
 
-	// get indexes of shapes to be connected
-	let indexes = getIndexesOfTwoShapes(line_first_shape_id, line_second_shape_id);
-	//console.log("first", indexes.f, "second", indexes.s);
+    // get indexes of shapes to be connected
+    let indexes = getIndexesOfTwoShapes(line_first_shape_id, line_second_shape_id);
+    //console.log("first", indexes.f, "second", indexes.s);
 
-	// reset variables for shapes
-	line_first_shape_id = null;
-	line_second_shape_id = null;
+    // reset variables for shapes
+    line_first_shape_id = null;
+    line_second_shape_id = null;
 
-	// get reference to paper from data of element
-	paper = shapes[indexes.f].data("paper");
-	//console.log("[connect shapes] paper canvas:", paper.canvas);
+    // get reference to paper from data of element
+    paper = shapes[indexes.f].data("paper");
+    //console.log("[connect shapes] paper canvas:", paper.canvas);
 
-	// connect shapes
+    // connect shapes
     connections.push(paper.connection(shapes[indexes.f], shapes[indexes.s], "#000", id++));
     console.log("[connect shapes] DONE");
 
@@ -256,46 +262,46 @@ function connectTwoShapes(){
 
 // returns indexes of shapes with ids as paramters
 function getIndexesOfTwoShapes(shape1_id, shape2_id){
-	let first = null, 
-	second = null;
-	for(let i = 0; i < shapes.length; i++){
-		if(shapes[i].id === shape1_id)
-			first = i;
+    let first = null,
+        second = null;
+    for(let i = 0; i < shapes.length; i++){
+        if(shapes[i].id === shape1_id)
+            first = i;
 
-		if(shapes[i].id === shape2_id)
-			second = i;
+        if(shapes[i].id === shape2_id)
+            second = i;
 
-		// if both are set just stop
-		if(first && second){
-			//console.log("[connect shapes - get index] done finding indexes");
-			break; 
-		}
-	}
-	console.log("[connect shapes - get index] indexes of shapes:", first, second);
-	return {
-		f: first,
-		s: second
-	};
+        // if both are set just stop
+        if(first && second){
+            //console.log("[connect shapes - get index] done finding indexes");
+            break;
+        }
+    }
+    console.log("[connect shapes - get index] indexes of shapes:", first, second);
+    return {
+        f: first,
+        s: second
+    };
 }
 
 // when add connection is true, you can actually add connection
 function addConnection(){
-	add_connection = !add_connection;
-	if(add_connection){
-		document.getElementById("add_connection_button").classList.remove("btn");
-		document.getElementById("add_connection_button").classList.remove("btn-primary");
-		document.getElementById("add_connection_button").classList.add("button_checked");
-	}
-	else{
-		document.getElementById("add_connection_button").classList.remove("button_checked");
-		document.getElementById("add_connection_button").classList.add("btn-primary");
-		document.getElementById("add_connection_button").classList.add("btn");
+    add_connection = !add_connection;
+    if(add_connection){
+        document.getElementById("add_connection_button").classList.remove("btn");
+        document.getElementById("add_connection_button").classList.remove("btn-primary");
+        document.getElementById("add_connection_button").classList.add("button_checked");
+    }
+    else{
+        document.getElementById("add_connection_button").classList.remove("button_checked");
+        document.getElementById("add_connection_button").classList.add("btn-primary");
+        document.getElementById("add_connection_button").classList.add("btn");
 
-	}
-	// reset variables for shapes
-	line_first_shape_id = null;
-	line_second_shape_id = null;
-	console.log("adding connection?", add_connection);
+    }
+    // reset variables for shapes
+    line_first_shape_id = null;
+    line_second_shape_id = null;
+    console.log("adding connection?", add_connection);
 }
 
 // ############## END OF CONNECTING TWO SHAPES ##############
@@ -356,7 +362,7 @@ window.onload = function () {
         ev.preventDefault();
     }, false);
 
-    
+
     let element = document.getElementById('content'),
         positionInfo = element.getBoundingClientRect(),
         height = positionInfo.height,
@@ -364,20 +370,20 @@ window.onload = function () {
 
     paper = Raphael(document.getElementById('content'), 2000, 2000);
     paper.rect(0, 0, 2000, 2000).attr({"stroke-width": 10});
-	console.log("[main] paper canvas:", paper.canvas);
+    console.log("[main] paper canvas:", paper.canvas);
 
-    // TESTING    
+    // TESTING
     connections = [];
-    shapes = [  paper.ellipse(paper.width/2, paper.height/2, 30, 20),
-                paper.rect(290, 80, 60, 40, 10),
-                paper.rect(290, 180, 60, 40, 2),
-                paper.ellipse(450, 100, 20, 20),
-                paper.rect(paper.width/2, paper.height/2, 60, 40, 4),
-                paper.rect(400, 250, 60, 40, 2)
-            ];
+    /*shapes = [  paper.ellipse(paper.width/2, paper.height/2, 30, 20),
+     paper.rect(290, 80, 60, 40, 10),
+     paper.rect(290, 180, 60, 40, 2),
+     paper.ellipse(450, 100, 20, 20),
+     paper.rect(paper.width/2, paper.height/2, 60, 40, 4),
+     paper.rect(400, 250, 60, 40, 2)
+     ];*/
 
     // create set for objects
-  	var mySet = paper.set();
+    var mySet = paper.set();
 
     // create shapes
     for (var i = 0, ii = shapes.length; i < ii; i++) {
@@ -390,25 +396,25 @@ window.onload = function () {
         shapes[i].click(connectTwoShapes);
     }
     // add connections between shapes
-    connections.push(paper.connection(shapes[0], shapes[1], "#000", id_connection++));
-    connections.push(paper.connection(shapes[1], shapes[2], "#000", id_connection++));
-    connections.push(paper.connection(shapes[1], shapes[3], "#000", id_connection++));
-    connections.push(paper.connection(shapes[2], shapes[3], "#000", id_connection++, "#4286f4"));
+    /*connections.push(paper.connection(shapes[0], shapes[1], "#000", id_connection++));
+     connections.push(paper.connection(shapes[1], shapes[2], "#000", id_connection++));
+     connections.push(paper.connection(shapes[1], shapes[3], "#000", id_connection++));
+     connections.push(paper.connection(shapes[2], shapes[3], "#000", id_connection++, "#4286f4"));
 
-    for(let i = 0; i < connections.length; i++)
-        console.log(connections[i].from.id, ":", connections[i].to.id, connections[i].id);
+     for(let i = 0; i < connections.length; i++)
+     console.log(connections[i].from.id, ":", connections[i].to.id, connections[i].id);*/
 
     mySet.push(paper.circle(50, 50, 50).attr('fill', 'red'));
-	mySet.push(paper.circle(50, 50, 40).attr('fill', 'white'));
-	mySet.push(paper.circle(50, 50, 30).attr('fill', 'red'));
-	mySet.push(paper.circle(50, 50, 20).attr('fill', 'white'));
-	mySet.push(paper.circle(50, 50, 10).attr('fill', 'red'));
-  
-  	// make set draggable
-  	mySet.draggable();
+    mySet.push(paper.circle(50, 50, 40).attr('fill', 'white'));
+    mySet.push(paper.circle(50, 50, 30).attr('fill', 'red'));
+    mySet.push(paper.circle(50, 50, 20).attr('fill', 'white'));
+    mySet.push(paper.circle(50, 50, 10).attr('fill', 'red'));
+
+    // make set draggable
+    mySet.draggable();
 
     // lets center screen to some shape
-    scrollTo("content", shapes[0]);
+    //scrollTo("content", shapes[0]);
 
 
     // connections.push(paper.connection(shapes[1], shapes[2], "#fff", "#fff|5"));
@@ -419,16 +425,16 @@ $('html').keyup(function(e){
     console.log("key code:", e.keyCode);
     // keycode = 8 ==> backspace
     if(e.keyCode == 8) {
-    	if(remove_connectionn_id){
-    		console.log("minus pressed, delete path with id", remove_connectionn_id);
-    		let index = getConnectionIndex(remove_connectionn_id);
-    		// remove line and than delete whole connection from array
-    		connections[index].line.remove();
-    		connections.splice(index, 1);
-    		remove_connectionn_id = null;
-    	}
-    	else
-    		console.log("just minus pressed, delete nothing");
+        if(remove_connectionn_id){
+            console.log("minus pressed, delete path with id", remove_connectionn_id);
+            let index = getConnectionIndex(remove_connectionn_id);
+            // remove line and than delete whole connection from array
+            connections[index].line.remove();
+            connections.splice(index, 1);
+            remove_connectionn_id = null;
+        }
+        else
+            console.log("just minus pressed, delete nothing");
     }
 });
 
@@ -436,7 +442,7 @@ $('html').keyup(function(e){
 
 
 function addToShapes(shape){
-    shape.attr({fill: "blue", stroke: "blue", "fill-opacity": 1, "stroke-width": 2, cursor: "move"});
+    //shape.attr({fill: "blue", stroke: "blue", "fill-opacity": 1, "stroke-width": 2, });
     // save reference to paper
     shape.data("paper", paper);
     //shape.drag(move, dragger, up);
@@ -483,13 +489,15 @@ function shapeDraw(arg, ev) {
     // create local variables
     var shape;
     var set = paper.set();
+
     var txt;
     var fts;
 
     // draws a rectangle
     if(arg === "aSquare"){
         // create element and draw it on canvas
-        shape =  paper.rect(ev.offsetX, ev.offsetY, 100, 50).attr({fill: "black"}).data('setID', id);
+        shape =  paper.rect(ev.offsetX, ev.offsetY, 100, 50).attr({fill: "white", cursor: "move"}).data('setID', id);
+
         // creates a 'details' rectangle
         var resizable = paper.rect(ev.offsetX+10, ev.offsetY+10, 20, 20).attr({fill: "white"});
         // adds a text field
@@ -502,7 +510,7 @@ function shapeDraw(arg, ev) {
 
         // adds a dblclick handler to the text field
         txt.dblclick(function () {
-           IDtext.focus();
+            IDtext.focus();
         });
 
         // adds the elements to a set
@@ -528,6 +536,7 @@ function shapeDraw(arg, ev) {
 
         set.push(shape);
         set.push(txt);
+        set.draggable();
 
         canvasSets.push(set);
         id++;
@@ -550,17 +559,18 @@ function shapeDraw(arg, ev) {
     else{
         return null;
     }
-
+    set.data('id', shape.id);
+    console.log("set id: ", set.data('id'));
     addToShapes(shape);
 
-    // saves the current shape to a global spoce
+    // saves the current shape to a global scope
     active = shape;
 
     // sets the values in IDinput and IDtext to the currently active shape's values
     IDinput.setAttribute('value', shape.id);
     // when creating
     IDtext.removeAttribute('disabled');
-    IDtext.value = "";
+    IDtext.value = "neki";
 
     // shape click event handler
     shape.click(function () {
@@ -569,12 +579,14 @@ function shapeDraw(arg, ev) {
         active = shape;
 
         // change colours (testing purposes)
-        var el = paper.getById(shape.id);
-        el.attr({fill: getRandomColor()});
-        el.attr({stroke: getRandomColor()});
+        //shape.attr({fill: getRandomColor()});
+        //shape.attr({stroke: getRandomColor()});
 
         // read and set the element's values for IDtext and IDinput
+        IDtext.value = "neki";
+
         IDtext.value = getText(shape.id);
+        console.log("IDtext: ", IDtext.value);
         IDinput.setAttribute('value', shape.id);
     });
 
@@ -592,13 +604,28 @@ function mainDraw(ev) {
 
 }
 
+function getSet(id){
+    for(let i = 0; i < canvasSets.length; i++){
+        console.log("getSet:",canvasSets[i][0].id);
+        if(canvasSets[i][0].id === id){
+            console.log("found correct set");
+            return i;
+        }
+    }
+    return null;
+}
+
 // acces the correct set from canvasSets and extract the text element 't', change the element's value
 function getText(id) {
-    var set = canvasSets[paper.getById(id).data('setID')];
+    console.log("[getText] id:",id);
+    let index = getSet(id);
+
+    var set = canvasSets[index];
     console.log("[getText] set:", set);
 
     var t = set.pop();
     var txt = t.attr('text');
+    console.log("TEKST OUT: ", txt);
     set.push(t);
     return txt;
 }
@@ -606,7 +633,7 @@ function getText(id) {
 // 'onblur' event handler for IDtext input field, changes the text in the corresponding element (set of elements)
 function setText() {
     var id = IDinput.value;
-    var set = canvasSets[paper.getById(id).data('setID')];
+    var set = canvasSets[getSet(id)];
     console.log("[setText] set:", set);
     var t = set.pop();
     t.attr({text: IDtext.value});
