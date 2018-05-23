@@ -212,7 +212,7 @@ $(function(){
     document.addEventListener("dragover", function (ev) {
         ev.preventDefault();
     }, false);
-    
+
 });
 
 
