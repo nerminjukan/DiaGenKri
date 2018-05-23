@@ -98,6 +98,8 @@ class Shape{
 	}
 }
 
+// raphael paper reference
+let r;
 // array for shapes(circles, rectangles)
 let shapes = [];
 // array for connection between shapes
@@ -133,6 +135,10 @@ function doubleClick(){
         console.log("removing", this.id);
         shapes.splice(index, 1);
         this.remove();
+        // reset variables for shapes(which should be connected)
+        // thats saftey because one might want to add connection to first shape, then delete second one by mistake and there would be an error connecting thoose two
+        line_first_shape_id = null;
+        line_second_shape_id = null;
     }
 }
 
@@ -190,6 +196,7 @@ function getConnectionIndex(id){
 let line_first_shape_id = null, 
 line_second_shape_id = null; // when thoose are both something but null, connect two shapes
 function connectTwoShapes(){
+    console.log("id of shape:", this.id);
 	if(!add_connection)
 		return;
 	if(!line_first_shape_id){
@@ -275,7 +282,54 @@ function addConnection(){
 }
 
 // ############## END OF CONNECTING TWO SHAPES ##############
+
+// ************* some other functions
+// center element(target) inside his parent(outer)
+function scrollTo(name_of_div, shape){
+    //let out = $("#"+name_of_div);
+    // spodnji primerm bo "zaskrolal" tako, da bo element na poziciji 1000, 1000 na sredini div-a
+    // elipsa (krog) ima središče v [1000, 1000], kvadrat ima središče v [1000 + rect.width() / 2, 1000 + rect.height() / 2]
+    // ****** primer za rectangle ******
+    // let box = rectangle.getBBox();
+    // out.scrollLeft(box.x - out.width()/2 + box.width/2);
+    // out.scrollTop(box.y - out.height()/2 + box.height/2);
+    // ****** primer za elipso ******
+    // let box = elipse.getBBox();
+    // out.scrollTop(box.cy - out.height()/2);
+    // out.scrollLeft(box.cx - out.width()/2);
+
+    // name of div whoose child is raphael paper
+    let out = $("#"+name_of_div);
+    console.log("[scrollTo] type:", shape.type);
+    if(shape.type === "rect"){
+        let box = shape.getBBox();
+        out.scrollLeft(box.x - out.width()/2 + box.width/2);
+        out.scrollTop(box.y - out.height()/2 + box.height/2);
+    } else {
+        let box = shape.getBBox();
+        out.scrollTop(box.cy - out.height()/2);
+        out.scrollLeft(box.cx - out.width()/2);
+    }
+    shape.animate({"fill-opacity": .2}, 500);
+    // shape.animate({"fill-opacity": 0}, 500);
+}
+
+function zoom(og_width, og_height, map_width, map_height){
+    var original_width = og_width;
+    var original_height = og_height;
+    var zoom_width = map_width/original_width;
+    var zoom_height = map_height/original_height;
+    if(zoom_width<=zoom_height)
+        zoom = zoom_width;
+    else
+        zoom = zoom_height;
+    r.setViewBox($("#canvas").offset().left, $("#canvas").offset().top, (map_width/zoom), (map_height/zoom));
+}
+// ************* end of some other functions
 window.onload = function () {
+    // set focus to div with paper
+    // $('#content').focus();
+
     var dragger = function () {
         this.ox = this.type == "rect" ? this.attr("x") : this.attr("cx");
         this.oy = this.type == "rect" ? this.attr("y") : this.attr("cy");
@@ -297,21 +351,22 @@ window.onload = function () {
         height = positionInfo.height,
         width = positionInfo.width;
 
-    var r = Raphael(document.getElementById('content'), width, height);
+    r = Raphael(document.getElementById('content'), 2000, 2000);
+    r.rect(0, 0, 2000, 2000).attr({"stroke-width": 10});
 	console.log("[main] paper canvas:", r.canvas);
 
     // TESTING    
     connections = [];
-    shapes = [  r.ellipse(190, 100, 30, 20),
+    shapes = [  r.ellipse(r.width/2, r.height/2, 30, 20),
                 r.rect(290, 80, 60, 40, 10),
                 r.rect(290, 180, 60, 40, 2),
                 r.ellipse(450, 100, 20, 20),
-                r.rect(100, 400, 60, 40, 2),
+                r.rect(r.width/2, r.height/2, 60, 40, 4),
                 r.rect(400, 250, 60, 40, 2)
             ];
 
     // create set for objects
-  	// var mySet = r.set();
+  	var mySet = r.set();
 
     // create shapes
     for (var i = 0, ii = shapes.length; i < ii; i++) {
@@ -332,14 +387,17 @@ window.onload = function () {
     for(let i = 0; i < connections.length; i++)
         console.log(connections[i].from.id, ":", connections[i].to.id, connections[i].id);
 
-    // mySet.push(r.circle(50, 50, 50).attr('fill', 'red'));
-	// mySet.push(r.circle(50, 50, 40).attr('fill', 'white'));
-	// mySet.push(r.circle(50, 50, 30).attr('fill', 'red'));
-	// mySet.push(r.circle(50, 50, 20).attr('fill', 'white'));
-	// mySet.push(r.circle(50, 50, 10).attr('fill', 'red'));
+    mySet.push(r.circle(50, 50, 50).attr('fill', 'red'));
+	mySet.push(r.circle(50, 50, 40).attr('fill', 'white'));
+	mySet.push(r.circle(50, 50, 30).attr('fill', 'red'));
+	mySet.push(r.circle(50, 50, 20).attr('fill', 'white'));
+	mySet.push(r.circle(50, 50, 10).attr('fill', 'red'));
   
   	// make set draggable
-  	// mySet.draggable();
+  	mySet.draggable();
+
+    // lets center screen to some shape
+    scrollTo("content", shapes[0]);
 
 
     // connections.push(r.connection(shapes[1], shapes[2], "#fff", "#fff|5"));
@@ -347,7 +405,9 @@ window.onload = function () {
 };
 
 $('html').keyup(function(e){
-    if(e.keyCode == 173) {
+    console.log("key code:", e.keyCode);
+    // keycode = 8 ==> backspace
+    if(e.keyCode == 8) {
     	if(remove_connectionn_id){
     		console.log("minus pressed, delete path with id", remove_connectionn_id);
     		let index = getConnectionIndex(remove_connectionn_id);
