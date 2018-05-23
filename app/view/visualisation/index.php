@@ -128,7 +128,7 @@
                 </svg>
             </a>
         </div>
-        <div ondrop="mainDraw(event)" class="col-sm-8" id="content">
+        <div onclick="looseFocus(event)" ondrop="mainDraw(event)" class="col-sm-8" id="content">
 
         </div>
         <div class="col-sm-2 sidenav">
@@ -137,7 +137,7 @@
                 <label for="IDinput">Element ID</label>
                     <input id="IDinput" disabled type="text" name="fname"><br>
                 <label for="IDtext">Text</label>
-                    <input disabled onblur="setText(event)" id="IDtext" type="text">
+                    <input disabled onblur="setText()" id="IDtext" type="text">
             </form>
         </div>
     </div>
