@@ -107,6 +107,9 @@
     height: 100%;
     padding: 0;
     overflow: auto;
+    background: #f3f3f3;
+    background-image: linear-gradient(rgba(100, 100, 100, .1) .1em, transparent .1em), linear-gradient(90deg, rgba(100,100,100, .1) .1em, transparent .1em);
+    background-size: 1em 1em;
 }
 
 /* if button is checked */
@@ -122,6 +125,5 @@
 /*#add_connection_button {
     white-space: pre-wrap;
 }*/
-
 
 
