@@ -102,7 +102,7 @@
     width: 100%;
 }
 
-/* raphael js css*/
+/* ------ raphael js css ------ */
 #content {
     height: 100%;
     padding: 0;
@@ -122,8 +122,19 @@
     border-color: #204d74;
 }
 
+/* curso*/
+.grabbing { cursor: url(../js/david/closedhand.cur), pointer !important; }
+
 /*#add_connection_button {
     white-space: pre-wrap;
 }*/
+
+/* position of + and - for zoom */
+#content #mapControls { position: absolute; left: 15px; top: 15px; width: 29px; }
+#content #mapControls #up { background: url(../js/david/iconUp.png) no-repeat center top; display: block; height: 26px; width: 29px; }
+#content #mapControls #down { background: url(../js/david/iconDown.png) no-repeat center top; display: block; height: 27px; width: 29px; }
+
+
+
 
 

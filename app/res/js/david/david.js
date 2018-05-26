@@ -69,8 +69,8 @@ Raphael.st.draggable = function() {
         oy = 0,
         moveFnc = function(dx, dy) {
             // this.forEach(function(e){
-                lx = dx + ox;
-                ly = dy + oy;
+                lx = dx * scale.x + ox;
+                ly = dy * scale.y + oy;
                 me.transform('t' + lx + ',' + ly);
                 let att ={
                     x: lx,
@@ -156,6 +156,26 @@ let add_connection = false;
 // if removing connection is possible - that's when user's mouse is on the line and user pressed some key(- minus key for now)
 // following variable represents id of path(connection) to be removed
 let remove_connectionn_id = null;
+// variable for zoom
+let panZoom = null;
+
+// var scale = {
+//     x:1,
+//     y:1
+// }
+
+// $(window).resize(function(){
+//     scale = getScale(paper);
+// })
+
+// function getScale(paper, new_width, new_height){
+//     var x = new_width/$(paper.canvas).width(); 
+//     var y = new_height/$(paper.canvas).height(); 
+//     scale =  {
+//         x:x,
+//         y:y
+//     }
+// }
 
 var dragger = function () {
         this.ox = this.type == "rect" ? this.attr("x") : this.attr("cx");
@@ -163,7 +183,8 @@ var dragger = function () {
         this.animate({"fill-opacity": .2}, 500);
     },
     move = function (dx, dy) {
-        var att = this.type == "rect" ? {x: this.ox + dx, y: this.oy + dy} : {cx: this.ox + dx, cy: this.oy + dy};
+        // getScale(paper, 200, 200);
+        var att = this.type == "rect" ? {x: this.ox + dx * scale.x, y: this.oy + dy * scale.y} : {cx: this.ox + dx * scale.x, cy: this.oy + dy * scale.y};
         this.attr(att);
         for (var i = connections.length; i--;) {
             paper.connection(connections[i]);
@@ -353,7 +374,7 @@ function addConnection(){
 
 // ************* some other functions
 // center element(target) inside his parent(outer)
-function scrollTo(name_of_div, shape){
+function scrollTo(name_of_div, shape, coorindates = null){
     //let out = $("#"+name_of_div);
     // spodnji primerm bo "zaskrolal" tako, da bo element na poziciji 1000, 1000 na sredini div-a
     // elipsa (krog) ima središče v [1000, 1000], kvadrat ima središče v [1000 + rect.width() / 2, 1000 + rect.height() / 2]
@@ -366,8 +387,17 @@ function scrollTo(name_of_div, shape){
     // out.scrollTop(box.cy - out.height()/2);
     // out.scrollLeft(box.cx - out.width()/2);
 
+
     // name of div whoose child is raphael paper
     let out = $("#"+name_of_div);
+
+    // scroll to specific coordinates
+    if(coorindates){
+        out.scrollTop(coorindates.y- out.height()/2);
+        out.scrollLeft(coorindates.x - out.width()/2);
+        return;
+    }
+  
     console.log("[scrollTo] type:", shape.type);
     if(shape.type === "rect"){
         let box = shape.getBBox();
@@ -393,32 +423,48 @@ function zoom(og_width, og_height, map_width, map_height){
         zoom = zoom_height;
     paper.setViewBox($("#canvas").offset().left, $("#canvas").offset().top, (map_width/zoom), (map_height/zoom));
 }
+
+
+// returns center point of shapes in array, centroid
+function calculateCenter(shapes){
+    let box = null;
+    let x = 0, y = 0; 
+    for(let i = 0; i < shapes.length; i++){
+        box = shapes[i].getBBox();
+        x += box.cx;
+        y += box.cy;
+    }
+    return {
+        x: x/shapes.length || 0,
+        y: y/shapes.length || 0
+    }
+}
 // ************* end of some other functions
-window.onload = function () {
+// window.onload = function () {
     // set focus to div with paper
     // $('#content').focus();
 
 
-    IDinput = document.getElementById('IDinput');
-    IDtext = document.getElementById('IDtext');
+    // IDinput = document.getElementById('IDinput');
+    // IDtext = document.getElementById('IDtext');
 
-    // drag and drop is possible "everywhere"
-    document.addEventListener("dragover", function (ev) {
-        ev.preventDefault();
-    }, false);
+    // // drag and drop is possible "everywhere"
+    // document.addEventListener("dragover", function (ev) {
+    //     ev.preventDefault();
+    // }, false);
 
 
-    let element = document.getElementById('content'),
-        positionInfo = element.getBoundingClientRect(),
-        height = positionInfo.height,
-        width = positionInfo.width;
+    // let element = document.getElementById('content'),
+    //     positionInfo = element.getBoundingClientRect(),
+    //     height = positionInfo.height,
+    //     width = positionInfo.width;
 
-    paper = Raphael(document.getElementById('content'), 2000, 2000);
-    paper.rect(0, 0, 2000, 2000).attr({"stroke-width": 10});
-    console.log("[main] paper canvas:", paper.canvas);
+    // paper = Raphael(document.getElementById('content'), 2000, 2000);
+    // paper.rect(0, 0, 2000, 2000).attr({"stroke-width": 10});
+    // console.log("[main] paper canvas:", paper.canvas);
 
     // TESTING
-    connections = [];
+    // connections = [];
     /*shapes = [  paper.ellipse(paper.width/2, paper.height/2, 30, 20),
      paper.rect(290, 80, 60, 40, 10),
      paper.rect(290, 180, 60, 40, 2),
@@ -428,18 +474,18 @@ window.onload = function () {
      ];*/
 
     // create set for objects
-    var mySet = paper.set();
+    // var mySet = paper.set();
 
     // create shapes
-    for (var i = 0, ii = shapes.length; i < ii; i++) {
-        var color = Raphael.getColor();
-        shapes[i].attr({fill: color, stroke: color, "fill-opacity": 0, "stroke-width": 2, cursor: "move"});
-        // save reference to paper
-        shapes[i].data("paper", paper);
-        shapes[i].drag(move, dragger, up);
-        shapes[i].dblclick(doubleClick);
-        shapes[i].click(connectTwoShapes);
-    }
+    // for (var i = 0, ii = shapes.length; i < ii; i++) {
+    //     var color = Raphael.getColor();
+    //     shapes[i].attr({fill: color, stroke: color, "fill-opacity": 0, "stroke-width": 2, cursor: "move"});
+    //     // save reference to paper
+    //     shapes[i].data("paper", paper);
+    //     shapes[i].drag(move, dragger, up);
+    //     shapes[i].dblclick(doubleClick);
+    //     shapes[i].click(connectTwoShapes);
+    // }
     // add connections between shapes
     /*connections.push(paper.connection(shapes[0], shapes[1], "#000", id_connection++));
      connections.push(paper.connection(shapes[1], shapes[2], "#000", id_connection++));
@@ -476,7 +522,79 @@ window.onload = function () {
 
     // connections.push(paper.connection(shapes[1], shapes[2], "#fff", "#fff|5"));
     // connections.push(paper.connection(shapes[1], shapes[3], "#000", "#fff"));
-};
+// };
+
+
+
+
+// ************************************** start of zoom
+jQuery(function ($) {
+    IDinput = document.getElementById('IDinput');
+    IDtext = document.getElementById('IDtext');
+
+    // drag and drop is possible "everywhere"
+    document.addEventListener("dragover", function (ev) {
+        ev.preventDefault();
+    }, false);
+
+
+    let element = document.getElementById('content'),
+        positionInfo = element.getBoundingClientRect(),
+        height = positionInfo.height,
+        width = positionInfo.width;
+
+    paper = Raphael(document.getElementById('content'), 1500, 1500);
+    // paper.rect(0, 0, 2000, 2000).attr({"stroke-width": 10});
+    console.log("[main] paper canvas:", paper.canvas);
+
+    // TESTING
+    connections = [];
+    // shapes = [  paper.ellipse(paper.width/2, paper.height/2, 30, 20),
+    //  paper.rect(290, 80, 60, 40, 10),
+    //  paper.rect(290, 180, 60, 40, 2),
+    //  paper.ellipse(450, 100, 20, 20),
+    //  paper.rect(paper.width/2, paper.height/2, 60, 40, 4),
+    //  paper.rect(400, 250, 60, 40, 2)
+    //  ];
+
+    // create set for objects
+    var mySet = paper.set();
+
+    // create shapes
+    for (var i = 0, ii = shapes.length; i < ii; i++) {
+        var color = Raphael.getColor();
+        shapes[i].attr({fill: color, stroke: color, "fill-opacity": 0, "stroke-width": 2, cursor: "move"});
+        // save reference to paper
+        shapes[i].data("paper", paper);
+        // shapes[i].drag(move, dragger, up);
+        shapes[i].dblclick(doubleClick);
+        shapes[i].click(connectTwoShapes);
+    }
+
+
+    panZoom = paper.panzoom();
+    panZoom.enable();
+    // paper.safari();
+
+    $("#up").click(function (e) {
+        console.log("[mapContainer up]");
+
+        panZoom.zoomIn(0.9, calculateCenter(shapes));
+        e.preventDefault();
+    });
+
+    $("#down").click(function (e) {
+        console.log("[mapContainer down]");
+
+        panZoom.zoomOut(0.9, calculateCenter(shapes));
+        e.preventDefault();
+    });
+    
+});
+// ************************************** end of zoom
+
+
+
 
 $('html').keyup(function(e){
     console.log("key code:", e.keyCode);
@@ -502,7 +620,7 @@ function addToShapes(shape){
     //shape.attr({fill: "blue", stroke: "blue", "fill-opacity": 1, "stroke-width": 2, });
     // save reference to paper
     shape.data("paper", paper);
-    //shape.drag(move, dragger, up);
+    // shape.drag(move, dragger, up);
     shape.dblclick(doubleClick);
     shape.click(connectTwoShapes);
     shapes.push(shape)
