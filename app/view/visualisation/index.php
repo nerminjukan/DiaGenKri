@@ -1,3 +1,9 @@
+<?php
+
+if(!isset($_SESSION["user"])){
+    header("Location: ../../../DiaGenKri/public/home");
+}
+?>
 <!DOCTYPE html>
 <html lang="sl">
 <head>
@@ -8,13 +14,18 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="../../../DiaGenKri/app/res/js/raphael/raphael.min.js"></script>
-    <script src="../../../DiaGenKri/app/res/js/raphael/raphael.free_transform.js"></script>
-    <script src="../../../DiaGenKri/app/res/js/nermin/nermin.js"></script>
+
+    <!---
+        <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/raphael.pan-zoom.js"></script>
+    --->
+
+    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/nermin/nermin.js"></script>
+
     <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css"
 
 </head>
 <header class="col-12 spacing-increased">
-    <h1>Visualisation</h1>
+    <h1>Visualisation - david</h1>
 </header>
 
 <nav class="navbar navbar-inverse">
@@ -25,7 +36,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a draggable="false" class="navbar-brand" href="../../../DiaGenKri/public/home">DiaGenKri</a>
+            <a class="navbar-brand" href="../../../DiaGenKri/public/home">DiaGenKri</a>
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
@@ -44,12 +55,12 @@
                             <li>
                                 <div class="navbar-login">
                                     <div class="row">
-                                        <div class="col-lg-4">
+                                        <div class="col-lg-4" id="login-size">
                                             <p class="text-center">
                                                 <span class="glyphicon glyphicon-user icon-size"></span>
                                             </p>
                                         </div>
-                                        <div class="col-lg-8">
+                                        <div class="col-lg-8" id="login-size">
                                             <p class="text-left"><strong><?php
                                                     echo $_SESSION["user-name"] . " " . $_SESSION["user-surname"];
                                                     ?>
@@ -129,15 +140,19 @@
             </a>
         </div>
         <div onclick="looseFocus(event)" ondrop="mainDraw(event)" class="col-sm-8" id="content">
+            <div id="mapControls"><a id="up" href="javascript:void(0)"></a><a id="down" href="javascript:void(0)"></a></div>
 
         </div>
         <div class="col-sm-2 sidenav">
+            <div class="well">
+                <button onclick="addConnection()" id = "add_connection_button" class="btn btn-primary">add connection</button>
+            </div>
             <h2>Settings</h2>
             <form>
                 <label for="IDinput">Element ID</label>
-                    <input id="IDinput" disabled type="text" name="fname"><br>
+                <input id="IDinput" disabled type="text" name="fname"><br>
                 <label for="IDtext">Text</label>
-                    <input disabled onblur="setText()" id="IDtext" type="text">
+                <input disabled onblur="setText()" id="IDtext" type="text">
             </form>
         </div>
     </div>

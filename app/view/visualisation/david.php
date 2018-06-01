@@ -14,7 +14,9 @@ if(!isset($_SESSION["user"])){
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="../../../DiaGenKri/app/res/js/raphael/raphael.min.js"></script>
-    <script src="../../../DiaGenKri/app/res/js/nermin/nermin.js"></script>
+
+    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/raphael.pan-zoom.js"></script>
+    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/david.js"></script>
 
     <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css"
 
@@ -39,7 +41,7 @@ if(!isset($_SESSION["user"])){
                     <li><a href="../../../DiaGenKri/public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <span class="glyphicon glyphicon-user"></span>
+                            <span class="glyphicon glyphicon-user"></span> 
                             <strong><?php
                                 echo $_SESSION["user-name"];
                                 ?>
@@ -135,6 +137,7 @@ if(!isset($_SESSION["user"])){
             </a>
         </div>
         <div onclick="looseFocus(event)" ondrop="mainDraw(event)" class="col-sm-8" id="content">
+            <div id="mapControls"><a id="up" href="javascript:void(0)"></a><a id="down" href="javascript:void(0)"></a></div>
 
         </div>
         <div class="col-sm-2 sidenav">

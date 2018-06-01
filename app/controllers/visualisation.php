@@ -21,7 +21,7 @@ class visualisation extends Controller
         $user = $this->model('User');
         $user->name = $name;
 
-        $this->view('visualisation/david', ['name' => $user->name]);
+        $this->view('visualisation/index', ['name' => $user->name]);
     }
 
 }
