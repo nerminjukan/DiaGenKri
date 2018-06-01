@@ -4,6 +4,8 @@ Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000", b
         line = obj1;
         obj1 = line.from;
         obj2 = line.to;
+
+        line.line.attr({"arrow-end":"classic-wide-long"});
     }
     var bb1 = obj1.getBBox(),
         bb2 = obj2.getBBox(),
@@ -658,6 +660,64 @@ function startDrag(ev) {
     ev.dataTransfer.setData('Text/html', ev.target.id);
 }
 
+function changeConnectionVisibility(shape_id, first_id){
+    var shape = paper.getById(shape_id);
+
+    var hide = paper.getById(first_id).data('connections');
+    var setID;
+    hide = !hide;
+    for(let i = 0; i < connections.length; i++){
+        if(connections[i].from.id === shape.id){
+            if(hide){
+                paper.getById(shape.data('resizableID')).attr({fill: 'red'});
+
+                setID = getSet(connections[i].to.id);
+
+                if(setID && connections[i].to.id !== first_id){
+                    connections[i].line.hide();
+                    canvasSets[setID].forEach( function (e) {
+                            e.hide();
+                        }
+
+                    );
+
+                    //shape.data('connections', hide);
+                }
+                else{
+                    connections[i].line.hide();
+                    //shape.data('connections', hide);
+                    continue;
+                    //console.log('set ID to hide: ' + paper.getById(connections[i].to.id).data('setID'));
+                }
+
+            }
+            else{
+                paper.getById(shape.data('resizableID')).attr({fill: 'green'});
+
+                setID = getSet(connections[i].to.id);
+                if(setID && connections[i].to.id !== first_id){
+                    connections[i].line.show();
+                    canvasSets[setID].forEach( function (e) {
+                            e.show();
+                        }
+                    );
+
+                    //shape.data('connections', hide);
+                }
+                else{
+                    connections[i].line.show();
+                    //shape.data('connections', hide);
+                    continue;
+                }
+
+            }
+            changeConnectionVisibility(connections[i].to.id, first_id);
+
+        }
+    }
+
+}
+
 // the actual drawing function, determines which shape to draw
 function shapeDraw(arg, ev) {
 
@@ -665,22 +725,27 @@ function shapeDraw(arg, ev) {
     var shape;
     var set = paper.set();
 
+
     var txt;
     var fts;
 
     // draws a rectangle
     if(arg === "aSquare"){
         // create element and draw it on canvas
-        shape =  paper.rect(ev.offsetX, ev.offsetY, 100, 50).attr({fill: "white", cursor: "move"}).data('setID', id);
+        shape =  paper.rect(ev.offsetX, ev.offsetY, 100, 50).attr({fill: "white", cursor: "move"}).data('setID', id, 'connections', true);
 
         // creates a 'details' rectangle
-        var resizable = paper.rect(ev.offsetX+10, ev.offsetY+10, 20, 20).attr({fill: "white"});
+        var resizable = paper.rect(ev.offsetX+10, ev.offsetY+10, 20, 20).attr({fill: "green"});
+
+        shape.data('resizableID', resizable.id);
         // adds a text field
         txt = paper.text(ev.offsetX+60, ev.offsetY+30, "TEST").attr({'fill': 'red'});
 
         // adds a dblclick handler to the 'details' rectangle
         resizable.click(function () {
-            console.log("I am going to hide links soon.")
+            changeConnectionVisibility(shape.id, shape.id);
+            var status = shape.data('connections');
+            shape.data('connections', !status);
         });
 
         // adds a dblclick handler to the text field
