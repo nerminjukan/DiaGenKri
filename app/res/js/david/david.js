@@ -68,20 +68,65 @@ Raphael.st.draggable = function() {
         ox = 0,
         oy = 0,
         moveFnc = function(dx, dy) {
+            // this.forEach(function(e){
             lx = dx + ox;
             ly = dy + oy;
             me.transform('t' + lx + ',' + ly);
+            let att ={
+                x: lx,
+                y: ly
+            };
+            // this.attr(att);
+            // console.log("THIS:",this);
+            for (var i = connections.length; i--;) {
+                paper.connection(connections[i]);
+            }
+            // });
+
         },
         startFnc = function() {
-            console.log("[dragging shapes] works");
+            // ox =  this.attr("x");
+            // oy = this.attr("y");
+            console.log("[dragging shapes] works - dragging,", this);
         },
         endFnc = function() {
             ox = lx;
             oy = ly;
         };
+    // start1 = function() {
 
+    //     ox =  this.attr("x");
+    //     oy = this.attr("y");
+    //     this.attr({
+    //         opacity: 1
+    //     });
+    //         console.log("[starting new drag] ");
+
+    // },
+
+    // move1 = function(dx, dy) {
+    //     var att ={
+    //         x: ox + dx,
+    //         y:oy + dy
+    //     };
+    //     this.attr(att);
+    // },
+    // up1 = function() {
+    //     this.attr({
+    //         opacity: .5
+    //     });
+    //     ox = 0, oy = 0;
+    // };
+
+    // this.forEach(function (el) {
     this.drag(moveFnc, startFnc, endFnc);
+
+    // });
+    // this.drag(move1, start1, up1);
+
 };
+
+
 
 class Shape{
     constructor(id_shape, array_connections){
@@ -404,14 +449,26 @@ window.onload = function () {
      for(let i = 0; i < connections.length; i++)
      console.log(connections[i].from.id, ":", connections[i].to.id, connections[i].id);*/
 
-    mySet.push(paper.circle(50, 50, 50).attr('fill', 'red'));
-    mySet.push(paper.circle(50, 50, 40).attr('fill', 'white'));
-    mySet.push(paper.circle(50, 50, 30).attr('fill', 'red'));
-    mySet.push(paper.circle(50, 50, 20).attr('fill', 'white'));
-    mySet.push(paper.circle(50, 50, 10).attr('fill', 'red'));
+    // let c1 = paper.circle(50, 50, 50).attr('fill', 'red');
+    // let c2 = paper.circle(50, 50, 40).attr('fill', 'white');
+    // let c3 = paper.circle(50, 50, 30).attr('fill', 'red');
+    // let c4 = paper.circle(50, 50, 20).attr('fill', 'white');
+    // let c5 = paper.circle(50, 50, 10).attr('fill', 'red');
+
+    // addToShapes(c1);
+    // addToShapes(c2);
+    // addToShapes(c3);
+    // addToShapes(c4);
+    // addToShapes(c5);
+
+    // mySet.push(c1);
+    // mySet.push(c2);
+    // mySet.push(c3);
+    // mySet.push(c4);
+    // mySet.push(c5);
 
     // make set draggable
-    mySet.draggable();
+    // mySet.draggable();
 
     // lets center screen to some shape
     //scrollTo("content", shapes[0]);

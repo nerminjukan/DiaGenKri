@@ -1,73 +1,73 @@
 /* Remove the navbar's default margin-bottom and rounded borders */
-    .navbar {
-        margin-bottom: 0;
-        border-radius: 0;
-    }
+.navbar {
+    margin-bottom: 0;
+    border-radius: 0;
+}
 
 /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
-    .row.content {height: 450px}
+.row.content {height: 450px}
 
 /* Set gray background color and 100% height */
-    .sidenav {
-        padding-top: 20px;
-        background-color: #f1f1f1;
-        height: 100%;
-    }
+.sidenav {
+    padding-top: 20px;
+    background-color: #f1f1f1;
+    height: 100%;
+}
 
 /* Set black background color, white text and some padding */
-    footer {
-        background-color: #555;
-        color: white;
-        padding: 15px;
-    }
+footer {
+    background-color: #555;
+    color: white;
+    padding: 15px;
+}
 
 /* On small screens, set height to 'auto' for sidenav and grid */
-    @media screen and (max-width: 767px) {
-        .sidenav {
-            height: auto;
-            padding: 15px;
-        }
-        .row.content {height:auto;}
+@media screen and (max-width: 767px) {
+    .sidenav {
+        height: auto;
+        padding: 15px;
     }
+    .row.content {height:auto;}
+}
 
 /* Increase spacing between rows */
-    .row-increased-top {
-        margin-top : 20px;
-    }
+.row-increased-top {
+    margin-top : 20px;
+}
 
 /* Increase spacing for lead titles */
-    .spacing-increased {
-        padding-left: 15px;
-    }
+.spacing-increased {
+    padding-left: 15px;
+}
 
 /* Increase spacing for lead titles */
-    .row-increased-bottom {
-        margin-bottom: 20px;
-    }
+.row-increased-bottom {
+    margin-bottom: 20px;
+}
 
 /* Increase spacing for checkbox form group */
-    .check-box-spacing {
-        margin-left: 10px;
-        margin-right: 10px;
-    }
+.check-box-spacing {
+    margin-left: 10px;
+    margin-right: 10px;
+}
 /* Create a scrollable table */
-    .tr-sc {
-        width: 100%;
-        display: inline-table;
-        height:30px;
-    }
+.tr-sc {
+    width: 100%;
+    display: inline-table;
+    height:30px;
+}
 
-    .table-sc {
-        height:350px;
-        display: -moz-groupbox;
-    }
+.table-sc {
+    height:350px;
+    display: -moz-groupbox;
+}
 
-    .tbody-sc {
-        overflow-y: scroll;
-        height: 300px;
-        width: 100%;
-        position: absolute;
-    }
+.tbody-sc {
+    overflow-y: scroll;
+    height: 300px;
+    width: 100%;
+    position: absolute;
+}
 
 /* Crop the image to size */
 .center-cropped {
@@ -78,9 +78,9 @@
 }
 
 
+/* Size for login */
 .navbar-login
 {
-    width: 15em;
     padding: 1em;
     padding-bottom: 0px;
 }
@@ -97,4 +97,32 @@
     font-size: 5em;
 }
 
+/* login divs */
+#login-size {
+    width: 100%;
+}
+
+/* raphael js css*/
+#content {
+    height: 100%;
+    padding: 0;
+    overflow: auto;
+    background: #f3f3f3;
+    background-image: linear-gradient(rgba(100, 100, 100, .1) .1em, transparent .1em), linear-gradient(90deg, rgba(100,100,100, .1) .1em, transparent .1em);
+    background-size: 1em 1em;
+}
+
+/* if button is checked */
+.button_checked {
+    padding: 6px 12px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: #fff;
+    background-color: #286090;
+    border-color: #204d74;
+}
+
+/*#add_connection_button {
+    white-space: pre-wrap;
+}*/
 
