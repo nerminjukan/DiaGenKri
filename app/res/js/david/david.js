@@ -660,6 +660,20 @@ function startDrag(ev) {
     ev.dataTransfer.setData('Text/html', ev.target.id);
 }
 
+function changeIncomingConnections(node_id, change){
+    for(let i = 0; i < connections.length; i++){
+        if(connections[i].to.id === node_id){
+            if(change){
+                connections[i].line.hide();
+            }
+            else{
+                connections[i].line.show();
+            }
+            console.log(change);
+        }
+    }
+}
+
 function changeConnectionVisibility(shape_id, first_id){
     var shape = paper.getById(shape_id);
 
@@ -674,6 +688,7 @@ function changeConnectionVisibility(shape_id, first_id){
                 setID = getSet(connections[i].to.id);
 
                 if(setID && connections[i].to.id !== first_id){
+                    changeIncomingConnections(connections[i].to.id, true);
                     connections[i].line.hide();
                     canvasSets[setID].forEach( function (e) {
                             e.hide();
@@ -696,6 +711,7 @@ function changeConnectionVisibility(shape_id, first_id){
 
                 setID = getSet(connections[i].to.id);
                 if(setID && connections[i].to.id !== first_id){
+                    changeIncomingConnections(connections[i].to.id, false);
                     connections[i].line.show();
                     canvasSets[setID].forEach( function (e) {
                             e.show();

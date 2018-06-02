@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Gostitelj: 127.0.0.1
--- Čas nastanka: 28. apr 2018 ob 22.30
+-- Čas nastanka: 03. jun 2018 ob 00.41
 -- Različica strežnika: 10.1.22-MariaDB
 -- Različica PHP: 7.1.4
 
@@ -21,6 +21,34 @@ SET time_zone = "+00:00";
 --
 -- Zbirka podatkov: `diagenkri`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabele `graph`
+--
+
+CREATE TABLE `graph` (
+  `id` int(11) NOT NULL,
+  `e-mail` varchar(100) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `visual` tinyint(4) NOT NULL,
+  `data` mediumtext NOT NULL,
+  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Struktura tabele `graph-edits`
+--
+
+CREATE TABLE `graph-edits` (
+  `id` int(11) NOT NULL,
+  `graph-id` int(11) NOT NULL,
+  `edited-by` varchar(100) NOT NULL,
+  `edit-date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -96,13 +124,27 @@ INSERT INTO `user_profile` (`e-mail`, `lastaccess`, `fieldofwork`, `admin`, `rea
 ('nermin.jukan@mail.si', '2018-03-23 11:23:53', NULL, 1, 1, 1, 1, 1, 1),
 ('qq3q3t@afaefe', '2018-04-16 15:38:25', NULL, 0, 0, 0, 0, 0, 0),
 ('ssss@ssss', '2018-04-16 11:27:29', NULL, 0, 1, 0, 1, 1, 1),
-('test@test', '2018-04-26 14:54:24', NULL, 0, 0, 0, 1, 1, 0),
+('test@test', '2018-06-02 23:45:58', NULL, 0, 0, 0, 1, 1, 0),
 ('www@w', '2018-04-16 15:39:20', NULL, 0, 0, 0, 0, 0, 0),
 ('www@ww', '2018-04-16 15:38:56', NULL, 0, 0, 0, 0, 0, 0);
 
 --
 -- Indeksi zavrženih tabel
 --
+
+--
+-- Indeksi tabele `graph`
+--
+ALTER TABLE `graph`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `USER E-MAIL` (`e-mail`);
+
+--
+-- Indeksi tabele `graph-edits`
+--
+ALTER TABLE `graph-edits`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `GRAPH-ID` (`graph-id`);
 
 --
 -- Indeksi tabele `user`
@@ -122,6 +164,16 @@ ALTER TABLE `user_profile`
 --
 
 --
+-- AUTO_INCREMENT tabele `graph`
+--
+ALTER TABLE `graph`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT tabele `graph-edits`
+--
+ALTER TABLE `graph-edits`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
 -- AUTO_INCREMENT tabele `user`
 --
 ALTER TABLE `user`
@@ -129,6 +181,13 @@ ALTER TABLE `user`
 --
 -- Omejitve tabel za povzetek stanja
 --
+
+--
+-- Omejitve za tabelo `graph`
+--
+ALTER TABLE `graph`
+  ADD CONSTRAINT `graph_ibfk_1` FOREIGN KEY (`e-mail`) REFERENCES `user_profile` (`e-mail`),
+  ADD CONSTRAINT `graph_ibfk_2` FOREIGN KEY (`id`) REFERENCES `graph-edits` (`graph-id`);
 
 --
 -- Omejitve za tabelo `user_profile`
