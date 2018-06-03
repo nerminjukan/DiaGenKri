@@ -14,6 +14,7 @@ if(!isset($_SESSION["user"])){
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="../../../DiaGenKri/app/res/js/raphael/raphael.min.js"></script>
+    <script src="../../../DiaGenKri/app/res/js/raphael/raphael.json.js"></script>
 
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/raphael.pan-zoom.js"></script>
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/david.js"></script>
@@ -135,6 +136,10 @@ if(!isset($_SESSION["user"])){
                     </g>
                 </svg>
             </a>
+
+            <button id="save" onclick="saveGraph()" type="button" class="btn btn-success">Save</button>
+            <!---<a href="../../../DiaGenKri/public/visualisation" type="button" class="btn btn-danger row-increased-bottom">Cancel</a>--->
+            <button id="load" onclick="loadGraph()" type="button" class="btn btn-success">Load</button>
         </div>
         <div onclick="looseFocus(event)" ondrop="mainDraw(event)" class="col-sm-8" id="content">
             <div id="mapControls"><a id="up" href="javascript:void(0)"></a><a id="down" href="javascript:void(0)"></a></div>
@@ -142,6 +147,7 @@ if(!isset($_SESSION["user"])){
         </div>
         <div class="col-sm-2 sidenav">
             <div class="well">
+                <button onclick="addConnection()" id = "add_connection_button" class="btn btn-primary">add connection</button>
                 <button onclick="addConnection()" id = "add_connection_button" class="btn btn-primary">add connection</button>
             </div>
             <h2>Settings</h2>

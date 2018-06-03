@@ -145,6 +145,8 @@ class Shape{
     }
 }
 
+var json;
+
 // raphael paper reference
 let paper;
 // array for shapes(circles, rectangles)
@@ -775,6 +777,10 @@ function shapeDraw(arg, ev) {
         set.push(txt);
         set.draggable();
 
+        for(i in set){
+            set[i].setID = id;
+        }
+
         // saves the set ito a global array
         canvasSets.push(set);
         // increments the global id
@@ -904,6 +910,53 @@ function looseFocus(ev){
         // }
     }
 
+}
+
+function saveGraph() {
+
+    /*var json = paper.toJSON(function(el, data) {
+        // Save the set identifier along with the other data
+        data.setName = el.setName;
+
+        return data;
+    });*/
+
+    //var json = paper.toJSON();
+
+    /*console.log('JSON: ' + json);
+
+    paper.clear();
+
+    paper.fromJSON(json, function(el, data) {
+        // Recreate the set using the identifier
+        if ( !window[data.setName] ) window[data.setName] = paper.set();
+
+        // Place each element back into the set
+        console.log('BACK: ' + window[data.setName]);
+        window[data.setName].push(el);
+
+        return el;
+    });
+
+
+    $.post("../../../DiaGenKri/public/visualisation/save",
+        {
+            data: json
+        },
+        function(data, status){
+            alert(data, status);
+        });*/
+    json = paper.toJSON();
+
+    console.log(json);
+
+    paper.clear();
+}
+
+function loadGraph() {
+    paper = Raphael('content');
+
+    paper.fromJSON(json);
 }
 
 // initial setup function, createc the canvas as 'paper' sets some global variables, adds 'dragover' event handler for canvas

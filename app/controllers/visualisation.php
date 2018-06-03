@@ -24,4 +24,13 @@ class visualisation extends Controller
         $this->view('visualisation/david', ['name' => $user->name]);
     }
 
+    public function save($name = ''){
+        $user = $this->model('User');
+        $user->name = $name;
+
+        echo(implode(" ", $_POST));
+
+        //$this->view('visualisation/david', ['name' => $user->name]);
+    }
+
 }
