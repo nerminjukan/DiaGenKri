@@ -50,6 +50,9 @@ Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000", b
     } else {
         let color = color_user;
         let line_path = this.path(path).attr({stroke: color, fill: "none", "stroke-width": 3});
+        line_path.setName = 'name' + id_c;
+        line_path.setID = id_c;
+        line_path.data('setID', obj1.id+' '+obj2.id);
         line_path.mouseover(deleteConnection);
         line_path.mouseout(noDelete);
         return {
@@ -57,7 +60,9 @@ Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000", b
             line: line_path,
             from: obj1,
             to: obj2,
-            id: id_c
+            id: id_c,
+            //setName: 'name' + id_c,
+            //setID: '' + id_c
         };
     }
 };
@@ -777,8 +782,8 @@ function shapeDraw(arg, ev) {
         set.push(txt);
         set.draggable();
 
-        for(i in set){
-            set[i].setID = id;
+        for(var i in set){
+            set[i].setName = 'name' + id;
         }
 
         // saves the set ito a global array
@@ -946,7 +951,13 @@ function saveGraph() {
         function(data, status){
             alert(data, status);
         });*/
-    json = paper.toJSON();
+    json = paper.toJSON(function(el, data) {
+        data.id = el.node.id;
+        data.setName = el.setName;
+        console.log('data setName: ' + data.setName);
+
+        return data;
+    });
 
     console.log(json);
 
@@ -956,7 +967,38 @@ function saveGraph() {
 function loadGraph() {
     paper = Raphael('content');
 
-    paper.fromJSON(json);
+    paper.fromJSON(json, function(el, data) {
+        el.node.id = data.id;
+        // Recreate the set using the identifier
+        if ( !window[data.setName] ) window[data.setName] = paper.set();
+
+        // Place each element back into the set
+        window[data.setName].push(el);
+
+        console.log(window[data.setName]);
+
+        window[data.setName].draggable();
+
+        el.click(function () {
+            console.log(el.data('setID'));
+        })
+        if(el.type === 'path'){
+            var idSplit = el.data('setID').split(" ");
+            connections.push(paper.connection(paper.getById(idSplit[0]), paper.getById(idSplit[1]), "#000", id++));
+            el.remove();
+        }
+        //return el;
+    });
+    /*paper.fromJSON(json, function(el, data) {
+        el.node.id = data.id;
+        el.click(function () {
+            //alert(el.data('setID'));
+            if(el.type === "rect"){
+                alert(el[0].setName);
+            }
+        })
+        return el;
+    });*/
 }
 
 // initial setup function, createc the canvas as 'paper' sets some global variables, adds 'dragover' event handler for canvas

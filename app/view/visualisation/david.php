@@ -148,7 +148,6 @@ if(!isset($_SESSION["user"])){
         <div class="col-sm-2 sidenav">
             <div class="well">
                 <button onclick="addConnection()" id = "add_connection_button" class="btn btn-primary">add connection</button>
-                <button onclick="addConnection()" id = "add_connection_button" class="btn btn-primary">add connection</button>
             </div>
             <h2>Settings</h2>
             <form>
