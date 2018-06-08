@@ -15,13 +15,35 @@
         for ( var el = paper.bottom; el != null; el = el.next ) {
             data = callback ? callback(el, new Object) : new Object;
 
-            if ( data ) elements.push({
-                data:      data,
-                type:      el.type,
-                attrs:     el.attrs,
-                transform: el.matrix.toTransformString(),
-                id:        el.id
-            });
+            if ( data ){
+                //alert('x pred spremembo transformacije: ' + el.attr('x'));
+                el.matrix.a = 1;
+                el.matrix.b = 0;
+                el.matrix.c = 0;
+                el.matrix.d = 1;
+                el.matrix.e = 0;
+                el.matrix.f = 0;
+                let box = el.getBBox();
+                if(el.type === 'text'){
+
+                    el.attr({'x': box.cx});
+                    el.attr({'y': box.cy});
+
+                }else{
+                    //alert('x po spremembi tranformacije' + el.attr('x'));
+                    el.attr({'x': box.x});
+                    el.attr({'y': box.y});
+                    //alert('x po spremembi X: ' + el.attr('x') + " " + box.x);
+                }
+                elements.push({
+
+                    data:      data,
+                    type:      el.type,
+                    attrs:     el.attrs,
+                    transform: el.matrix.toTransformString(),
+                    id:        el.id
+                });
+            }
         }
 
         var cache = [];

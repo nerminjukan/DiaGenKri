@@ -51,8 +51,8 @@ Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000", b
         let color = color_user;
         let line_path = this.path(path).attr({stroke: color, fill: "none", "stroke-width": 3});
         line_path.setName = 'name' + id_c;
-        line_path.setID = id_c;
-        line_path.data('setID', obj1.id+' '+obj2.id);
+        //line_path.setID = id_c;
+        line_path.data('fromTo', obj1.id+' '+obj2.id);
         line_path.mouseover(deleteConnection);
         line_path.mouseout(noDelete);
         return {
@@ -684,11 +684,17 @@ function changeIncomingConnections(node_id, change){
 function changeConnectionVisibility(shape_id, first_id){
     var shape = paper.getById(shape_id);
 
+    console.log('shape id: ' + shape.id);
+
     var hide = paper.getById(first_id).data('connections');
+    console.log('before   HIDE of ID: ' +hide + ' : ' + shape.id);
     var setID;
-    hide = !hide;
+    //hide = !hide;
+    console.log('after    HIDE of ID: ' +hide + ' : ' + shape.id);
+    console.log(connections.length);
     for(let i = 0; i < connections.length; i++){
         if(connections[i].from.id === shape.id){
+            console.log('FOUND ONE');
             if(hide){
                 paper.getById(shape.data('resizableID')).attr({fill: 'red'});
 
@@ -697,8 +703,10 @@ function changeConnectionVisibility(shape_id, first_id){
                 if(setID && connections[i].to.id !== first_id){
                     changeIncomingConnections(connections[i].to.id, true);
                     connections[i].line.hide();
+                    console.log(connections[i].line.id +' is hidden');
                     canvasSets[setID].forEach( function (e) {
-                            e.hide();
+                        console.log('element ID: ' +e.id);
+                            paper.getById(e.id).hide();
                         }
 
                     );
@@ -721,7 +729,7 @@ function changeConnectionVisibility(shape_id, first_id){
                     changeIncomingConnections(connections[i].to.id, false);
                     connections[i].line.show();
                     canvasSets[setID].forEach( function (e) {
-                            e.show();
+                            paper.getById(e.id).show();
                         }
                     );
 
@@ -737,8 +745,19 @@ function changeConnectionVisibility(shape_id, first_id){
             changeConnectionVisibility(connections[i].to.id, first_id);
 
         }
+        else{
+            console.log('NO CONNECTIONS');
+        }
     }
 
+}
+
+function hideNodes(parentID) {
+    console.log('parent: ' +parentID);
+    var shape = paper.getById(parentID);
+    changeConnectionVisibility(shape.id, shape.id);
+    var status = shape.data('connections');
+    shape.data('connections', !status);
 }
 
 // the actual drawing function, determines which shape to draw
@@ -755,21 +774,27 @@ function shapeDraw(arg, ev) {
     // draws a rectangle
     if(arg === "aSquare"){
         // create element and draw it on canvas
-        shape =  paper.rect(ev.offsetX, ev.offsetY, 100, 50).attr({fill: "white", cursor: "move"}).data('setID', id, 'connections', true);
+        shape =  paper.rect(ev.offsetX, ev.offsetY, 100, 50).attr({fill: "white", cursor: "move"}).data('setID', id);
 
-        // creates a 'details' rectangle
+        //alert('x zacetni: ' + shape.attr('x'));
+
+        shape.data('connections', true);
+
+        // creates a 'hide' rectangle
         var resizable = paper.rect(ev.offsetX+10, ev.offsetY+10, 20, 20).attr({fill: "green"});
+        resizable.data('type', 'hide');
+        resizable.data('parentID', shape.id);
 
         shape.data('resizableID', resizable.id);
         // adds a text field
         txt = paper.text(ev.offsetX+60, ev.offsetY+30, "TEST").attr({'fill': 'red'});
 
-        // adds a dblclick handler to the 'details' rectangle
-        resizable.click(function () {
-            changeConnectionVisibility(shape.id, shape.id);
-            var status = shape.data('connections');
-            shape.data('connections', !status);
-        });
+        // adds a dblclick handler to the 'hide' rectangle
+        resizable.click(function(){hideNodes(resizable.data('parentID'))});
+
+        shape.click(function () {
+            console.log('DATA: ' + shape.data('connections'));
+        })
 
         // adds a dblclick handler to the text field
         txt.dblclick(function () {
@@ -783,7 +808,7 @@ function shapeDraw(arg, ev) {
         set.draggable();
 
         for(var i in set){
-            set[i].setName = 'name' + id;
+            set[i].setName = 'name' + set[0].id;
         }
 
         // saves the set ito a global array
@@ -873,7 +898,7 @@ function mainDraw(ev) {
 
 function getSet(id){
     for(let i = 0; i < canvasSets.length; i++){
-        console.log("getSet:",canvasSets[i][0].id);
+        //console.log("getSet:",canvasSets[i][0].id);
         if(canvasSets[i][0].id === id){
             console.log("found correct set");
             return i;
@@ -951,15 +976,24 @@ function saveGraph() {
         function(data, status){
             alert(data, status);
         });*/
+
+
+    connections = [];
+    shapes = [];
+    canvasSets = [];
+
+
+
     json = paper.toJSON(function(el, data) {
+
         data.id = el.node.id;
         data.setName = el.setName;
-        console.log('data setName: ' + data.setName);
+        console.log('data setName PRE: ' + data.setName);
 
         return data;
     });
 
-    console.log(json);
+    //console.log(json);
 
     paper.clear();
 }
@@ -973,20 +1007,39 @@ function loadGraph() {
         if ( !window[data.setName] ) window[data.setName] = paper.set();
 
         // Place each element back into the set
+        console.log('setName POST:' +data.setName);
         window[data.setName].push(el);
 
-        console.log(window[data.setName]);
+        //console.log('setName :' +window[data.setName]);
 
+        canvasSets.push(window[data.setName]);
         window[data.setName].draggable();
 
         el.click(function () {
-            console.log(el.data('setID'));
+            console.log('atr: ' + Object.getOwnPropertyNames(el.data()));
         })
         if(el.type === 'path'){
-            var idSplit = el.data('setID').split(" ");
+            var idSplit = el.data('fromTo').split(" ");
             connections.push(paper.connection(paper.getById(idSplit[0]), paper.getById(idSplit[1]), "#000", id++));
             el.remove();
         }
+        if(el.type === 'rect' && el.data('type') === 'hide'){
+            console.log('add handler to HIDE');
+            var i = 0;
+            el.click(function () {
+
+                console.log('HIDE: ' + i);
+                i++;
+                hideNodes(el.data('parentID'));
+            })
+        }
+        else if(el.type === "rect"){
+            console.log("ELEMENT: ", el);
+            addToShapes(el);
+        }
+
+        el.setName = data.setName;
+
         //return el;
     });
     /*paper.fromJSON(json, function(el, data) {
