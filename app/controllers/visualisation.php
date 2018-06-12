@@ -15,7 +15,7 @@ if($status == PHP_SESSION_NONE){
 require_once '../app/database/DBfunctions.php';
 require_once("../app/core/ViewHelper.php");
 
-class visualisation extends Controller
+class Visualisation extends Controller
 {
     public function index($name = ''){
         $user = $this->model('User');
@@ -24,13 +24,15 @@ class visualisation extends Controller
         $this->view('visualisation/david', ['name' => $user->name]);
     }
 
-    public function save($name = ''){
-        $user = $this->model('User');
-        $user->name = $name;
+    public function save(){
 
-        echo(implode(" ", $_POST));
+        //$data = explode(" ", $_POST['data'], 2);
 
-        //$this->view('visualisation/david', ['name' => $user->name]);
+        echo($_POST["data"]);
+
+
+        //echo(implode(" ", $_POST));
+
     }
 
 }

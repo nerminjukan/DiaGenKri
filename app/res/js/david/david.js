@@ -44,12 +44,14 @@ Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000", b
         x3 = [0, 0, 0, 0, x4, x4, x4 - dx, x4 + dx][res[1]].toFixed(3),
         y3 = [0, 0, 0, 0, y1 + dy, y1 - dy, y4, y4][res[1]].toFixed(3);
     var path = ["M", x1.toFixed(3), y1.toFixed(3), "C", x2, y2, x3, y3, x4.toFixed(3), y4.toFixed(3)].join(",");
+
     if (line && line.line) {
+        line.line.attr({"arrow-end":"classic-wide-long"});
         line.bg && line.bg.attr({path: path});
         line.line.attr({path: path});
     } else {
         let color = color_user;
-        let line_path = this.path(path).attr({stroke: color, fill: "none", "stroke-width": 3});
+        let line_path = this.path(path).attr({"arrow-end":"classic-wide-long", stroke: color, fill: "none", "stroke-width": 3});
         line_path.setName = 'name' + id_c;
         //line_path.setID = id_c;
         line_path.data('fromTo', obj1.id+' '+obj2.id);
@@ -60,46 +62,62 @@ Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000", b
             line: line_path,
             from: obj1,
             to: obj2,
-            id: id_c,
-            //setName: 'name' + id_c,
-            //setID: '' + id_c
+            id: id_c
         };
     }
 };
 
 // dragging shapes
 Raphael.st.draggable = function() {
-    var me = this,
+        let me = this,
         lx = 0,
         ly = 0,
         ox = 0,
         oy = 0,
         moveFnc = function(dx, dy) {
-            // this.forEach(function(e){
-            lx = dx * scale.x + ox;
-            ly = dy * scale.y + oy;
-            me.transform('t' + lx + ',' + ly);
-            let att ={
-                x: lx,
-                y: ly
-            };
-            // this.attr(att);
-            // console.log("THIS:",this);
-            for (var i = connections.length; i--;) {
+            lx = dx + ox;
+            ly = dy + oy;
+            if(me[0].data('rotate') === true){
+                me[0].transform('t' + lx + ',' + ly + 'r45');
+                me[1].transform('t' + lx + ',' + ly);
+                //console.log('MATRIX: ',me[0].matrix);
+            }
+            else{
+                me.transform('t' + lx + ',' + ly);
+            }
+            for (let i = connections.length; i--;) {
                 paper.connection(connections[i]);
             }
-            // });
-
+            //console.log('DX AND DY: ', dx, dy);
         },
-        startFnc = function() {
-            // ox =  this.attr("x");
-            // oy = this.attr("y");
-            console.log("[dragging shapes] works - dragging,", this);
-        },
+        startFnc = function() {},
         endFnc = function() {
             ox = lx;
             oy = ly;
+            /*me.forEach(function (e) {
+                console.log('X AND Y PRE: ' , e.attr('x'), e.attr('y'));
+                let bbox = e.getBBox();
+                if(e.type === 'rect'){
+                    //e.attr('x', bbox.x);
+                    //e.attr('y', bbox.y);
+                    console.log('X AND Y POST: ', e.attr('x'), e.attr('y'));
+
+                }
+                else{
+                    //e.attr('cx', bbox.x);
+                    //e.attr('cy', bbox.y);
+                    console.log('CX AND CY POST: ', e.attr('cx'), e.attr('cy'));
+
+                }
+
+                console.log('E MATRIX: ', e.matrix);
+
+            });*/
+            console.log('\n');
         };
+
+    this.drag(moveFnc, startFnc, endFnc);
+};
     // start1 = function() {
 
     //     ox =  this.attr("x");
@@ -126,12 +144,12 @@ Raphael.st.draggable = function() {
     // };
 
     // this.forEach(function (el) {
-    this.drag(moveFnc, startFnc, endFnc);
+    //this.drag(moveFnc, startFnc, endFnc);
 
     // });
     // this.drag(move1, start1, up1);
 
-};
+//};
 
 
 
@@ -208,7 +226,7 @@ var dragger = function () {
 // ############## START OF REMOVE SHAPE ##############
 // on double click remove "double clicked" shape
 function doubleClick(){
-    console.log("shape to be removed:", this.id);
+    //console.log("shape to be removed:", this.id);
 
     // get ids of all connections that a shape got
     let connections_ids = getAllConnections(this.id);
@@ -230,7 +248,7 @@ function doubleClick(){
         e.remove();
     });
     if (index > -1) {
-        console.log("removing", this.id);
+        //console.log("removing", this.id);
         shapes.splice(index, 1);
         this.remove();
         // reset variables for shapes(which should be connected)
@@ -251,17 +269,17 @@ function getAllConnections(shape_id){
     return to_remove;
 }
 function removeConnections(c_ids){
-    console.log("dolžina",connections.length - 1);
+    //("dolžina",connections.length - 1);
     for(let i = c_ids.length - 1; i >= 0; i--){
         for(let j = connections.length - 1; j >= 0; j--){
             // if id of connection and if of connections to be removed matches
             if(connections[j].id === c_ids[i]){
-                console.log("remove connection on index", j, " with id of path:", connections[j].line.id, "that is connecting:", connections[j].from.id,
-                    "and", connections[j].to.id);
+                //console.log("remove connection on index", j, " with id of path:", connections[j].line.id, "that is connecting:", connections[j].from.id,
+                    //"and", connections[j].to.id);
                 connections[j].line.remove();
                 connections.splice(j, 1);
                 //c_ids.splice(i, 1); // optimization, also increment i to get to correct index
-                console.log("successfuly removed");
+                //console.log("successfuly removed");
             }
         }
     }
@@ -271,7 +289,7 @@ function removeConnections(c_ids){
 
 // ############## START OF REMOVE CONNECTION ##############
 function deleteConnection(){
-    console.log("path:",this.id);
+    //console.log("path:",this.id);
     this.attr("stroke-width", 5);
     remove_connectionn_id = this.id;
 }
@@ -294,22 +312,22 @@ function getConnectionIndex(id){
 let line_first_shape_id = null,
     line_second_shape_id = null; // when thoose are both something but null, connect two shapes
 function connectTwoShapes(){
-    console.log("id of shape:", this.id);
+    //console.log("id of shape:", this.id);
     if(!add_connection)
         return;
     if(!line_first_shape_id){
         line_first_shape_id = this.id;
-        console.log("[connect shapes] got first shape:", this.id);
+        //console.log("[connect shapes] got first shape:", this.id);
         return "first";
     }
 
     if(!line_second_shape_id){
         if(this.id === line_first_shape_id){
-            console.log("[connect shapes] same shapes, choose different!");
+            //console.log("[connect shapes] same shapes, choose different!");
             return "error";
         }
         line_second_shape_id = this.id;
-        console.log("[connect shapes] got second shape:", this.id);
+        //console.log("[connect shapes] got second shape:", this.id);
     }
 
     // check if two shapes are already connected
@@ -329,7 +347,7 @@ function connectTwoShapes(){
 
     // connect shapes
     connections.push(paper.connection(shapes[indexes.f], shapes[indexes.s], "#000", id++));
-    console.log("[connect shapes] DONE");
+    //console.log("[connect shapes] DONE");
 
     // reset adding connections
     addConnection();
@@ -352,7 +370,7 @@ function getIndexesOfTwoShapes(shape1_id, shape2_id){
             break;
         }
     }
-    console.log("[connect shapes - get index] indexes of shapes:", first, second);
+    //console.log("[connect shapes - get index] indexes of shapes:", first, second);
     return {
         f: first,
         s: second
@@ -376,7 +394,7 @@ function addConnection(){
     // reset variables for shapes
     line_first_shape_id = null;
     line_second_shape_id = null;
-    console.log("adding connection?", add_connection);
+    //console.log("adding connection?", add_connection);
 }
 
 // ############## END OF CONNECTING TWO SHAPES ##############
@@ -407,7 +425,7 @@ function scrollTo(name_of_div, shape, coorindates = null){
         return;
     }
 
-    console.log("[scrollTo] type:", shape.type);
+    //console.log("[scrollTo] type:", shape.type);
     if(shape.type === "rect"){
         let box = shape.getBBox();
         out.scrollLeft(box.x - out.width()/2 + box.width/2);
@@ -540,6 +558,7 @@ function calculateCenter(shapes){
 jQuery(function ($) {
     IDinput = document.getElementById('IDinput');
     IDtext = document.getElementById('IDtext');
+    IDdesc = document.getElementById('IDdesc');
 
     // drag and drop is possible "everywhere"
     document.addEventListener("dragover", function (ev) {
@@ -554,7 +573,7 @@ jQuery(function ($) {
 
     paper = Raphael(document.getElementById('content'), 1500, 1500);
     // paper.rect(0, 0, 2000, 2000).attr({"stroke-width": 10});
-    console.log("[main] paper canvas:", paper.canvas);
+    //console.log("[main] paper canvas:", paper.canvas);
 
     // TESTING
     connections = [];
@@ -586,14 +605,14 @@ jQuery(function ($) {
     // paper.safari();
 
     $("#up").click(function (e) {
-        console.log("[mapContainer up]");
+        //console.log("[mapContainer up]");
 
         panZoom.zoomIn(0.9, calculateCenter(shapes));
         e.preventDefault();
     });
 
     $("#down").click(function (e) {
-        console.log("[mapContainer down]");
+        //console.log("[mapContainer down]");
 
         panZoom.zoomOut(0.9, calculateCenter(shapes));
         e.preventDefault();
@@ -606,19 +625,20 @@ jQuery(function ($) {
 
 
 $('html').keyup(function(e){
-    console.log("key code:", e.keyCode);
+    //console.log("key code:", e.keyCode);
     // keycode = 8 ==> backspace
-    if(e.keyCode == 8) {
+    if(e.keyCode === 8) {
         if(remove_connectionn_id){
-            console.log("minus pressed, delete path with id", remove_connectionn_id);
+            //console.log("minus pressed, delete path with id", remove_connectionn_id);
             let index = getConnectionIndex(remove_connectionn_id);
             // remove line and than delete whole connection from array
             connections[index].line.remove();
             connections.splice(index, 1);
             remove_connectionn_id = null;
         }
-        else
-            console.log("just minus pressed, delete nothing");
+        else {
+            //console.log("just minus pressed, delete nothing");
+        }
     }
 });
 
@@ -642,6 +662,8 @@ var IDinput;
 
 // HTML input Text field
 var IDtext;
+
+let IDdesc;
 
 // the currently handled shape -> makes it globally accessible (idea)
 var active;
@@ -676,7 +698,7 @@ function changeIncomingConnections(node_id, change){
             else{
                 connections[i].line.show();
             }
-            console.log(change);
+            //console.log(change);
         }
     }
 }
@@ -684,28 +706,30 @@ function changeIncomingConnections(node_id, change){
 function changeConnectionVisibility(shape_id, first_id){
     var shape = paper.getById(shape_id);
 
-    console.log('shape id: ' + shape.id);
+    //console.log('shape id: ' + shape.id);
 
     var hide = paper.getById(first_id).data('connections');
-    console.log('before   HIDE of ID: ' +hide + ' : ' + shape.id);
+    //console.log('before   HIDE of ID: ' +hide + ' : ' + shape.id);
     var setID;
     //hide = !hide;
-    console.log('after    HIDE of ID: ' +hide + ' : ' + shape.id);
-    console.log(connections.length);
+    //console.log('after    HIDE of ID: ' +hide + ' : ' + shape.id);
+    //console.log(connections.length);
     for(let i = 0; i < connections.length; i++){
         if(connections[i].from.id === shape.id){
-            console.log('FOUND ONE');
+            //console.log('FOUND ONE');
             if(hide){
-                paper.getById(shape.data('resizableID')).attr({fill: 'red'});
+                if(shape.data('type') !== 'decision'){
+                    paper.getById(shape.data('resizableID')).attr({fill: 'red'});
+                }
 
                 setID = getSet(connections[i].to.id);
 
                 if(setID && connections[i].to.id !== first_id){
                     changeIncomingConnections(connections[i].to.id, true);
                     connections[i].line.hide();
-                    console.log(connections[i].line.id +' is hidden');
+                    //console.log(connections[i].line.id +' is hidden');
                     canvasSets[setID].forEach( function (e) {
-                        console.log('element ID: ' +e.id);
+                        //console.log('element ID: ' +e.id);
                             paper.getById(e.id).hide();
                         }
 
@@ -722,7 +746,9 @@ function changeConnectionVisibility(shape_id, first_id){
 
             }
             else{
-                paper.getById(shape.data('resizableID')).attr({fill: 'green'});
+                if(shape.data('type') !== 'decision'){
+                    paper.getById(shape.data('resizableID')).attr({fill: 'green'});
+                }
 
                 setID = getSet(connections[i].to.id);
                 if(setID && connections[i].to.id !== first_id){
@@ -746,14 +772,14 @@ function changeConnectionVisibility(shape_id, first_id){
 
         }
         else{
-            console.log('NO CONNECTIONS');
+            //console.log('NO CONNECTIONS');
         }
     }
 
 }
 
 function hideNodes(parentID) {
-    console.log('parent: ' +parentID);
+    //console.log('parent: ' +parentID);
     var shape = paper.getById(parentID);
     changeConnectionVisibility(shape.id, shape.id);
     var status = shape.data('connections');
@@ -769,21 +795,25 @@ function shapeDraw(arg, ev) {
 
 
     var txt;
-    var fts;
 
     // draws a rectangle
     if(arg === "aSquare"){
         // create element and draw it on canvas
         shape =  paper.rect(ev.offsetX, ev.offsetY, 100, 50).attr({fill: "white", cursor: "move"}).data('setID', id);
 
-        //alert('x zacetni: ' + shape.attr('x'));
-
         shape.data('connections', true);
+
+        shape.data('desc', '');
 
         // creates a 'hide' rectangle
         var resizable = paper.rect(ev.offsetX+10, ev.offsetY+10, 20, 20).attr({fill: "green"});
         resizable.data('type', 'hide');
         resizable.data('parentID', shape.id);
+        
+        shape.click(function () {
+            document.getElementById('descText').innerHTML = shape.data('desc');
+            $("#myModal").modal();
+        });
 
         shape.data('resizableID', resizable.id);
         // adds a text field
@@ -792,14 +822,13 @@ function shapeDraw(arg, ev) {
         // adds a dblclick handler to the 'hide' rectangle
         resizable.click(function(){hideNodes(resizable.data('parentID'))});
 
-        shape.click(function () {
-            console.log('DATA: ' + shape.data('connections'));
-        })
 
         // adds a dblclick handler to the text field
         txt.dblclick(function () {
             IDtext.focus();
         });
+
+        shape.data('rotate', false);
 
         // adds the elements to a set
         set.push(shape);
@@ -818,9 +847,14 @@ function shapeDraw(arg, ev) {
     }
     // draws a decision node, similar process as for rectangle element, doesn't include the 'details' element
     else if(arg === "aDecision"){
-        shape = paper.rect(ev.offsetX, ev.offsetY, 75, 75).attr({fill: "white"}).data('setID', id);
+        shape = paper.rect(ev.offsetX, ev.offsetY, 75, 75).attr({fill: "white", cursor: "move"}).data('setID', id);
         shape.rotate(45);
+        shape.data('rotate', true);
+        shape.data('type', 'decision');
         txt = paper.text(ev.offsetX+40, ev.offsetY+40, "TEST").attr({'fill': 'red'});
+
+        shape.data('connections', true);
+        shape.data('desc', '');
 
         txt.dblclick(function () {
             IDtext.focus();
@@ -830,7 +864,12 @@ function shapeDraw(arg, ev) {
         set.push(txt);
         set.draggable();
 
+        for(var i in set){
+            set[i].setName = 'name' + set[0].id;
+        }
+
         canvasSets.push(set);
+        console.log('ADDED SHAPE - DRAW');
         id++;
     }
     // draws a link (for testing purposes)
@@ -852,7 +891,7 @@ function shapeDraw(arg, ev) {
         return null;
     }
     set.data('id', shape.id);
-    console.log("set id: ", set.data('id'));
+    //console.log("set id: ", set.data('id'));
     addToShapes(shape);
 
     // saves the current shape to a global scope
@@ -862,7 +901,8 @@ function shapeDraw(arg, ev) {
     IDinput.setAttribute('value', shape.id);
     // when creating
     IDtext.removeAttribute('disabled');
-    IDtext.value = "neki";
+
+    IDdesc.removeAttribute('disabled');
 
     // shape click event handler
     shape.click(function () {
@@ -877,8 +917,9 @@ function shapeDraw(arg, ev) {
         // read and set the element's values for IDtext and IDinput
         IDtext.value = "neki";
 
-        IDtext.value = getText(shape.id);
-        console.log("IDtext: ", IDtext.value);
+        IDtext.value = getText(shape.id).short;
+        IDdesc.value = getText(shape.id).long;
+        //console.log("IDtext: ", IDtext.value);
         IDinput.setAttribute('value', shape.id);
     });
 
@@ -900,7 +941,7 @@ function getSet(id){
     for(let i = 0; i < canvasSets.length; i++){
         //console.log("getSet:",canvasSets[i][0].id);
         if(canvasSets[i][0].id === id){
-            console.log("found correct set");
+            //console.log("found correct set");
             return i;
         }
     }
@@ -909,26 +950,30 @@ function getSet(id){
 
 // acces the correct set from canvasSets and extract the text element 't', change the element's value
 function getText(id) {
-    console.log("[getText] id:",id);
+    //console.log("[getText] id:",id);
     let index = getSet(id);
 
     var set = canvasSets[index];
-    console.log("[getText] set:", set);
+    //console.log("[getText] set:", set);
 
     var t = set.pop();
-    var txt = t.attr('text');
-    console.log("TEKST OUT: ", txt);
+    var txt1 = t.attr('text');
+    //console.log("TEKST OUT: ", txt);
     set.push(t);
-    return txt;
+
+    var text2 = set[0].data('desc');
+    return {short: txt1, long: text2};
 }
 
 // 'onblur' event handler for IDtext input field, changes the text in the corresponding element (set of elements)
 function setText() {
     var id = IDinput.value;
     var set = canvasSets[getSet(id)];
-    console.log("[setText] set:", set);
+    //console.log("[setText] set:", set);
     var t = set.pop();
     t.attr({text: IDtext.value});
+
+    set[0].data('desc', IDdesc.value);
     set.push(t);
 }
 
@@ -944,40 +989,6 @@ function looseFocus(ev){
 
 function saveGraph() {
 
-    /*var json = paper.toJSON(function(el, data) {
-        // Save the set identifier along with the other data
-        data.setName = el.setName;
-
-        return data;
-    });*/
-
-    //var json = paper.toJSON();
-
-    /*console.log('JSON: ' + json);
-
-    paper.clear();
-
-    paper.fromJSON(json, function(el, data) {
-        // Recreate the set using the identifier
-        if ( !window[data.setName] ) window[data.setName] = paper.set();
-
-        // Place each element back into the set
-        console.log('BACK: ' + window[data.setName]);
-        window[data.setName].push(el);
-
-        return el;
-    });
-
-
-    $.post("../../../DiaGenKri/public/visualisation/save",
-        {
-            data: json
-        },
-        function(data, status){
-            alert(data, status);
-        });*/
-
-
     connections = [];
     shapes = [];
     canvasSets = [];
@@ -986,16 +997,57 @@ function saveGraph() {
 
     json = paper.toJSON(function(el, data) {
 
+        let dx, dy;
+
         data.id = el.node.id;
         data.setName = el.setName;
-        console.log('data setName PRE: ' + data.setName);
+        //console.log('data setName PRE: ' + data.setName);
+        //console.log('element x and y PRE: ', el.attr('x'), el.attr('y'));
+        if(el.data('type') === 'decision'){
+            el.rotate(-45);
+            let cx = el.getBBox().x;
+            let cy = el.getBBox().y;
+
+            dx = cx - el.attr('x');
+            dy = cy - el.attr('y');
+        }
+        else{
+            dx = el.matrix.e;
+            dy = el.matrix.f;
+        }
+
+        console.log(dx, dy);
+
+
+        el.attr('x', el.attr('x') + dx);
+        el.attr('y', el.attr('y') + dy);
+
+        el.matrix.a = 1;
+        el.matrix.b = 0;
+        el.matrix.c = 0;
+        el.matrix.d = 1;
+        el.matrix.e = 0;
+        el.matrix.f = 0;
+
 
         return data;
     });
+    console.log(json);
 
-    //console.log(json);
+    $.post("../../../DiaGenKri/public/visualisation/save",
+        {
+            data: json
+        },
+        function(data, status){
+            console.log(data);
+            console.log('\n')
+            json = data;
+        });
+
+    console.log(json);
 
     paper.clear();
+
 }
 
 function loadGraph() {
@@ -1004,37 +1056,46 @@ function loadGraph() {
     paper.fromJSON(json, function(el, data) {
         el.node.id = data.id;
         // Recreate the set using the identifier
-        if ( !window[data.setName] ) window[data.setName] = paper.set();
+        if( !window[data.setName] ){
+            window[data.setName] = paper.set();
+            window[data.setName].draggable();
+
+            canvasSets.push(window[data.setName]);
+
+            console.log(data.setName);
+        }
 
         // Place each element back into the set
-        console.log('setName POST:' +data.setName);
+        //console.log('setName POST:' +data.setName);
         window[data.setName].push(el);
+
+        console.log('SAVING: ', window[data.setName]);
 
         //console.log('setName :' +window[data.setName]);
 
-        canvasSets.push(window[data.setName]);
-        window[data.setName].draggable();
+      
 
-        el.click(function () {
-            console.log('atr: ' + Object.getOwnPropertyNames(el.data()));
-        })
+
+
         if(el.type === 'path'){
             var idSplit = el.data('fromTo').split(" ");
             connections.push(paper.connection(paper.getById(idSplit[0]), paper.getById(idSplit[1]), "#000", id++));
             el.remove();
+            console.log("PATH");
         }
-        if(el.type === 'rect' && el.data('type') === 'hide'){
-            console.log('add handler to HIDE');
-            var i = 0;
+        else if(el.type === 'rect' && el.data('type') === 'hide'){
             el.click(function () {
-
-                console.log('HIDE: ' + i);
-                i++;
                 hideNodes(el.data('parentID'));
             })
+            console.log("HIDE");
         }
-        else if(el.type === "rect"){
-            console.log("ELEMENT: ", el);
+        else if(el.type === "rect" && el.data('type') === 'decision'){
+            el.rotate(45);
+            addToShapes(el);
+            console.log("DECISION");
+        }
+        else if(el.type === 'rect' && el.data('type') === undefined){
+            console.log("ELSE");
             addToShapes(el);
         }
 
@@ -1042,30 +1103,7 @@ function loadGraph() {
 
         //return el;
     });
-    /*paper.fromJSON(json, function(el, data) {
-        el.node.id = data.id;
-        el.click(function () {
-            //alert(el.data('setID'));
-            if(el.type === "rect"){
-                alert(el[0].setName);
-            }
-        })
-        return el;
-    });*/
 }
-
-// initial setup function, createc the canvas as 'paper' sets some global variables, adds 'dragover' event handler for canvas
-// $(function(){
-//     //set = paper.set();
-//     IDinput = document.getElementById('IDinput');
-//     IDtext = document.getElementById('IDtext');
-
-//     document.addEventListener("dragover", function (ev) {
-//         ev.preventDefault();
-//     }, false);
-
-// });
-
 
 
 

@@ -17,7 +17,7 @@
 
             if ( data ){
                 //alert('x pred spremembo transformacije: ' + el.attr('x'));
-                el.matrix.a = 1;
+                /*el.matrix.a = 1;
                 el.matrix.b = 0;
                 el.matrix.c = 0;
                 el.matrix.d = 1;
@@ -34,7 +34,7 @@
                     el.attr({'x': box.x});
                     el.attr({'y': box.y});
                     //alert('x po spremembi X: ' + el.attr('x') + " " + box.x);
-                }
+                }*/
                 elements.push({
 
                     data:      data,
