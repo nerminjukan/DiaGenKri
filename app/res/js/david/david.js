@@ -53,6 +53,7 @@ Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000", b
         let color = color_user;
         let line_path = this.path(path).attr({"arrow-end":"classic-wide-long", stroke: color, fill: "none", "stroke-width": 3});
         line_path.setName = 'name' + id_c;
+
         //line_path.setID = id_c;
         line_path.data('fromTo', obj1.id+' '+obj2.id);
         line_path.mouseover(deleteConnection);
@@ -62,7 +63,12 @@ Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000", b
             line: line_path,
             from: obj1,
             to: obj2,
-            id: id_c
+            id: id_c,
+            // TODO fix text to follow line (update text position)
+            text: paper.text(line_path.getPointAtLength(line_path.getTotalLength() / 2).x, line_path.getPointAtLength(line_path.getTotalLength() / 2).y-20, "no-text").attr({'fill': 'red'}).dblclick(function () {
+                IDinput.value = line_path.id;
+                IDtext.focus();
+            })
         };
     }
 };
@@ -168,7 +174,7 @@ class Shape{
     }
 }
 
-var json;
+let json;
 
 // raphael paper reference
 let paper;
@@ -222,6 +228,8 @@ var dragger = function () {
         this.animate({"fill-opacity": 0}, 500);
     }
 
+
+    // TODO change handler for removing shapes
 
 // ############## START OF REMOVE SHAPE ##############
 // on double click remove "double clicked" shape
@@ -799,25 +807,26 @@ function shapeDraw(arg, ev) {
     // draws a rectangle
     if(arg === "aSquare"){
         // create element and draw it on canvas
-        shape =  paper.rect(ev.offsetX, ev.offsetY, 100, 50).attr({fill: "white", cursor: "move"}).data('setID', id);
+        shape =  paper.rect(ev.offsetX, ev.offsetY, 80, 30).attr({fill: "white", cursor: "move"}).data('setID', id);
 
         shape.data('connections', true);
 
         shape.data('desc', '');
 
         // creates a 'hide' rectangle
-        var resizable = paper.rect(ev.offsetX+10, ev.offsetY+10, 20, 20).attr({fill: "green"});
+        var resizable = paper.rect(ev.offsetX+5, ev.offsetY+5, 10, 10).attr({fill: "green"});
         resizable.data('type', 'hide');
         resizable.data('parentID', shape.id);
         
         shape.click(function () {
             document.getElementById('descText').innerHTML = shape.data('desc');
-            $("#myModal").modal();
+            document.getElementById('h4ID').innerHTML = 'Opis vozlišča: ' +  shape.id;
+            $("#longText").modal();
         });
 
         shape.data('resizableID', resizable.id);
         // adds a text field
-        txt = paper.text(ev.offsetX+60, ev.offsetY+30, "TEST").attr({'fill': 'red'});
+        txt = paper.text(ev.offsetX+40, ev.offsetY+20, "no-text").attr({'font-size': 7, 'fill': 'red', 'text-anchor': 'middle'});
 
         // adds a dblclick handler to the 'hide' rectangle
         resizable.click(function(){hideNodes(resizable.data('parentID'))});
@@ -847,11 +856,11 @@ function shapeDraw(arg, ev) {
     }
     // draws a decision node, similar process as for rectangle element, doesn't include the 'details' element
     else if(arg === "aDecision"){
-        shape = paper.rect(ev.offsetX, ev.offsetY, 75, 75).attr({fill: "white", cursor: "move"}).data('setID', id);
+        shape = paper.rect(ev.offsetX, ev.offsetY, 50, 50).attr({fill: "white", cursor: "move"}).data('setID', id);
         shape.rotate(45);
         shape.data('rotate', true);
         shape.data('type', 'decision');
-        txt = paper.text(ev.offsetX+40, ev.offsetY+40, "TEST").attr({'fill': 'red'});
+        txt = paper.text(ev.offsetX+25, ev.offsetY+25, "no-text").attr({'font-size': 7, 'fill': 'red'});
 
         shape.data('connections', true);
         shape.data('desc', '');
@@ -968,13 +977,20 @@ function getText(id) {
 // 'onblur' event handler for IDtext input field, changes the text in the corresponding element (set of elements)
 function setText() {
     var id = IDinput.value;
-    var set = canvasSets[getSet(id)];
-    //console.log("[setText] set:", set);
-    var t = set.pop();
-    t.attr({text: IDtext.value});
+    if(paper.getById(id).type !== 'path'){
+        var set = canvasSets[getSet(id)];
+        //console.log("[setText] set:", set);
+        var t = set.pop();
+        t.attr({text: IDtext.value});
 
-    set[0].data('desc', IDdesc.value);
-    set.push(t);
+        set[0].data('desc', IDdesc.value);
+        set.push(t);
+    }
+    // TODO change text on line
+    else{
+        return;
+    }
+
 }
 
 // de-selects any selected element and hides handles
@@ -987,19 +1003,28 @@ function looseFocus(ev){
 
 }
 
+// TODO fix dragging of decision node, check all event-handlers after re-load
+// TODO fix dragging of decision node, check all event-handlers after re-load
+
 function saveGraph() {
 
     connections = [];
     shapes = [];
     canvasSets = [];
+    json = null;
 
 
 
     json = paper.toJSON(function(el, data) {
 
+        if(window[data.setName]){
+            window[data.setName].remove();
+        }
+
         let dx, dy;
 
         data.id = el.node.id;
+        console.log('NODE ID: ',el.id);
         data.setName = el.setName;
         //console.log('data setName PRE: ' + data.setName);
         //console.log('element x and y PRE: ', el.attr('x'), el.attr('y'));
@@ -1051,14 +1076,15 @@ function saveGraph() {
 }
 
 function loadGraph() {
+    console.log('LOADING');
     paper = Raphael('content');
 
     paper.fromJSON(json, function(el, data) {
         el.node.id = data.id;
+        console.log('el node id: ',el.id);
         // Recreate the set using the identifier
         if( !window[data.setName] ){
             window[data.setName] = paper.set();
-            window[data.setName].draggable();
 
             canvasSets.push(window[data.setName]);
 
@@ -1069,11 +1095,15 @@ function loadGraph() {
         //console.log('setName POST:' +data.setName);
         window[data.setName].push(el);
 
+        window[data.setName].draggable();
+
         console.log('SAVING: ', window[data.setName]);
 
-        //console.log('setName :' +window[data.setName]);
+        console.log('window :' +window[data.setName]);
 
-      
+        el.click(function () {
+            console.log(el.matrix);
+        })
 
 
 
@@ -1098,7 +1128,7 @@ function loadGraph() {
             console.log("ELSE");
             addToShapes(el);
         }
-
+        console.log('setName');
         el.setName = data.setName;
 
         //return el;

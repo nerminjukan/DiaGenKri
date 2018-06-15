@@ -106,7 +106,7 @@ var scale = null;
             settings.maxZoom = options.maxZoom || 9;
             settings.minZoom = options.minZoom || 0;
             settings.zoomStep = options.zoomStep || 0.1;
-            settings.initialZoom = options.initialZoom || 0;
+            settings.initialZoom = options.initialZoom || 2.5;
             settings.initialPosition = options.initialPosition || { x: 0, y: 0 };
     
             this.currZoom = settings.initialZoom;

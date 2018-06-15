@@ -23,8 +23,17 @@ if(!isset($_SESSION["user"])){
 
 </head>
 <header class="col-12 spacing-increased">
-    <h1>Visualisation - david</h1>
+    <h1>Visualisation</h1>
 </header>
+
+<?php
+
+// Temporary - to  be loaded from DB
+$name = "Untitled diagram";
+$description="";
+
+
+?>
 
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
@@ -112,18 +121,7 @@ if(!isset($_SESSION["user"])){
                     </g>
                 </svg>
             </a>
-            <a ondragstart="startDrag(event)" draggable="true"  id="aLink" href="javascript:void(0);" style="overflow: hidden; width: 40px; height: 40px; padding: 1px; display: inline-block; cursor: move">
-                <svg class="draggable" id="svgtag"  style="width: 36px; height: 36px; display: block; position: relative; overflow: hidden; left: 2px; top: 2px">
-                    <g>
-                        <g></g>
-                        <g>
-                            <g transform="translate(0.5,0.5)" style="visibility: visible;">
-                                <line x1="5" y1="5" x2="30" y2="30" id="lineID" class="draggable" stroke="#000000" pointer-events="all"></line>
-                            </g>
-                        </g>
-                    </g>
-                </svg>
-            </a>
+            <br>
             <a ondragstart="startDrag(event)" draggable="true"  id="aDecision" href="javascript:void(0);" style="overflow: hidden; width: 40px; height: 40px; padding: 1px; display: inline-block; cursor: move">
                 <svg class="draggable" id="svgtag"  style="width: 36px; height: 36px; display: block; position: relative; overflow: hidden; left: 2px; top: 2px">
                     <g>
@@ -136,25 +134,35 @@ if(!isset($_SESSION["user"])){
                     </g>
                 </svg>
             </a>
+            <div class="well well-sm">
+                <button onclick="addConnection()" id = "add_connection_button" class="btn btn-block btn-primary" style="overflow: visible;
+text-overflow: ellipsis;
+white-space: nowrap;">Add connection</button>
+            </div>
 
-            <button id="save" onclick="saveGraph()" type="button" class="btn btn-success">Save</button>
+            <div class="well well-sm">
+                <button type="button" data-toggle="modal" data-target="#metaData" id = "edit_description" class="btn btn-block btn-primary">Edit description</button>
+            </div>
+
+            <!---<div class="well well-sm">
+                <button id="save" onclick="saveGraph()" type="button" class="btn btn-block btn-success">Save</button>
             <!---<a href="../../../DiaGenKri/public/visualisation" type="button" class="btn btn-danger row-increased-bottom">Cancel</a>--->
-            <button id="load" onclick="loadGraph()" type="button" class="btn btn-success">Load</button>
+            <!---    <button id="load" onclick="loadGraph()" type="button" class="btn btn-block btn-success">Load</button>
+            </div>--->
+
         </div>
         <div onclick="looseFocus(event)" ondrop="mainDraw(event)" class="col-sm-8" id="content">
             <div id="mapControls"><a id="up" href="javascript:void(0)"></a><a id="down" href="javascript:void(0)"></a></div>
 
         </div>
         <div class="col-sm-2 sidenav">
-            <div class="well">
-                <button onclick="addConnection()" id = "add_connection_button" class="btn btn-primary">add connection</button>
-            </div>
+
             <h2>Settings</h2>
             <form>
                 <label for="IDinput">Element ID</label>
                 <input id="IDinput" disabled type="text" name="fname"><br>
                 <label for="IDtext">Text (short)</label>
-                <input disabled onblur="setText()" id="IDtext" type="text">
+                <input disabled onblur="setText()" id="IDtext" type="text" maxlength="20">
                 <label for="IDdesc">Text (long)</label>
                 <textarea rows="6" cols="20" disabled onblur="setText()" id="IDdesc" type="text"></textarea>
             </form>
@@ -162,8 +170,32 @@ if(!isset($_SESSION["user"])){
     </div>
 </div>
 
-<!-- Modal -->
-<div class="modal fade" id="myModal" role="dialog">
+<!-- Modal Long text -->
+<div class="modal fade" id="longText" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 id="h4ID" class="modal-title">
+                    Podroben opis vozlišča
+                    <!---<script>document.getElementById('h4ID').innerText=document.getElementById('IDtext').value</script>--->
+                </h4>
+            </div>
+            <div class="modal-body">
+                <span style="word-wrap: break-word" id="descText"></span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal graph description (metadata) -->
+<div class="modal fade" id="metaData" role="dialog">
     <div class="modal-dialog">
 
         <!-- Modal content-->
@@ -176,7 +208,8 @@ if(!isset($_SESSION["user"])){
                 <span style="word-wrap: break-word" id="descText"></span>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" data-dismiss="modal">Save</button>
+                <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
             </div>
         </div>
 
