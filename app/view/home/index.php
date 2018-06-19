@@ -42,12 +42,12 @@
                         <li>
                             <div class="navbar-login">
                                 <div class="row">
-                                    <div class="col-lg-4" id="login-size">
+                                    <div class="col-lg-4">
                                         <p class="text-center">
                                             <span class="glyphicon glyphicon-user icon-size"></span>
                                         </p>
                                     </div>
-                                    <div class="col-lg-8" id="login-size">
+                                    <div class="col-lg-8">
                                         <p class="text-left"><strong><?php
                                             echo $_SESSION["user-name"] . " " . $_SESSION["user-surname"];
                                         ?>

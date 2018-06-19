@@ -84,6 +84,9 @@ var scale = null;
 
         getCurrentZoom: function () {
             return this.currZoom;
+        },
+        getCurrentScale: function () {
+            return scale;
         }
     },
 
@@ -112,14 +115,14 @@ var scale = null;
             this.currZoom = settings.initialZoom;
             this.currPos = settings.initialPosition;
 
-                // $(window).resize(function(){
-                //     scale = getScale(paper);
-                // })
+            // $(window).resize(function(){
+            //     scale = getScale(paper);
+            // })
 
             function getScale(paper, new_width, new_height){
                 var x = new_width/$(paper.canvas).width() || 1; 
                 var y = new_height/$(paper.canvas).height() || 1; 
-                console.log("[SCALE SCALE]", x, y, "FROM width:", new_width, "height:", new_height);
+                // console.log("[SCALE SCALE]", x, y, "FROM width:", new_width, "height:", new_height);
 
                 scale =  {
                     x:x,
@@ -146,10 +149,10 @@ var scale = null;
                 } else if (me.currPos.y > (paper.height * me.currZoom * settings.zoomStep)) {
                     me.currPos.y = (paper.height * me.currZoom * settings.zoomStep);
                 }
-                console.log("x:", me.currPos.x, "y:", me.currPos.y, "width:", newWidth, "height:", newHeight);
+                // console.log("x:", me.currPos.x, "y:", me.currPos.y, "width:", newWidth, "height:", newHeight);
                 getScale(paper, newWidth, newHeight);
                 paper.setViewBox(me.currPos.x, me.currPos.y, newWidth, newHeight, true);
-                console.log("[repaint] i moved viewbox, scale is:", scale)
+                // console.log("[repaint] i moved viewbox, scale is:", scale)
             }
             
             // function dragging(e) {
@@ -199,9 +202,9 @@ var scale = null;
             this.applyZoom = applyZoom;
             
             function handleScroll(e) {
-                if(e.shiftKey == true)
+                if(e.ctrlKey === true)
                 {
-                    console.log('ZOOM: shift is trueeeee');
+                    // console.log('ZOOM: ctrl is trueeeee');
 
                     // e.preventDefault();
                     // if(e.originalEvent.detail > 0) {

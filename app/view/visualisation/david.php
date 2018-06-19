@@ -13,17 +13,27 @@ if(!isset($_SESSION["user"])){
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+
     <script src="../../../DiaGenKri/app/res/js/raphael/raphael.min.js"></script>
+    <script src="../../../DiaGenKri/app/res/js/raphael/raphael.json.js"></script>
 
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/raphael.pan-zoom.js"></script>
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/david.js"></script>
 
-    <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css"
+    <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css">
 
 </head>
-<header class="col-12 spacing-increased">
-    <h1>Visualisation - david</h1>
-</header>
+
+<?php
+
+// Temporary - to  be loaded from DB
+$name = "Untitled diagram";
+$description="";
+
+
+?>
 
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
@@ -95,7 +105,7 @@ if(!isset($_SESSION["user"])){
         </div>
     </div>
 </nav>
-<div class="container-fluid text-center">
+<div class="container-fluid text-center" id="main-container">
     <div class="row content">
         <div class="col-sm-2 sidenav">
             <h2>Toolbar</h2>
@@ -111,18 +121,7 @@ if(!isset($_SESSION["user"])){
                     </g>
                 </svg>
             </a>
-            <a ondragstart="startDrag(event)" draggable="true"  id="aLink" href="javascript:void(0);" style="overflow: hidden; width: 40px; height: 40px; padding: 1px; display: inline-block; cursor: move">
-                <svg class="draggable" id="svgtag"  style="width: 36px; height: 36px; display: block; position: relative; overflow: hidden; left: 2px; top: 2px">
-                    <g>
-                        <g></g>
-                        <g>
-                            <g transform="translate(0.5,0.5)" style="visibility: visible;">
-                                <line x1="5" y1="5" x2="30" y2="30" id="lineID" class="draggable" stroke="#000000" pointer-events="all"></line>
-                            </g>
-                        </g>
-                    </g>
-                </svg>
-            </a>
+            <br>
             <a ondragstart="startDrag(event)" draggable="true"  id="aDecision" href="javascript:void(0);" style="overflow: hidden; width: 40px; height: 40px; padding: 1px; display: inline-block; cursor: move">
                 <svg class="draggable" id="svgtag"  style="width: 36px; height: 36px; display: block; position: relative; overflow: hidden; left: 2px; top: 2px">
                     <g>
@@ -135,26 +134,94 @@ if(!isset($_SESSION["user"])){
                     </g>
                 </svg>
             </a>
-        </div>
-        <div onclick="looseFocus(event)" ondrop="mainDraw(event)" class="col-sm-8" id="content">
-        <div id="mapControls"><a id="up" href="javascript:void(0)"></a><a id="down" href="javascript:void(0)"></a></div>
+            <div class="well well-sm">
+                <button onclick="addConnection()" id = "add_connection_button" class="btn btn-block btn-primary">Add connection</button>
+            </div>
+
+            <div class="well well-sm">
+                <button onclick="setDeleteConnection()" id = "delete_connection_button" class="btn btn-block btn-primary">Delete connection</button>
+            </div>
+
+            <div class="well well-sm">
+                <button onclick="setDeleteShape()" id = "delete_shape_button" class="btn btn-block btn-primary">Delete vertex</button>
+            </div>
+
+            <div class="well well-sm">
+                <button type="button" data-toggle="modal" data-target="#metaData" id = "edit_description" class="btn btn-block btn-primary">Edit description</button>
+            </div>
+
+            <!---<div class="well well-sm">
+                <button id="save" onclick="saveGraph()" type="button" class="btn btn-block btn-success">Save</button>
+            <!---<a href="../../../DiaGenKri/public/visualisation" type="button" class="btn btn-danger row-increased-bottom">Cancel</a>--->
+            <!---    <button id="load" onclick="loadGraph()" type="button" class="btn btn-block btn-success">Load</button>
+            </div>--->
 
         </div>
+        <div onclick="looseFocus(event)" ondrop="mainDraw(event)" class="col-sm-8" id="content">
+        </div>
+        <div id="mapControls"><a id="up" href="javascript:void(0)"></a><a id="down" href="javascript:void(0)"></a></div>
+
         <div class="col-sm-2 sidenav">
-            <div class="well">
-                <button onclick="addConnection()" id = "add_connection_button" class="btn btn-primary">add connection</button>
-            </div>
+
             <h2>Settings</h2>
             <form>
-                <label for="IDinput">Element ID</label>
-                    <input id="IDinput" disabled type="text" name="fname"><br>
-                <label for="IDtext">Text</label>
-                    <input disabled onblur="setText()" id="IDtext" type="text">
+                <label class="myLabelForm" for="IDinput">Element ID</label></br>
+                <input class="myInputForm" id="IDinput" disabled type="text" name="fname"><br>
+                <label class="myLabelForm" for="IDtext">Text (short)</label></br>
+                <input class="myInputForm"disabled onblur="setText()" id="IDtext" type="text" maxlength="20"></br>
+                <label class="myLabelForm" for="IDdesc">Text (long)</label></br>
+                <textarea class="myInputForm" rows="6" cols="20" disabled onblur="setText()" id="IDdesc" type="text"></textarea>
             </form>
         </div>
     </div>
 </div>
 
-<footer class="container-fluid text-center">
+<!-- Modal Long text -->
+<div class="modal fade" id="longText" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 id="h4ID" class="modal-title">
+                    Podroben opis vozlišča
+                    <!---<script>document.getElementById('h4ID').innerText=document.getElementById('IDtext').value</script>--->
+                </h4>
+            </div>
+            <div class="modal-body">
+                <span style="word-wrap: break-word" id="descText"></span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal graph description (metadata) -->
+<div class="modal fade" id="metaData" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Modal Header</h4>
+            </div>
+            <div class="modal-body">
+                <span style="word-wrap: break-word" id="descText"></span>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">Save</button>
+                <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<footer class="container-fluid text-center fixed_bottom">
     <p>©DiaGenKri</p>
 </footer>

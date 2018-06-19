@@ -1,73 +1,73 @@
 /* Remove the navbar's default margin-bottom and rounded borders */
-    .navbar {
-        margin-bottom: 0;
-        border-radius: 0;
-    }
+.navbar {
+    margin-bottom: 0;
+    border-radius: 0;
+}
 
 /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
-    .row.content {height: 450px}
+.row.content {height: 450px}
 
 /* Set gray background color and 100% height */
-    .sidenav {
-        padding-top: 20px;
-        background-color: #f1f1f1;
-        height: 100%;
-    }
+.sidenav {
+    padding-top: 20px;
+    background-color: #f1f1f1;
+    height: 100%;
+}
 
 /* Set black background color, white text and some padding */
-    footer {
-        background-color: #555;
-        color: white;
-        padding: 15px;
-    }
+footer {
+    background-color: #555;
+    color: white;
+    padding: 15px;
+}
 
 /* On small screens, set height to 'auto' for sidenav and grid */
-    @media screen and (max-width: 767px) {
-        .sidenav {
-            height: auto;
-            padding: 15px;
-        }
-        .row.content {height:auto;}
+@media screen and (max-width: 767px) {
+    .sidenav {
+        height: auto;
+        padding: 15px;
     }
+    .row.content {height:auto;}
+}
 
 /* Increase spacing between rows */
-    .row-increased-top {
-        margin-top : 20px;
-    }
+.row-increased-top {
+    margin-top : 20px;
+}
 
 /* Increase spacing for lead titles */
-    .spacing-increased {
-        padding-left: 15px;
-    }
+.spacing-increased {
+    padding-left: 15px;
+}
 
 /* Increase spacing for lead titles */
-    .row-increased-bottom {
-        margin-bottom: 20px;
-    }
+.row-increased-bottom {
+    margin-bottom: 20px;
+}
 
 /* Increase spacing for checkbox form group */
-    .check-box-spacing {
-        margin-left: 10px;
-        margin-right: 10px;
-    }
+.check-box-spacing {
+    margin-left: 10px;
+    margin-right: 10px;
+}
 /* Create a scrollable table */
-    .tr-sc {
-        width: 100%;
-        display: inline-table;
-        height:30px;
-    }
+.tr-sc {
+    width: 100%;
+    display: inline-table;
+    height:30px;
+}
 
-    .table-sc {
-        height:350px;
-        display: -moz-groupbox;
-    }
+.table-sc {
+    height:350px;
+    display: -moz-groupbox;
+}
 
-    .tbody-sc {
-        overflow-y: scroll;
-        height: 300px;
-        width: 100%;
-        position: absolute;
-    }
+.tbody-sc {
+    overflow-y: scroll;
+    height: 300px;
+    width: 100%;
+    position: absolute;
+}
 
 /* Crop the image to size */
 .center-cropped {
@@ -102,7 +102,7 @@
     width: 100%;
 }
 
-/* ------ raphael js css ------ */
+/* raphael js css*/
 #content {
     height: 100%;
     padding: 0;
@@ -122,19 +122,61 @@
     border-color: #204d74;
 }
 
-/* curso*/
-.grabbing { cursor: url(../js/david/closedhand.cur), pointer !important; }
-
 /*#add_connection_button {
     white-space: pre-wrap;
 }*/
 
-/* position of + and - for zoom */
-#content #mapControls { position: absolute; left: 15px; top: 15px; width: 29px; }
-#content #mapControls #up { background: url(../js/david/iconUp.png) no-repeat center top; display: block; height: 26px; width: 29px; }
-#content #mapControls #down { background: url(../js/david/iconDown.png) no-repeat center top; display: block; height: 27px; width: 29px; }
+/*@media screen and (min-width: 768px) {
+    .fixed_bottom {
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+    }
+}*/
 
+ .navbar {
+  min-height: 50px;
+}
 
+.navbar-brand {
+  padding: 0 15px;
+  height: 50px;
+  line-height: 50px;
+}
 
+.navbar-toggle {
+  /* (80px - button height 34px) / 2 = 23px */
+  margin-top: 23px;
+  padding: 9px 10px !important;
+}
 
+@media (min-width: 768px) {
+  .navbar-nav > li > a {
+    /* (80px - line-height of 27px) / 2 = 26.5px */
+    padding-top: 17px;
+    padding-bottom: 17px;
+    line-height: 14px;
+  }
+}
+
+.row.content {
+   height: 100%;
+}
+
+#main-container{
+    height: 100vh;
+}
+
+.btn {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* how should be input in settings(visualisation tab) styled*/
+.myInputForm {
+    width: 70%;
+    max-width: 70%;
+    min-width: 70%;
+}
 
