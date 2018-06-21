@@ -1,3 +1,39 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+/* wrapper literarly around evertything */
+.box {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+}
+
+
+/* <EXPERIMENTAL> */
+.box .row {
+  border: 1px dotted grey;
+}
+
+.box .row.header {
+  flex: 0 1 auto;
+  /* The above is shorthand for:
+  flex-grow: 0,
+  flex-shrink: 1,
+  flex-basis: auto
+  */
+}
+
+.box .row.content {
+  flex: 1 1 auto;
+}
+
+.box .row.footer {
+  flex: 0 1 40px;
+}
+/* </EXPERIMENTAL> */
+
 /* Remove the navbar's default margin-bottom and rounded borders */
 .navbar {
     margin-bottom: 0;
@@ -134,6 +170,8 @@ footer {
     }
 }*/
 
+
+/* style for navigation bar */
  .navbar {
   min-height: 50px;
 }
@@ -142,6 +180,7 @@ footer {
   padding: 0 15px;
   height: 50px;
   line-height: 50px;
+  max-height: 50px;
 }
 
 .navbar-toggle {
@@ -159,14 +198,18 @@ footer {
   }
 }
 
+
+/* main row that contains toolbar, canvas and settings*/
 .row.content {
    height: 100%;
 }
 
+/* wrapper around content, navbar and footer not included*/
 #main-container{
-    height: 100vh;
+    height: calc(100vh - 50px);
 }
 
+/* buttons in toolbar */
 .btn {
     overflow: hidden;
     text-overflow: ellipsis;

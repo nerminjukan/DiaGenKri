@@ -167,6 +167,14 @@ Raphael.st.draggable = function() {
 
 //};
 
+// to trigger raphael events
+Raphael.el.trigger = function(eventName){
+    for(var i = 0, len = this.events.length; i < len; i++) {
+        if (this.events[i].name == eventName) {
+            this.events[i].f.call(this);
+        }
+    }
+}
 
 
 class Shape{
@@ -233,6 +241,10 @@ let Colors = {
     green: "rgb(0, 200, 0)",
     red: "rgb(200, 0, 0)"
 };
+
+// variable to know for which "text" shape the text is being edited
+let changingText = null;
+
 // $(window).resize(function(){
 //     scale = getScale(paper);
 //     console.log("[window] resized")
@@ -391,6 +403,13 @@ function getConnectionIndex(id){
 let line_first_shape_id = null,
     line_second_shape_id = null; // when thoose are both something but null, connect two shapes
 function onShapeClicked(){
+
+    // saves the current shape to a global spoce
+    active = this;
+    changingText = this.data('type') === 'decision' ? canvasSets[getSet(this.id)][1] : canvasSets[getSet(this.id)][2]
+    resetText(changingText, this);
+    IDinput.setAttribute('value', this.id);
+
     //console.log("id of shape:", this.id);
     if(!add_connection && !delete_shape)
         return;
@@ -640,6 +659,7 @@ function calculateCenter(shapes){
     }
 }
 
+// happens when you hover over a "plus" which servers for zooming
 function hoverIn(){
     // this.transform("s1.5");
     let currentColor = this.attr('stroke');
@@ -685,6 +705,70 @@ function hoverOut(){
 
     // console.log(this.attr('stroke'));
 }
+
+// fires when "text" shape is clicked
+function textClicked(){
+
+
+    // get correct set, so set which this text belongs to
+
+    // first determine on which position in set is the actual "text" shape,
+    // if its decision node it is on position 1 because it has only 2 elements, 
+    // otherwise it is on position 2 because rectangle got 3 elements
+
+    // let whichAttr =  this.data('type') === 'decision' ? 1 : 2; not working because set does not know if it is decision or not
+    // console.log("PLACE:", whichAttr);
+    console.log("ID OF TEXT:", this.id);
+    let indexCorrectSet = null;
+    try {
+        indexCorrectSet = getSet(this.id, 2);
+
+    } catch(err){
+        indexCorrectSet = getSet(this.id, 1);
+        console.log("[textClicked] text is not on position 2");
+        console.log("[textClicked] its on 1");
+
+    }
+
+    if (indexCorrectSet === null){
+        console.log("[textClicked] was not able to find correct set, something is wrong");
+        return;
+    }
+    console.log("CORRECT INDEX:", indexCorrectSet);
+    active = canvasSets[indexCorrectSet][0];
+    IDinput.setAttribute('value', active.id);
+
+
+    // remember which text you are changin
+    console.log("[textClicked] changingText changed");
+    changingText = this;
+    console.log("[textClicked] element:", this.id, changingText.id);
+
+    // set the value of input field to the current value of text
+    // let inputText = document.getElementById("IDtext");
+    // let descriptionText = document.getElementById("IDdesc");
+    // inputText.value = this.attr("text");
+    // descriptionText.value = active.data("desc"); // active is currently active shape
+
+    resetText(this, active, true);
+    // inputText.focus();
+}
+
+// reset input fields for short and long text
+// parameters:
+//  textShape   - shape that represents text(1(decision) or 2(square) index in a Set)
+//  vertexShape - actual rectangle shape
+//  focus       - whether to focus text field("#IDtext") or not
+function resetText(textShape, vertexShape, focus=false){
+    let inputText = document.getElementById("IDtext");
+    let descriptionText = document.getElementById("IDdesc");
+    inputText.value = textShape.attr("text");
+    descriptionText.value = vertexShape.data("desc"); // active is currently active shape
+    if(focus)
+        inputText.focus();
+}
+
+
 // ************* end of some other functions
 // window.onload = function () {
 // set focus to div with paper
@@ -784,7 +868,6 @@ jQuery(function ($) {
         ev.preventDefault();
     }, false);
 
-
     let element = document.getElementById('content'),
         positionInfo = element.getBoundingClientRect(),
         height = positionInfo.height,
@@ -842,6 +925,74 @@ jQuery(function ($) {
 
         panZoom.zoomOut(0.9, calculateCenter(shapes));
         e.preventDefault();
+    });
+
+    // loose focus if enter is pressed
+    $("#IDtext").keyup(function(e){
+        //console.log("key code:", e.keyCode);
+        // keycode = 8 ==> backspace
+        if(e.keyCode === 13) {
+            // console.log("ENTER CLICKED, loosing focus");
+            // this.blur();
+            // currentText = this.value;
+            // changingText.attr({text: currentText});
+            // this.value = "";
+            $("#IDtext").trigger( "blur" );
+        }
+
+    });
+
+    $("#IDdesc").keyup(function(e){
+        if(e.keyCode === 13) {
+            $("#IDdesc").trigger( "blur" );
+        }
+    });
+
+    // change text on input
+    $('#IDtext').on('input', function() {
+        let currentText = $.trim($(this).val());
+        console.log("[IDtext onInput] changingText:", changingText.id);
+        // check if input changed and its not empty, only then change the value of current text,
+        // because we do not want data loss
+        if(currentText !== changingText.attr("text"))
+            changingText.attr({text: currentText});
+    });
+
+    $('#IDdesc').on('input', function() {
+        let currentText = $.trim($(this).val());
+        console.log("[IDdesc onInput] changingText:", changingText.id);
+        // check if input changed and its not empty, only then change the value of current text,
+        // because we do not want data loss
+        if(currentText !== active.data("desc"))
+            active.data("desc", currentText);
+    });
+
+    // change text on blur
+    $("#IDtext").on("blur", function (){
+        console.log("[IDtext blur]", this.value);
+        let currentText = this.value;
+        // check if input changed and its not empty, only then change the value of current text,
+        // because we do not want data loss
+        if(currentText !== changingText.attr("text"))
+            changingText.attr({text: currentText});
+        //this.value = "";
+
+        // also blur long text if its not focused
+        // console.log($(":focus") );
+        // if ($(":focus") !== document.getElementById("IDdesc")){
+            // console.log("WELL I WILL ALSO BLUR LONG TEXT HEHEHEHE");
+            // $("#IDdesc").trigger( "blur" );
+        // }
+    });
+
+    $("#IDdesc").on("blur", function (){
+        console.log("[IDdesc blur]", this.value);
+        let currentText = this.value;
+        // check if input changed and its not empty, only then change the value of current text,
+        // because we do not want data loss
+        if(currentText !== active.data("desc"))
+            active.data("desc", currentText);
+        //this.value = "";
     });
 
 });
@@ -992,7 +1143,7 @@ function shapeDraw(arg, ev) {
 
         shape.data('connections', true);
 
-        shape.data('desc', '');
+        shape.data('desc', 'default-text');
 
 
         // CREATE + sign
@@ -1009,7 +1160,7 @@ function shapeDraw(arg, ev) {
         resizable.data('parentID', shape.id);
         
         shape.mouseup(function () {
-            // display onlt if shape was not dragged
+            // display only if shape was not dragged
             if(!dragging_set && !line_first_shape_id && !line_second_shape_id && !delete_shape){
                 document.getElementById('descText').innerHTML = shape.data('desc');
                 document.getElementById('h4ID').innerHTML = 'Opis vozlišča: ' +  shape.id;
@@ -1020,15 +1171,19 @@ function shapeDraw(arg, ev) {
 
         shape.data('resizableID', resizable.id);
         // adds a text field
-        txt = paper.text(ev.offsetX+50, ev.offsetY+20, "no-text").attr({'font-size': 7, 'fill': 'red', 'text-anchor': 'middle'});
+        txt = paper.text(ev.offsetX+50, ev.offsetY+20, "default-text").attr({'font-size': 10, 'fill': 'black', 'text-anchor': 'middle'});
 
         // adds a dblclick handler to the 'hide' rectangle
         resizable.click(function(){hideNodes(resizable.data('parentID'))});
 
 
         // adds a dblclick handler to the text field
-        txt.dblclick(function () {
-            IDtext.focus();
+        txt.click(textClicked);
+        txt.mouseover(function (){
+            this.attr({'font-size': 11});
+        });
+        txt.mouseout(function (){
+            this.attr({'font-size': 10});
         });
 
         shape.data('rotate', false);
@@ -1054,13 +1209,17 @@ function shapeDraw(arg, ev) {
         shape.rotate(45);
         shape.data('rotate', true);
         shape.data('type', 'decision');
-        txt = paper.text(ev.offsetX+25, ev.offsetY+25, "no-text").attr({'font-size': 7, 'fill': 'red'});
+        txt = paper.text(ev.offsetX+25, ev.offsetY+25, "default-text").attr({'font-size': 10, 'fill': 'black'});
 
         shape.data('connections', true);
         shape.data('desc', '');
 
-        txt.dblclick(function () {
-            IDtext.focus();
+        txt.click(textClicked);
+        txt.mouseover(function (){
+            this.attr({'font-size': 11});
+        });
+        txt.mouseout(function (){
+            this.attr({'font-size': 10});
         });
 
         set.push(shape);
@@ -1082,7 +1241,7 @@ function shapeDraw(arg, ev) {
         shape = paper.path("M" + ev.offsetX+" "+ev.offsetY+"L" + x + " " + y).attr({stroke: "pink", "stroke-width":4}).data('setID', id);
         shape.rotate(45);
 
-        txt = paper.text(ev.offsetX+40, ev.offsetY+40, "TEST").attr({'fill': 'red'});
+        txt = paper.text(ev.offsetX+40, ev.offsetY+40, "TEST").attr({'fill': 'black'});
 
         set.push(shape);
 
@@ -1107,26 +1266,36 @@ function shapeDraw(arg, ev) {
 
     IDdesc.removeAttribute('disabled');
 
+    // RELEVANT PARTS WERE MOVED TO onShapeClicked() because there were two click handlers
     // shape click event handler
-    shape.click(function () {
+    // shape.click(function () {
 
         // saves the current shape to a global spoce
-        active = shape;
+        // active = shape;
 
         // change colours (testing purposes)
         //shape.attr({fill: getRandomColor()});
         //shape.attr({stroke: getRandomColor()});
 
         // read and set the element's values for IDtext and IDinput
-        IDtext.value = "neki";
+        // IDtext.value = "default";
 
-        IDtext.value = getText(shape.id).short;
-        IDdesc.value = getText(shape.id).long;
-        //console.log("IDtext: ", IDtext.value);
-        IDinput.setAttribute('value', shape.id);
-    });
+        // IDtext.value = getText(shape.id).short;
+        // IDdesc.value = getText(shape.id).long;
+        // //console.log("IDtext: ", IDtext.value);
+        // changingText = shape.data('type') === 'decision' ? canvasSets[getSet(shape.id)][1] : canvasSets[getSet(shape.id)][2]
+        // let inputText = document.getElementById("IDtext");
+        // let descriptionText = document.getElementById("IDdesc");
+        // inputText.value = changingText.attr("text");
+        // descriptionText.value = shape.data("desc"); // active is currently active shape
+        // inputText.focus();
 
+        // resetText(changingText, shape);
+        // IDinput.setAttribute('value', shape.id);
+    // });
 
+    // trigger click so everthing resets :D
+    shape.trigger("click");
 
     // return shape (no actual use)
     return shape;
@@ -1137,13 +1306,15 @@ function shapeDraw(arg, ev) {
 function mainDraw(ev) {
     var data = ev.dataTransfer.getData("text/html");
     shapeDraw(data, ev);
+    // document.getElementById("IDtext").value = "";
+    // document.getElementById("IDdesc").value = "";
 
 }
 
-function getSet(id){
+function getSet(id, which = 0){
     for(let i = 0; i < canvasSets.length; i++){
         //console.log("getSet:",canvasSets[i][0].id);
-        if(canvasSets[i][0].id === id){
+        if(canvasSets[i][which].id === id){
             console.log("found correct set", id);
             return i;
         }
@@ -1161,7 +1332,7 @@ function getText(id) {
 
     var t = set.pop();
     var txt1 = t.attr('text');
-    //console.log("TEKST OUT: ", txt);
+    console.log("TEKST OUT: ", txt);
     set.push(t);
 
     var text2 = set[0].data('desc');
@@ -1173,7 +1344,7 @@ function setText() {
     var id = IDinput.value;
     if(paper.getById(id).type !== 'path'){
         var set = canvasSets[getSet(id)];
-        //console.log("[setText] set:", set);
+        console.log("[setText] set:", set);
         var t = set.pop();
         t.attr({text: IDtext.value});
 

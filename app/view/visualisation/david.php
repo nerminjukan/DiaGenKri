@@ -21,6 +21,8 @@ if(!isset($_SESSION["user"])){
 
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/raphael.pan-zoom.js"></script>
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/david.js"></script>
+    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/handlers.js"></script>
+
 
     <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css">
 
@@ -34,7 +36,6 @@ $description="";
 
 
 ?>
-
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -168,9 +169,9 @@ $description="";
                 <label class="myLabelForm" for="IDinput">Element ID</label></br>
                 <input class="myInputForm" id="IDinput" disabled type="text" name="fname"><br>
                 <label class="myLabelForm" for="IDtext">Text (short)</label></br>
-                <input class="myInputForm"disabled onblur="setText()" id="IDtext" type="text" maxlength="20"></br>
+                <input class="myInputForm"disabled id="IDtext" type="text" maxlength="20"></br>
                 <label class="myLabelForm" for="IDdesc">Text (long)</label></br>
-                <textarea class="myInputForm" rows="6" cols="20" disabled onblur="setText()" id="IDdesc" type="text"></textarea>
+                <textarea class="myInputForm" rows="6" cols="20" disable id="IDdesc" type="text"></textarea>
             </form>
         </div>
     </div>
