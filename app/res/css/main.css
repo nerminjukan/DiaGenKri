@@ -1,3 +1,39 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+/* wrapper literarly around evertything */
+.box {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+}
+
+
+/* <EXPERIMENTAL> */
+.box .row {
+  border: 1px dotted grey;
+}
+
+.box .row.header {
+  flex: 0 1 auto;
+  /* The above is shorthand for:
+  flex-grow: 0,
+  flex-shrink: 1,
+  flex-basis: auto
+  */
+}
+
+.box .row.content {
+  flex: 1 1 auto;
+}
+
+.box .row.footer {
+  flex: 0 1 40px;
+}
+/* </EXPERIMENTAL> */
+
 /* Remove the navbar's default margin-bottom and rounded borders */
 .navbar {
     margin-bottom: 0;
@@ -126,3 +162,83 @@ footer {
     white-space: pre-wrap;
 }*/
 
+/*@media screen and (min-width: 768px) {
+    .fixed_bottom {
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+    }
+}*/
+
+
+/* style for navigation bar */
+ .navbar {
+  min-height: 50px;
+}
+
+.navbar-brand {
+  padding: 0 15px;
+  height: 50px;
+  line-height: 50px;
+  max-height: 50px;
+}
+
+.navbar-toggle {
+  /* (80px - button height 34px) / 2 = 23px */
+  margin-top: 23px;
+  padding: 9px 10px !important;
+}
+
+@media (min-width: 768px) {
+  .navbar-nav > li > a {
+    /* (80px - line-height of 27px) / 2 = 26.5px */
+    padding-top: 17px;
+    padding-bottom: 17px;
+    line-height: 14px;
+  }
+}
+
+
+/* main row that contains toolbar, canvas and settings*/
+.row.content {
+   height: 100%;
+}
+
+/* wrapper around content, navbar and footer not included*/
+#main-container{
+    height: calc(100vh - 50px);
+}
+
+/* buttons in toolbar */
+.btn {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* how should be input in settings(visualisation tab) styled*/
+.myInputForm {
+    width: 90%;
+    max-width: 90%;
+    min-width: 70%;
+}
+
+.modal-body .form-horizontal .col-sm-2,
+.modal-body .form-horizontal .col-sm-10 {
+    width: 100%
+}
+
+.modal-body .form-horizontal .control-label {
+    text-align: left;
+}
+.modal-body .form-horizontal .col-sm-offset-2 {
+    margin-left: 15px;
+}
+
+.modal-dialog{
+    overflow-y: initial !important
+}
+.modal-body{
+    max-height: 500px;
+    overflow-y: auto;
+}

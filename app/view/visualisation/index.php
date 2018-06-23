@@ -158,6 +158,6 @@ if(!isset($_SESSION["user"])){
     </div>
 </div>
 
-<footer class="container-fluid text-center">
+<footer class="container-fluid text-center fixed-bottom">
     <p>©DiaGenKri</p>
 </footer>

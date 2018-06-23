@@ -58,6 +58,7 @@ Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000", b
         line_path.data('fromTo', obj1.id+' '+obj2.id);
         line_path.mouseover(deleteConnection);
         line_path.mouseout(noDelete);
+        line_path.click(deleteConnectionOnClick);
         return {
             bg: bg && bg.split && this.path(path).attr({stroke: bg.split("|")[0], fill: "none", "stroke-width": bg.split("|")[1] || 3}),
             line: line_path,
@@ -73,6 +74,10 @@ Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000", b
     }
 };
 
+// variable that is set to true when some shape is dragged
+// it is useful because it prevents modal to be shown when user drags some shape(actually set)
+let dragging_set = false
+
 // dragging shapes
 Raphael.st.draggable = function() {
         let me = this,
@@ -81,8 +86,11 @@ Raphael.st.draggable = function() {
         ox = 0,
         oy = 0,
         moveFnc = function(dx, dy) {
-            lx = dx + ox;
-            ly = dy + oy;
+            dragging_set = true
+            // console.log('[draggable] start of drag', "scale:", panZoom.getCurrentScale());
+
+            lx = dx * panZoom.getCurrentScale().x + ox;
+            ly = dy * panZoom.getCurrentScale().y + oy;
             if(me[0].data('rotate') === true){
                 me[0].transform('t' + lx + ',' + ly + 'r45');
                 me[1].transform('t' + lx + ',' + ly);
@@ -95,6 +103,7 @@ Raphael.st.draggable = function() {
                 paper.connection(connections[i]);
             }
             //console.log('DX AND DY: ', dx, dy);
+
         },
         startFnc = function() {},
         endFnc = function() {
@@ -119,7 +128,8 @@ Raphael.st.draggable = function() {
                 console.log('E MATRIX: ', e.matrix);
 
             });*/
-            console.log('\n');
+            dragging_set = false
+            // console.log('[draggable] end of drag');
         };
 
     this.drag(moveFnc, startFnc, endFnc);
@@ -157,6 +167,14 @@ Raphael.st.draggable = function() {
 
 //};
 
+// to trigger raphael events
+Raphael.el.trigger = function(eventName){
+    for(var i = 0, len = this.events.length; i < len; i++) {
+        if (this.events[i].name == eventName) {
+            this.events[i].f.call(this);
+        }
+    }
+}
 
 
 class Shape{
@@ -186,19 +204,50 @@ let connections = [];
 let id_connection = 0;
 // if adding connections is possible
 let add_connection = false;
+// if deleting connections is possible
+let delete_connection = false
+// if deleting shapes(actually sets of shapes) is possible
+let delete_shape = false
 // if removing connection is possible - that's when user's mouse is on the line and user pressed some key(- minus key for now)
 // following variable represents id of path(connection) to be removed
 let remove_connectionn_id = null;
 // variable for zoom
 let panZoom = null;
 
-// var scale = {
-//     x:1,
-//     y:1
-// }
+// HTML input ID input field
+var IDinput;
+
+// HTML input Text field
+var IDtext;
+
+let IDdesc;
+
+// the currently handled shape -> makes it globally accessible (idea)
+var active;
+
+// counter and ID number for sets inserted into 'canvasSets'
+var id = 0;
+
+// holds all the sets of elements indexied by 'id'
+var canvasSets = [];
+
+var scale = {
+    x:1,
+    y:1
+};
+
+// custom defined colors as rgb channels
+let Colors = {
+    green: "rgb(0, 200, 0)",
+    red: "rgb(200, 0, 0)"
+};
+
+// variable to know for which "text" shape the text is being edited
+let changingText = null;
 
 // $(window).resize(function(){
 //     scale = getScale(paper);
+//     console.log("[window] resized")
 // })
 
 // function getScale(paper, new_width, new_height){
@@ -233,11 +282,14 @@ var dragger = function () {
 
 // ############## START OF REMOVE SHAPE ##############
 // on double click remove "double clicked" shape
-function doubleClick(){
+function removeShape(shape_id){
     //console.log("shape to be removed:", this.id);
+    // shape should not be deleted
+    if(!delete_shape)
+        return
 
     // get ids of all connections that a shape got
-    let connections_ids = getAllConnections(this.id);
+    let connections_ids = getAllConnections(shape_id);
 
     // remove connections
     removeConnections(connections_ids);
@@ -249,16 +301,21 @@ function doubleClick(){
      if(shapes[i].id === this.id)
      index = i;
      }*/
-    var toRemove = canvasSets[getSet(this.id)];
+    // console.log("[removeShape] id of shape to be removed:", shape_id, shape_id)
+    // console.log("[removeShape] canvasSets:", canvasSets);
+    let toRemove = canvasSets[getSet(shape_id)];
+    console.log("[removeShape] set with this shape to be removed:", toRemove);
 
-    canvasSets.splice(getSet(this.id), 1);
+    canvasSets.splice(getSet(shape_id), 1);
+    console.log("REMOVING:");
     toRemove.forEach(function (e) {
+        console.log(e.id)
         e.remove();
     });
     if (index > -1) {
         //console.log("removing", this.id);
         shapes.splice(index, 1);
-        this.remove();
+        shape_id.remove();
         // reset variables for shapes(which should be connected)
         // thats saftey because one might want to add connection to first shape, then delete second one by mistake and there would be an error connecting thoose two
         line_first_shape_id = null;
@@ -293,6 +350,32 @@ function removeConnections(c_ids){
     }
 }
 
+// to set delete_shape with click on button
+function setDeleteShape(){
+    if(add_connection)
+        addConnection();
+
+    if(delete_connection)
+        setDeleteConnection();
+
+    delete_shape = !delete_shape;
+
+    if(delete_shape){
+        document.getElementById("delete_shape_button").classList.remove("btn");
+        document.getElementById("delete_shape_button").classList.remove("btn-primary");
+        document.getElementById("delete_shape_button").classList.add("button_checked");
+
+        console.log("[setDeleteShape button] deleting shapes")
+    }
+    else{
+        document.getElementById("delete_shape_button").classList.remove("button_checked");
+        document.getElementById("delete_shape_button").classList.add("btn-primary");
+        document.getElementById("delete_shape_button").classList.add("btn");
+
+        console.log("[setDeleteShape button] not deleting shapes")
+    }
+}
+
 // ############## END OF REMOVE SHAPE ##############
 
 // ############## START OF REMOVE CONNECTION ##############
@@ -319,11 +402,29 @@ function getConnectionIndex(id){
 // ############## START OF CONNECTING TWO SHAPES ##############
 let line_first_shape_id = null,
     line_second_shape_id = null; // when thoose are both something but null, connect two shapes
-function connectTwoShapes(){
+function onShapeClicked(){
+
+    // saves the current shape to a global spoce
+    active = this;
+    changingText = this.data('type') === 'decision' ? canvasSets[getSet(this.id)][1] : canvasSets[getSet(this.id)][2]
+    resetText(changingText, this);
+    IDinput.setAttribute('value', this.id);
+
     //console.log("id of shape:", this.id);
-    if(!add_connection)
+    if(!add_connection && !delete_shape)
         return;
+    else if(delete_shape){
+        // delete shape
+        removeShape(this.id);
+        // reset deleting shapes
+        setDeleteShape();
+        // and return
+        return;
+    }
+
     if(!line_first_shape_id){
+        // modal with vertex info should be shown only if user is not adding connections
+        // dragging_set = true
         line_first_shape_id = this.id;
         //console.log("[connect shapes] got first shape:", this.id);
         return "first";
@@ -331,12 +432,16 @@ function connectTwoShapes(){
 
     if(!line_second_shape_id){
         if(this.id === line_first_shape_id){
+            // modal with vertex info should be shown only if user is not adding connections
+            // dragging_set = true
+
             //console.log("[connect shapes] same shapes, choose different!");
             return "error";
         }
         line_second_shape_id = this.id;
         //console.log("[connect shapes] got second shape:", this.id);
     }
+
 
     // check if two shapes are already connected
     // TODO;
@@ -387,23 +492,102 @@ function getIndexesOfTwoShapes(shape1_id, shape2_id){
 
 // when add connection is true, you can actually add connection
 function addConnection(){
+    // if user decides to add connection he can not delete it at same time
+    if(delete_connection)
+        setDeleteConnection();
+
+    if(delete_shape)
+        setDeleteShape();
+
     add_connection = !add_connection;
+    
+
     if(add_connection){
         document.getElementById("add_connection_button").classList.remove("btn");
         document.getElementById("add_connection_button").classList.remove("btn-primary");
         document.getElementById("add_connection_button").classList.add("button_checked");
+        // modal info about vertex should not be displayed when user is adding connections
+        dragging_set = true
+        console.log("[addConnection button] adding connections")
     }
     else{
         document.getElementById("add_connection_button").classList.remove("button_checked");
         document.getElementById("add_connection_button").classList.add("btn-primary");
         document.getElementById("add_connection_button").classList.add("btn");
-
+        // modal info about vertex should not be displayed when user is adding connections
+        console.log("[addConnection button] not adding connections")
     }
     // reset variables for shapes
     line_first_shape_id = null;
     line_second_shape_id = null;
+
     //console.log("adding connection?", add_connection);
 }
+
+// when add connection is true, you can actually add connection
+function setDeleteConnection(){
+    if(add_connection)
+        addConnection();
+
+    if(delete_shape)
+        setDeleteShape();
+
+    delete_connection = !delete_connection;
+
+    if(delete_connection){
+        document.getElementById("delete_connection_button").classList.remove("btn");
+        document.getElementById("delete_connection_button").classList.remove("btn-primary");
+        document.getElementById("delete_connection_button").classList.add("button_checked");
+
+        console.log("[deleteConnection button] deleting connections")
+    }
+    else{
+        document.getElementById("delete_connection_button").classList.remove("button_checked");
+        document.getElementById("delete_connection_button").classList.add("btn-primary");
+        document.getElementById("delete_connection_button").classList.add("btn");
+
+        console.log("[deleteConnection button] not deleting connections")
+    }
+}
+
+
+// delete connection on click on connection if everything was set
+function deleteConnectionOnClick(){
+    if(remove_connectionn_id && delete_connection){
+        console.log("deleting connection", this.id)
+        console.log("minus pressed, delete path with id", remove_connectionn_id);
+        let index = getConnectionIndex(remove_connectionn_id);
+        // remove line and than delete whole connection from array
+        connections[index].line.remove();
+        connections.splice(index, 1);
+        remove_connectionn_id = null;
+        // reset delete_connection to false
+        setDeleteConnection();
+    }
+    else {
+        console.log("you didnt click button to delete connection hehehehehehe");
+    }
+}
+
+
+// delete connection on back arrow key press
+// $('html').keyup(function(e){
+//     //console.log("key code:", e.keyCode);
+//     // keycode = 8 ==> backspace
+//     if(e.keyCode === 8) {
+//         if(remove_connectionn_id){
+//             //console.log("minus pressed, delete path with id", remove_connectionn_id);
+//             let index = getConnectionIndex(remove_connectionn_id);
+//             // remove line and than delete whole connection from array
+//             connections[index].line.remove();
+//             connections.splice(index, 1);
+//             remove_connectionn_id = null;
+//         }
+//         else {
+//             //console.log("just minus pressed, delete nothing");
+//         }
+//     }
+// });
 
 // ############## END OF CONNECTING TWO SHAPES ##############
 
@@ -474,6 +658,117 @@ function calculateCenter(shapes){
         y: y/shapes.length || 0
     }
 }
+
+// happens when you hover over a "plus" which servers for zooming
+function hoverIn(){
+    // this.transform("s1.5");
+    let currentColor = this.attr('stroke');
+    // console.log("[hoverIn]",this.attr('stroke'));
+    // let hehe = Raphael.getColor();
+    console.log("[hoverIn]",currentColor, Raphael.getRGB(currentColor).r, Raphael.getRGB(currentColor).g, Raphael.getRGB(currentColor).b);
+    let newColor = "rgb(" + Raphael.getRGB(currentColor).r * 0.5 + ", " +
+                            Raphael.getRGB(currentColor).g * 0.5 + ", " +
+                            Raphael.getRGB(currentColor).b * 0.5 + ")";
+    console.log("[hoverIn] NEW COLOR:", newColor);
+    if(Raphael.getRGB(currentColor).r == 0)
+        this.attr({stroke: "rgb(0, 100, 0)"});
+        // console.log("red is zero")
+    else
+        this.attr({stroke: "rgb(100, 0, 0)"});
+        // console.log("green is zero")
+
+    // this.attr({stroke: newColor});
+
+    // this.attr({stroke: "rgb(150, 100, 70)"});
+}
+function hoverOut(){
+    // this.transform("s1");
+    // this.transform("s1.5");
+    let currentColor = this.attr('stroke');
+    // console.log("[hoverOut]",this.attr('stroke'));
+    // let hehe = Raphael.getColor();
+    console.log("[hoverOut]",currentColor, Raphael.getRGB(currentColor).r, Raphael.getRGB(currentColor).g, Raphael.getRGB(currentColor).b);
+    let newColor = "rgb(" + Raphael.getRGB(currentColor).r * 2 + ", " +
+                            Raphael.getRGB(currentColor).g * 2 + ", " +
+                            Raphael.getRGB(currentColor).b * 2 + ")";
+    console.log("[hoverOut] NEW COLOR:", newColor);
+
+    if(Raphael.getRGB(currentColor).r == 0)
+        this.attr({stroke: "rgb(0, 200, 0)"});
+        // console.log("red is zero")
+    else
+        this.attr({stroke: "rgb(200, 0, 0)"});
+
+    // this.attr({stroke: newColor});
+
+    // this.attr({stroke: "rgb(70, 100, 150)"});
+
+    // console.log(this.attr('stroke'));
+}
+
+// fires when "text" shape is clicked
+function textClicked(){
+
+
+    // get correct set, so set which this text belongs to
+
+    // first determine on which position in set is the actual "text" shape,
+    // if its decision node it is on position 1 because it has only 2 elements, 
+    // otherwise it is on position 2 because rectangle got 3 elements
+
+    // let whichAttr =  this.data('type') === 'decision' ? 1 : 2; not working because set does not know if it is decision or not
+    // console.log("PLACE:", whichAttr);
+    console.log("ID OF TEXT:", this.id);
+    let indexCorrectSet = null;
+    try {
+        indexCorrectSet = getSet(this.id, 2);
+
+    } catch(err){
+        indexCorrectSet = getSet(this.id, 1);
+        console.log("[textClicked] text is not on position 2");
+        console.log("[textClicked] its on 1");
+
+    }
+
+    if (indexCorrectSet === null){
+        console.log("[textClicked] was not able to find correct set, something is wrong");
+        return;
+    }
+    console.log("CORRECT INDEX:", indexCorrectSet);
+    active = canvasSets[indexCorrectSet][0];
+    IDinput.setAttribute('value', active.id);
+
+
+    // remember which text you are changin
+    console.log("[textClicked] changingText changed");
+    changingText = this;
+    console.log("[textClicked] element:", this.id, changingText.id);
+
+    // set the value of input field to the current value of text
+    // let inputText = document.getElementById("IDtext");
+    // let descriptionText = document.getElementById("IDdesc");
+    // inputText.value = this.attr("text");
+    // descriptionText.value = active.data("desc"); // active is currently active shape
+
+    resetText(this, active, true);
+    // inputText.focus();
+}
+
+// reset input fields for short and long text
+// parameters:
+//  textShape   - shape that represents text(1(decision) or 2(square) index in a Set)
+//  vertexShape - actual rectangle shape
+//  focus       - whether to focus text field("#IDtext") or not
+function resetText(textShape, vertexShape, focus=false){
+    let inputText = document.getElementById("IDtext");
+    let descriptionText = document.getElementById("IDdesc");
+    inputText.value = textShape.attr("text");
+    descriptionText.value = vertexShape.data("desc"); // active is currently active shape
+    if(focus)
+        inputText.focus();
+}
+
+
 // ************* end of some other functions
 // window.onload = function () {
 // set focus to div with paper
@@ -518,8 +813,8 @@ function calculateCenter(shapes){
 //     // save reference to paper
 //     shapes[i].data("paper", paper);
 //     shapes[i].drag(move, dragger, up);
-//     shapes[i].dblclick(doubleClick);
-//     shapes[i].click(connectTwoShapes);
+//     shapes[i].dblclick(removeShape);
+//     shapes[i].click(onShapeClicked);
 // }
 // add connections between shapes
 /*connections.push(paper.connection(shapes[0], shapes[1], "#000", id_connection++));
@@ -573,13 +868,12 @@ jQuery(function ($) {
         ev.preventDefault();
     }, false);
 
-
     let element = document.getElementById('content'),
         positionInfo = element.getBoundingClientRect(),
         height = positionInfo.height,
         width = positionInfo.width;
 
-    paper = Raphael(document.getElementById('content'), 1500, 1500);
+    paper = Raphael(document.getElementById('content'), 3000, 3000);
     // paper.rect(0, 0, 2000, 2000).attr({"stroke-width": 10});
     //console.log("[main] paper canvas:", paper.canvas);
 
@@ -595,6 +889,13 @@ jQuery(function ($) {
 
     // create set for objects
     var mySet = paper.set();
+    // var d = ["M", 100, 100, "l", 10, 0, "M", 105, 95, "l", 0, 10].join(",");
+
+    // var c1 = paper.path(d).attr({"stroke-width": 3});
+    // var c2 = paper.path("M200 200l10 0M205 195l0 10").attr({"stroke-width": 3});
+
+    // var c2 = paper.path("M105 95l0 10").attr({"stroke-width": 3});
+    // var c3 = paper.path("M2 100 h100 v100 h100 v100 h-100 v100 h-100 v-100 h-100 v-100 h100 z").attr({"stroke-width": 5, fill: Raphael.getColor()});
 
     // create shapes
     for (var i = 0, ii = shapes.length; i < ii; i++) {
@@ -603,8 +904,8 @@ jQuery(function ($) {
         // save reference to paper
         shapes[i].data("paper", paper);
         // shapes[i].drag(move, dragger, up);
-        shapes[i].dblclick(doubleClick);
-        shapes[i].click(connectTwoShapes);
+        //shapes[i].dblclick(removeShape);
+        shapes[i].click(onShapeClicked);
     }
 
 
@@ -626,29 +927,77 @@ jQuery(function ($) {
         e.preventDefault();
     });
 
+    // loose focus if enter is pressed
+    $("#IDtext").keyup(function(e){
+        //console.log("key code:", e.keyCode);
+        // keycode = 8 ==> backspace
+        if(e.keyCode === 13) {
+            // console.log("ENTER CLICKED, loosing focus");
+            // this.blur();
+            // currentText = this.value;
+            // changingText.attr({text: currentText});
+            // this.value = "";
+            $("#IDtext").trigger( "blur" );
+        }
+
+    });
+
+    $("#IDdesc").keyup(function(e){
+        if(e.keyCode === 13) {
+            $("#IDdesc").trigger( "blur" );
+        }
+    });
+
+    // change text on input
+    $('#IDtext').on('input', function() {
+        let currentText = $.trim($(this).val());
+        console.log("[IDtext onInput] changingText:", changingText.id);
+        // check if input changed and its not empty, only then change the value of current text,
+        // because we do not want data loss
+        if(currentText !== changingText.attr("text"))
+            changingText.attr({text: currentText});
+    });
+
+    $('#IDdesc').on('input', function() {
+        let currentText = $.trim($(this).val());
+        console.log("[IDdesc onInput] changingText:", changingText.id);
+        // check if input changed and its not empty, only then change the value of current text,
+        // because we do not want data loss
+        if(currentText !== active.data("desc"))
+            active.data("desc", currentText);
+    });
+
+    // change text on blur
+    $("#IDtext").on("blur", function (){
+        console.log("[IDtext blur]", this.value);
+        let currentText = this.value;
+        // check if input changed and its not empty, only then change the value of current text,
+        // because we do not want data loss
+        if(currentText !== changingText.attr("text"))
+            changingText.attr({text: currentText});
+        //this.value = "";
+
+        // also blur long text if its not focused
+        // console.log($(":focus") );
+        // if ($(":focus") !== document.getElementById("IDdesc")){
+            // console.log("WELL I WILL ALSO BLUR LONG TEXT HEHEHEHE");
+            // $("#IDdesc").trigger( "blur" );
+        // }
+    });
+
+    $("#IDdesc").on("blur", function (){
+        console.log("[IDdesc blur]", this.value);
+        let currentText = this.value;
+        // check if input changed and its not empty, only then change the value of current text,
+        // because we do not want data loss
+        if(currentText !== active.data("desc"))
+            active.data("desc", currentText);
+        //this.value = "";
+    });
+
 });
 // ************************************** end of zoom
 
-
-
-
-$('html').keyup(function(e){
-    //console.log("key code:", e.keyCode);
-    // keycode = 8 ==> backspace
-    if(e.keyCode === 8) {
-        if(remove_connectionn_id){
-            //console.log("minus pressed, delete path with id", remove_connectionn_id);
-            let index = getConnectionIndex(remove_connectionn_id);
-            // remove line and than delete whole connection from array
-            connections[index].line.remove();
-            connections.splice(index, 1);
-            remove_connectionn_id = null;
-        }
-        else {
-            //console.log("just minus pressed, delete nothing");
-        }
-    }
-});
 
 
 
@@ -658,29 +1007,12 @@ function addToShapes(shape){
     // save reference to paper
     shape.data("paper", paper);
     // shape.drag(move, dragger, up);
-    shape.dblclick(doubleClick);
-    shape.click(connectTwoShapes);
+    //shape.dblclick(removeShape);
+    shape.click(onShapeClicked);
     shapes.push(shape)
 }
 
 ////////
-
-// HTML input ID input field
-var IDinput;
-
-// HTML input Text field
-var IDtext;
-
-let IDdesc;
-
-// the currently handled shape -> makes it globally accessible (idea)
-var active;
-
-// counter and ID number for sets inserted into 'canvasSets'
-var id = 0;
-
-// holds all the sets of elements indexied by 'id'
-var canvasSets = [];
 
 // helper function for 'element.click' event handler
 function getRandomColor() {
@@ -727,7 +1059,7 @@ function changeConnectionVisibility(shape_id, first_id){
             //console.log('FOUND ONE');
             if(hide){
                 if(shape.data('type') !== 'decision'){
-                    paper.getById(shape.data('resizableID')).attr({fill: 'red'});
+                    paper.getById(shape.data('resizableID')).attr({stroke: Colors.red});
                 }
 
                 setID = getSet(connections[i].to.id);
@@ -755,7 +1087,7 @@ function changeConnectionVisibility(shape_id, first_id){
             }
             else{
                 if(shape.data('type') !== 'decision'){
-                    paper.getById(shape.data('resizableID')).attr({fill: 'green'});
+                    paper.getById(shape.data('resizableID')).attr({stroke: Colors.green});
                 }
 
                 setID = getSet(connections[i].to.id);
@@ -807,34 +1139,51 @@ function shapeDraw(arg, ev) {
     // draws a rectangle
     if(arg === "aSquare"){
         // create element and draw it on canvas
-        shape =  paper.rect(ev.offsetX, ev.offsetY, 80, 30).attr({fill: "white", cursor: "move"}).data('setID', id);
+        shape =  paper.rect(ev.offsetX, ev.offsetY, 100, 40).attr({fill: "white", cursor: "move"}).data('setID', id);
 
         shape.data('connections', true);
 
-        shape.data('desc', '');
+        shape.data('desc', 'default-text');
+
+
+        // CREATE + sign
+        console.log("[shapeDraw] ev.offset:", ev.offsetX, ev.offsetY)
+        let d = ["M", ev.offsetX+5, ev.offsetY+10, "l", 10, 0, "M", ev.offsetX+10, ev.offsetY+5, "l", 0, 10].join(",");
+        let resizable = paper.path(d).attr({"stroke-width": 3, stroke: Colors.green});
+        resizable.mouseover(hoverIn);
+        resizable.mouseout(hoverOut);
+        // DONE + sign
 
         // creates a 'hide' rectangle
-        var resizable = paper.rect(ev.offsetX+5, ev.offsetY+5, 10, 10).attr({fill: "green"});
+        // var resizable = paper.rect(ev.offsetX+5, ev.offsetY+5, 10, 10).attr({fill: "green"});
         resizable.data('type', 'hide');
         resizable.data('parentID', shape.id);
         
-        shape.click(function () {
-            document.getElementById('descText').innerHTML = shape.data('desc');
-            document.getElementById('h4ID').innerHTML = 'Opis vozlišča: ' +  shape.id;
-            $("#longText").modal();
+        shape.mouseup(function () {
+            // display only if shape was not dragged
+            if(!dragging_set && !line_first_shape_id && !line_second_shape_id && !delete_shape){
+                document.getElementById('descText').innerHTML = shape.data('desc');
+                document.getElementById('h4ID').innerHTML = 'Description of node: ' +  shape.id;
+                $("#longText").modal();
+                console.log("[longText modal] showing");
+            }
         });
 
         shape.data('resizableID', resizable.id);
         // adds a text field
-        txt = paper.text(ev.offsetX+40, ev.offsetY+20, "no-text").attr({'font-size': 7, 'fill': 'red', 'text-anchor': 'middle'});
+        txt = paper.text(ev.offsetX+50, ev.offsetY+20, "default-text").attr({'font-size': 10, 'fill': 'black', 'text-anchor': 'middle'});
 
         // adds a dblclick handler to the 'hide' rectangle
         resizable.click(function(){hideNodes(resizable.data('parentID'))});
 
 
         // adds a dblclick handler to the text field
-        txt.dblclick(function () {
-            IDtext.focus();
+        txt.click(textClicked);
+        txt.mouseover(function (){
+            this.attr({'font-size': 11});
+        });
+        txt.mouseout(function (){
+            this.attr({'font-size': 10});
         });
 
         shape.data('rotate', false);
@@ -860,13 +1209,17 @@ function shapeDraw(arg, ev) {
         shape.rotate(45);
         shape.data('rotate', true);
         shape.data('type', 'decision');
-        txt = paper.text(ev.offsetX+25, ev.offsetY+25, "no-text").attr({'font-size': 7, 'fill': 'red'});
+        txt = paper.text(ev.offsetX+25, ev.offsetY+25, "default-text").attr({'font-size': 10, 'fill': 'black'});
 
         shape.data('connections', true);
         shape.data('desc', '');
 
-        txt.dblclick(function () {
-            IDtext.focus();
+        txt.click(textClicked);
+        txt.mouseover(function (){
+            this.attr({'font-size': 11});
+        });
+        txt.mouseout(function (){
+            this.attr({'font-size': 10});
         });
 
         set.push(shape);
@@ -888,7 +1241,7 @@ function shapeDraw(arg, ev) {
         shape = paper.path("M" + ev.offsetX+" "+ev.offsetY+"L" + x + " " + y).attr({stroke: "pink", "stroke-width":4}).data('setID', id);
         shape.rotate(45);
 
-        txt = paper.text(ev.offsetX+40, ev.offsetY+40, "TEST").attr({'fill': 'red'});
+        txt = paper.text(ev.offsetX+40, ev.offsetY+40, "TEST").attr({'fill': 'black'});
 
         set.push(shape);
 
@@ -913,26 +1266,36 @@ function shapeDraw(arg, ev) {
 
     IDdesc.removeAttribute('disabled');
 
+    // RELEVANT PARTS WERE MOVED TO onShapeClicked() because there were two click handlers
     // shape click event handler
-    shape.click(function () {
+    // shape.click(function () {
 
         // saves the current shape to a global spoce
-        active = shape;
+        // active = shape;
 
         // change colours (testing purposes)
         //shape.attr({fill: getRandomColor()});
         //shape.attr({stroke: getRandomColor()});
 
         // read and set the element's values for IDtext and IDinput
-        IDtext.value = "neki";
+        // IDtext.value = "default";
 
-        IDtext.value = getText(shape.id).short;
-        IDdesc.value = getText(shape.id).long;
-        //console.log("IDtext: ", IDtext.value);
-        IDinput.setAttribute('value', shape.id);
-    });
+        // IDtext.value = getText(shape.id).short;
+        // IDdesc.value = getText(shape.id).long;
+        // //console.log("IDtext: ", IDtext.value);
+        // changingText = shape.data('type') === 'decision' ? canvasSets[getSet(shape.id)][1] : canvasSets[getSet(shape.id)][2]
+        // let inputText = document.getElementById("IDtext");
+        // let descriptionText = document.getElementById("IDdesc");
+        // inputText.value = changingText.attr("text");
+        // descriptionText.value = shape.data("desc"); // active is currently active shape
+        // inputText.focus();
 
+        // resetText(changingText, shape);
+        // IDinput.setAttribute('value', shape.id);
+    // });
 
+    // trigger click so everthing resets :D
+    shape.trigger("click");
 
     // return shape (no actual use)
     return shape;
@@ -943,14 +1306,16 @@ function shapeDraw(arg, ev) {
 function mainDraw(ev) {
     var data = ev.dataTransfer.getData("text/html");
     shapeDraw(data, ev);
+    // document.getElementById("IDtext").value = "";
+    // document.getElementById("IDdesc").value = "";
 
 }
 
-function getSet(id){
+function getSet(id, which = 0){
     for(let i = 0; i < canvasSets.length; i++){
         //console.log("getSet:",canvasSets[i][0].id);
-        if(canvasSets[i][0].id === id){
-            //console.log("found correct set");
+        if(canvasSets[i][which].id === id){
+            console.log("found correct set", id);
             return i;
         }
     }
@@ -959,15 +1324,15 @@ function getSet(id){
 
 // acces the correct set from canvasSets and extract the text element 't', change the element's value
 function getText(id) {
-    //console.log("[getText] id:",id);
+    // console.log("[getText] id:",id);
     let index = getSet(id);
 
     var set = canvasSets[index];
-    //console.log("[getText] set:", set);
+    // console.log("[getText] set:", set);
 
     var t = set.pop();
     var txt1 = t.attr('text');
-    //console.log("TEKST OUT: ", txt);
+    console.log("TEKST OUT: ", txt);
     set.push(t);
 
     var text2 = set[0].data('desc');
@@ -979,7 +1344,7 @@ function setText() {
     var id = IDinput.value;
     if(paper.getById(id).type !== 'path'){
         var set = canvasSets[getSet(id)];
-        //console.log("[setText] set:", set);
+        console.log("[setText] set:", set);
         var t = set.pop();
         t.attr({text: IDtext.value});
 
