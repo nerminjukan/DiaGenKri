@@ -223,3 +223,10 @@ footer {
     min-width: 70%;
 }
 
+/* when input is disabled */
+input:disabled, textarea:disabled {
+  color: gray;
+  border: 1px solid gray;
+}
+
+

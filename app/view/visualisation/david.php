@@ -21,8 +21,6 @@ if(!isset($_SESSION["user"])){
 
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/raphael.pan-zoom.js"></script>
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/david.js"></script>
-    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/handlers.js"></script>
-
 
     <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css">
 
@@ -171,7 +169,7 @@ $description="";
                 <label class="myLabelForm" for="IDtext">Text (short)</label></br>
                 <input class="myInputForm"disabled id="IDtext" type="text" maxlength="20"></br>
                 <label class="myLabelForm" for="IDdesc">Text (long)</label></br>
-                <textarea class="myInputForm" rows="6" cols="20" disable id="IDdesc" type="text"></textarea>
+                <textarea class="myInputForm" rows="6" cols="20" disabled id="IDdesc" type="text"></textarea>
             </form>
         </div>
     </div>
