@@ -184,12 +184,12 @@ $description="";
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 id="h4ID" class="modal-title">
-                    Podroben opis vozlišča
+                    Detailed node description
                     <!---<script>document.getElementById('h4ID').innerText=document.getElementById('IDtext').value</script>--->
                 </h4>
             </div>
             <div class="modal-body">
-                <span style="word-wrap: break-word" id="descText"></span>
+                <pre><span style="word-wrap: break-word" id="descText"></span></pre>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -207,14 +207,56 @@ $description="";
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Modal Header</h4>
+                <h4 class="modal-title">Edit graph information</h4>
             </div>
-            <div class="modal-body">
-                <span style="word-wrap: break-word" id="descText"></span>
+            <div class="modal-body modal-body-graph">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label  class="col-sm-2 control-label"
+                                for="graphName">Graph name</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control"
+                                   id="graphName" placeholder="Graph name"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="graphDescritption" >Graph description</label>
+                        <div class="col-sm-10">
+                            <pre><textarea class="form-control"
+                                   id="graphDescritption" placeholder="Graph description" rows="6" cols="20" id="graphDescritption" type="text"></textarea></pre>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="graphType" >Graph type</label>
+                        <div class="col-sm-10">
+                            <div>
+                                <label class="radio-inline" for="typeVisual"><input class="radio" id="typeVisual" type="radio" name="gType" value="visual">Visual</label>
+                            </div>
+                            <div>
+                                <label class="radio-inline" for="typeDiagnostic"><input class="radio" type="radio" id="typeDiagnostic" name="gType" value="diagnostic">Diagnostic</label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" for="sel2">Algorithm type (ctrl+click - select multiple types)</label>
+                        <div class="col-sm-10">
+                            <select multiple class="form-control" id="sel2">
+                                <option id="opt1">Diagnostic</option>
+                                <option id="opt2">Treatment</option>
+                                <option id="opt3">???</option>
+                                <option id="opt4">...</option>
+                            </select>
+                        </div>
+
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" data-dismiss="modal">Save</button>
-                <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+                <button id="modal-save-graph" type="button" class="btn btn-success" data-dismiss="modal">Save</button>
+                <button id="modal-cancel-graph" type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
             </div>
         </div>
 

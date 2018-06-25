@@ -218,15 +218,37 @@ footer {
 
 /* how should be input in settings(visualisation tab) styled*/
 .myInputForm {
-    width: 70%;
-    max-width: 70%;
-    min-width: 70%;
+    width: 85%;
+    max-width: 85%;
+    min-width: 85%;
 }
 
 /* when input is disabled */
 input:disabled, textarea:disabled {
   color: gray;
   border: 1px solid gray;
+}
+
+/* style for modals */
+
+.modal-body .form-horizontal .col-sm-2,
+.modal-body .form-horizontal .col-sm-10 {
+    width: 100%
+}
+
+.modal-body .form-horizontal .control-label {
+    text-align: left;
+}
+.modal-body .form-horizontal .col-sm-offset-2 {
+    margin-left: 15px;
+}
+
+.modal-dialog{
+    overflow-y: initial !important
+}
+.modal-body{
+    max-height: 500px;
+    overflow-y: auto;
 }
 
 

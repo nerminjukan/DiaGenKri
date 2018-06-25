@@ -70,17 +70,20 @@ Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000") {
         // console.log("[creating connections] line_path:", line_path);
 
         //line_path.setID = id_c;
-        line_path.data('fromTo', obj1.id+' '+obj2.id);
+        line_path.data('fromTo', obj1.id + " " + obj2.id);
         line_path.mouseover(deleteConnection);
         line_path.mouseout(noDelete);
         line_path.click(deleteConnectionOnClick);
+
+        console.log("[connection] path from:", obj1.id, "to:", obj2.id);
+        console.log("[connection] fromTo", line_path.data("fromTo"));
 
 
         conn_text = paper.text(line_path.getPointAtLength(line_path.getTotalLength() / 2).x, 
             line_path.getPointAtLength(line_path.getTotalLength() / 2).y-20, "default-text");
 
         conn_text.attr({'fill': 'black', 'font-size': 12});
-        conn_text.data("connection_text", true);
+        conn_text.data("type", "connection_text");
         conn_text.click(textClicked);
         conn_text.mouseover(function (){
             this.attr({'font-size': 13});
@@ -285,6 +288,10 @@ let changingText = null;
 //     }
 // }
 
+// create custom event
+// its purpose will be to reset inputs
+let event_reset = new Event("reset_inputs");
+
 var dragger = function () {
         this.ox = this.type == "rect" ? this.attr("x") : this.attr("cx");
         this.oy = this.type == "rect" ? this.attr("y") : this.attr("cy");
@@ -338,6 +345,10 @@ function removeShape(shape_id){
         console.log(e.id)
         e.remove();
     });
+
+    // resets input elements
+    completeResetInputs();
+
     if (index > -1) {
         //console.log("removing", this.id);
         shapes.splice(index, 1);
@@ -583,6 +594,7 @@ function setDeleteConnection(){
 // delete connection on click on connection if everything was set
 function deleteConnectionOnClick(){
     if(remove_connectionn_id && delete_connection){
+        completeResetInputs();
         console.log("deleting connection", this.id)
         console.log("minus pressed, delete path with id", remove_connectionn_id);
         let index = getConnectionIndex(remove_connectionn_id);
@@ -740,7 +752,8 @@ function hoverOut(){
 function textClicked(){
 
     // first check if the text is connections text
-    if(this.data("connection_text")) {
+    if(this.data("type") === "connection_text") {
+        completeResetInputs();
         console.log("POVEZAVE POVEZAVE");
         disableInputs(true, "#IDdesc");
         disableInputs(false, "#IDtext");
@@ -811,6 +824,15 @@ function resetText(textShape, vertexShape, focus=false){
     descriptionText.value = vertexShape.data("desc"); // active is currently active shape
     if(focus)
         inputText.focus();
+}
+
+// completly resets anything related to inputs
+function completeResetInputs(){
+    active = null;
+    changingText = null;
+    IDinput.setAttribute('value', "");
+    document.getElementById("IDtext").value = "";
+    document.getElementById("IDdesc").value = "";
 }
 
 // disables inputs
@@ -1054,6 +1076,16 @@ jQuery(function ($) {
         disableInputs(true, "#IDdesc");
     });
 
+    $("#modal-save-graph").click(function(){
+        console.log("[modal-save-graph] save, clicked");
+        saveGraph();
+    });
+
+    $("#modal-cancel-graph").click(function(){
+        console.log("[modal-save-graph] cancel, clicked");
+        loadGraph();
+    });
+
 });
 // ************************************** end of zoom
 
@@ -1244,6 +1276,7 @@ function shapeDraw(arg, ev) {
         shape.data('resizableID', resizable.id);
         // adds a text field
         txt = paper.text(ev.offsetX+50, ev.offsetY+20, "default-text").attr({'font-size': 10, 'fill': 'black', 'text-anchor': 'middle'});
+        txt.data("type", "shape_text");
 
         // adds a dblclick handler to the 'hide' rectangle
         resizable.click(function(){hideNodes(resizable.data('parentID'))});
@@ -1282,6 +1315,8 @@ function shapeDraw(arg, ev) {
         shape.data('rotate', true);
         shape.data('type', 'decision');
         txt = paper.text(ev.offsetX+25, ev.offsetY+25, "default-text").attr({'font-size': 10, 'fill': 'black'});
+        txt.data("type", "shape_text");
+
 
         shape.data('connections', true);
         shape.data('desc', '');
@@ -1466,7 +1501,7 @@ function saveGraph() {
         let dx, dy;
 
         data.id = el.node.id;
-        console.log('NODE ID: ',el.id);
+        console.log('[saveGraph] NODE ID: ',el.id);
         data.setName = el.setName;
         //console.log('data setName PRE: ' + data.setName);
         //console.log('element x and y PRE: ', el.attr('x'), el.attr('y'));
@@ -1483,7 +1518,7 @@ function saveGraph() {
             dy = el.matrix.f;
         }
 
-        console.log(dx, dy);
+        console.log("[saveGraph] dx, dy:",dx, dy);
 
 
         el.attr('x', el.attr('x') + dx);
@@ -1499,38 +1534,38 @@ function saveGraph() {
 
         return data;
     });
-    console.log(json);
+    console.log("[saveGraph] before post ",json);
 
     $.post("../../../DiaGenKri/public/visualisation/save",
         {
             data: json
         },
         function(data, status){
-            console.log(data);
+            console.log("[saveGraph] in post(data: json)",data, status);
             console.log('\n')
             json = data;
         });
 
-    console.log(json);
+    console.log("[saveGraph] after post",json);
 
     paper.clear();
 
 }
 
 function loadGraph() {
-    console.log('LOADING');
+    console.log('[loadGraph] LOADING');
     paper = Raphael('content');
 
     paper.fromJSON(json, function(el, data) {
         el.node.id = data.id;
-        console.log('el node id: ',el.id);
+        console.log('[loadGraph] el node id: ',el.id);
         // Recreate the set using the identifier
         if( !window[data.setName] ){
             window[data.setName] = paper.set();
 
             canvasSets.push(window[data.setName]);
 
-            console.log(data.setName);
+            console.log("[loadGraph] data.setName:", data.setName);
         }
 
         // Place each element back into the set
@@ -1539,38 +1574,41 @@ function loadGraph() {
 
         window[data.setName].draggable();
 
-        console.log('SAVING: ', window[data.setName]);
+        // console.log('SAVING: ', window[data.setName]);
 
-        console.log('window :' +window[data.setName]);
+        // console.log('window :' +window[data.setName]);
 
         el.click(function () {
-            console.log(el.matrix);
+            console.log("click shape: matrix:", el.matrix);
         })
 
 
+        console.log("[loadGraph] type of element:", el.type);
+
 
         if(el.type === 'path'){
+            console.log("[loadGraph] path fromTo:", el.data("fromTo"));
             var idSplit = el.data('fromTo').split(" ");
             connections.push(paper.connection(paper.getById(idSplit[0]), paper.getById(idSplit[1]), "#000", id++));
             el.remove();
-            console.log("PATH");
+            console.log("[loadGraph] PATH");
         }
         else if(el.type === 'rect' && el.data('type') === 'hide'){
             el.click(function () {
                 hideNodes(el.data('parentID'));
             })
-            console.log("HIDE");
+            console.log("[loadGraph] HIDE");
         }
         else if(el.type === "rect" && el.data('type') === 'decision'){
             el.rotate(45);
             addToShapes(el);
-            console.log("DECISION");
+            console.log("[loadGraph] DECISION");
         }
         else if(el.type === 'rect' && el.data('type') === undefined){
-            console.log("ELSE");
+            console.log("[loadGraph] ELSE");
             addToShapes(el);
         }
-        console.log('setName');
+        // console.log('[loadGraph] setName');
         el.setName = data.setName;
 
         //return el;
