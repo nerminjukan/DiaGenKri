@@ -169,7 +169,7 @@ $description="";
                 <label class="myLabelForm" for="IDtext">Text (short)</label></br>
                 <input class="myInputForm"disabled id="IDtext" type="text" maxlength="20"></br>
                 <label class="myLabelForm" for="IDdesc">Text (long)</label></br>
-                <textarea class="myInputForm" rows="6" cols="20" disable id="IDdesc" type="text"></textarea>
+                <textarea class="myInputForm" rows="6" cols="20" disabled id="IDdesc" type="text"></textarea>
             </form>
         </div>
     </div>
@@ -255,8 +255,8 @@ $description="";
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" data-dismiss="modal">Save</button>
-                <button type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+                <button id="modal-save-graph" type="button" class="btn btn-success" data-dismiss="modal">Save</button>
+                <button id="modal-cancel-graph" type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
             </div>
         </div>
 

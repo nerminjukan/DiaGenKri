@@ -218,10 +218,18 @@ footer {
 
 /* how should be input in settings(visualisation tab) styled*/
 .myInputForm {
-    width: 90%;
-    max-width: 90%;
-    min-width: 70%;
+    width: 85%;
+    max-width: 85%;
+    min-width: 85%;
 }
+
+/* when input is disabled */
+input:disabled, textarea:disabled {
+  color: gray;
+  border: 1px solid gray;
+}
+
+/* style for modals */
 
 .modal-body .form-horizontal .col-sm-2,
 .modal-body .form-horizontal .col-sm-10 {
@@ -242,3 +250,5 @@ footer {
     max-height: 500px;
     overflow-y: auto;
 }
+
+
