@@ -189,7 +189,7 @@ function calculate (line) {
     else if(165 < alpha && alpha <= 180){
         console.log('165 < x <= 180');
         length = alpha / 20;
-        length = length * (line.text.attr("text").length * 0.6);
+        length = length * (line.text.attr("text").length * 0.36);
     }
     else if(195 < alpha && alpha <= 270){
         console.log('195 < x <= 270');
@@ -198,7 +198,7 @@ function calculate (line) {
     else if(180 < alpha && alpha <= 195){
         console.log('180 < x <= 195');
         length = (alpha / 30) + 3;
-        length = length * (line.text.attr("text").length * 0.6);
+        length = length * (line.text.attr("text").length * 0.38);
     }
     else if(378 <= alpha && alpha < 390){
         console.log('375 <= x < 390');
@@ -207,7 +207,7 @@ function calculate (line) {
     else if(360 <= alpha && alpha < 378){
         console.log('360 <= x < 375');
         length = alpha / 55;
-        length = length * (line.text.attr("text").length * 0.80);
+        length = length * (line.text.attr("text").length * 0.46);
     }
     else if(390 <= alpha && alpha < 450){
         console.log('390 <= x < 450');
@@ -498,6 +498,7 @@ function removeConnections(c_ids){
                 //"and", connections[j].to.id);
                 connections[j].line.remove();
                 connections[j].text.remove();
+                connections[j].subpath.remove();
                 connections.splice(j, 1);
                 //c_ids.splice(i, 1); // optimization, also increment i to get to correct index
                 //console.log("successfuly removed");
@@ -693,16 +694,16 @@ function setDeleteConnection(){
     delete_connection = !delete_connection;
 
     if(delete_connection){
-        document.getElementById("delete_connection_button").classList.remove("btn");
-        document.getElementById("delete_connection_button").classList.remove("btn-primary");
-        document.getElementById("delete_connection_button").classList.add("button_checked");
+        //document.getElementById("delete_connection_button").classList.remove("btn");
+        document.getElementById("delete_connection_button").classList.remove("btn-warning");
+        document.getElementById("delete_connection_button").classList.add("btn-danger");
 
         console.log("[deleteConnection button] deleting connections")
     }
     else{
-        document.getElementById("delete_connection_button").classList.remove("button_checked");
-        document.getElementById("delete_connection_button").classList.add("btn-primary");
-        document.getElementById("delete_connection_button").classList.add("btn");
+        document.getElementById("delete_connection_button").classList.remove("btn-danger");
+        document.getElementById("delete_connection_button").classList.add("btn-warning");
+        //document.getElementById("delete_connection_button").classList.add("btn");
 
         console.log("[deleteConnection button] not deleting connections")
     }
@@ -719,6 +720,7 @@ function deleteConnectionOnClick(){
         // remove line and text, then delete whole connection from array
         connections[index].line.remove();
         connections[index].text.remove();
+        connections[index].subpath.remove();
         connections.splice(index, 1);
         remove_connectionn_id = null;
         // reset delete_connection to false
@@ -1218,6 +1220,12 @@ function addToShapes(shape){
     // shape.drag(move, dragger, up);
     //shape.dblclick(removeShape);
     shape.click(onShapeClicked);
+    if(shapes.length === 0){
+        shape.data("root", true);
+    }
+    else{
+        shape.data("root", false);
+    }
     shapes.push(shape)
 }
 
@@ -1389,13 +1397,14 @@ function shapeDraw(arg, ev) {
             // display only if shape was not dragged
             if(!dragging_set && !line_first_shape_id && !line_second_shape_id && !delete_shape){
                 document.getElementById('descText').innerHTML = shape.data('desc');
-                document.getElementById('h4ID').innerHTML = 'Opis vozlišča: ' +  shape.id;
+                document.getElementById('h4ID').innerHTML = 'Node description: ' +  shape.id;
                 $("#longText").modal();
                 console.log("[longText modal] showing");
             }
         });
 
         shape.data('resizableID', resizable.id);
+        // adds a text field
         // adds a text field
         txt = paper.text(ev.offsetX+50, ev.offsetY+20, "default-text").attr({'font-size': 10, 'fill': 'black', 'text-anchor': 'middle'});
         txt.data("type", "shape_text");
@@ -1664,7 +1673,7 @@ function saveGraph() {
         },
         function(data, status){
             console.log("[saveGraph] in post(data: json)",data, status);
-            console.log('\n')
+            console.log('\n');
             json = data;
         });
 

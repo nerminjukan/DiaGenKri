@@ -21,6 +21,7 @@ if(!isset($_SESSION["user"])){
 
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/raphael.pan-zoom.js"></script>
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/nermin/nermin.js"></script>
+    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/nermin/test.js"></script>
 
     <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css">
 
@@ -151,6 +152,9 @@ $description="";
 
             <div class="well well-sm">
                 <button type="button" data-toggle="modal" data-target="#metaData" id = "edit_description" class="btn btn-block btn-info">Edit description</button>
+            </div>
+            <div class="well well-sm">
+                <button type="button" onclick="setModal()" id = "test_modal" class="btn btn-block btn-info">TEST</button>
             </div>
 
             <!---<div class="well well-sm">
@@ -361,6 +365,30 @@ $description="";
             <div class="modal-footer">
                 <a href="#top" style="text-align: left">To top</a>
                 <button id="help-close" type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal TEST -->
+<div class="modal fade" id="testmodal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">TEST modal for disease diagnosing</h4>
+            </div>
+            <div class="modal-body">
+                <h3 id="h3id"></h3>
+                <div id="testdiv">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
 
