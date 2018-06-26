@@ -20,7 +20,7 @@ if(!isset($_SESSION["user"])){
     <script src="../../../DiaGenKri/app/res/js/raphael/raphael.json.js"></script>
 
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/raphael.pan-zoom.js"></script>
-    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/david.js"></script>
+    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/nermin/nermin.js"></script>
 
     <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css">
 
@@ -108,45 +108,49 @@ $description="";
     <div class="row content">
         <div class="col-sm-2 sidenav">
             <h2>Toolbar</h2>
-            <a ondragstart="startDrag(event)" draggable="true"  id="aSquare" href="javascript:void(0);" style="overflow: hidden; width: 40px; height: 40px; padding: 1px; display: inline-block; cursor: move">
-                <svg class="draggable" id="svgtag"  style="width: 36px; height: 36px; display: block; position: relative; overflow: hidden; left: 2px; top: 2px">
-                    <g>
-                        <g></g>
+            <button type="button" data-toggle="modal" data-target="#helpModal" id = "help_btn" class="btn btn-info">Help</button><br><br>
+            <div class="well well-sm">
+                <a ondragstart="startDrag(event)" draggable="true"  id="aSquare" href="javascript:void(0);" style="overflow: hidden; width: 80px; height: 60px; padding: 1px; display: inline-block; cursor: move">
+                    <svg class="draggable" id="svgtag"  style="width: 80px; height: 60px; display: block; position: relative; overflow: hidden; left: 2px; top: 2px">
                         <g>
-                            <g transform="translate(2,10)" style="visibility: visible;">
-                                <rect id="rectID"  class="draggable" height="16" width="31" fill="#ffffff" stroke="#000000" pointer-events="all"></rect>
+                            <g></g>
+                            <g>
+                                <g transform="translate(2,10)" style="visibility: visible;">
+                                    <rect id="rectID"  class="draggable" height="30" width="70" fill="#ffffff" stroke="#000000" pointer-events="all"></rect>
+                                </g>
                             </g>
                         </g>
-                    </g>
-                </svg>
-            </a>
-            <br>
-            <a ondragstart="startDrag(event)" draggable="true"  id="aDecision" href="javascript:void(0);" style="overflow: hidden; width: 40px; height: 40px; padding: 1px; display: inline-block; cursor: move">
-                <svg class="draggable" id="svgtag"  style="width: 36px; height: 36px; display: block; position: relative; overflow: hidden; left: 2px; top: 2px">
-                    <g>
-                        <g></g>
+                    </svg>
+                </a>
+                <br>
+                <a ondragstart="startDrag(event)" draggable="true"  id="aDecision" href="javascript:void(0);" style="overflow: hidden; width: 80px; height: 60px; padding: 1px; display: inline-block; cursor: move">
+                    <svg class="draggable" id="svgtag"  style="width: 80px; height: 60px; display: block; position: relative; overflow: hidden; left: 2px; top: 2px">
                         <g>
-                            <g transform="translate(18, 8)" style="visibility: visible;">
-                                <rect id="rhombusID" transform="rotate(45)" class="draggable" height="15" width="15" fill="#ffffff" stroke="#000000" pointer-events="all"></rect>
+                            <g></g>
+                            <g>
+                                <g transform="translate(35, 5)" style="visibility: visible;">
+                                    <rect id="rhombusID" transform="rotate(45)" class="draggable" height="35" width="35" fill="#ffffff" stroke="#000000" pointer-events="all"></rect>
+                                </g>
                             </g>
                         </g>
-                    </g>
-                </svg>
-            </a>
-            <div class="well well-sm">
-                <button onclick="addConnection()" id = "add_connection_button" class="btn btn-block btn-primary">Add connection</button>
+                    </svg>
+                </a>
             </div>
 
             <div class="well well-sm">
-                <button onclick="setDeleteConnection()" id = "delete_connection_button" class="btn btn-block btn-primary">Delete connection</button>
+                <button onclick="addConnection()" id = "add_connection_button" class="btn btn-block btn-success">Add connection</button>
             </div>
 
             <div class="well well-sm">
-                <button onclick="setDeleteShape()" id = "delete_shape_button" class="btn btn-block btn-primary">Delete vertex</button>
+                <button onclick="setDeleteConnection()" id = "delete_connection_button" class="btn btn-block btn-warning">Delete connection</button>
             </div>
 
             <div class="well well-sm">
-                <button type="button" data-toggle="modal" data-target="#metaData" id = "edit_description" class="btn btn-block btn-primary">Edit description</button>
+                <button onclick="setDeleteShape()" id = "delete_shape_button" class="btn btn-block btn-warning">Delete vertex</button>
+            </div>
+
+            <div class="well well-sm">
+                <button type="button" data-toggle="modal" data-target="#metaData" id = "edit_description" class="btn btn-block btn-info">Edit description</button>
             </div>
 
             <!---<div class="well well-sm">
@@ -241,7 +245,7 @@ $description="";
 
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="sel2">Algorithm type (ctrl+click - select multiple types)</label>
+                        <label class="col-sm-2 control-label" for="sel2">Algorithm type (ctrl+click to select multiple types)</label>
                         <div class="col-sm-10">
                             <select multiple class="form-control" id="sel2">
                                 <option id="opt1">Diagnostic</option>
@@ -257,6 +261,106 @@ $description="";
             <div class="modal-footer">
                 <button id="modal-save-graph" type="button" class="btn btn-success" data-dismiss="modal">Save</button>
                 <button id="modal-cancel-graph" type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal help -->
+<div class="modal fade" id="helpModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h2 align="center" class="modal-title">ViDis help</h2>
+            </div>
+            <div class="modal-body modal-body-graph">
+                <div id="top" class="well well-sm">
+                    <h3>General information</h3>
+                    <p>The ViDis application is used to construct and visualise diagnostic algorithms.
+                       The algorithms are constructed in a form of directed graphs.
+                       The comments below will help you understand how to use the provided tools.
+                    </p>
+                </div>
+                <div class="well well-sm">
+                    <h3>Drawing canvas</h3>
+                    <p>
+                        The drawing canvas is our main drawing area. We can drag elements onto it from the 'Tool bar'
+                        by clicking and dragging them over the grid and then dropping them, all this is done with the
+                        left mouse button.<br>
+                        <h4>Dragging</h4>
+                        Dragging elements on the canvas is done by clicking and holding on an elements with the left mouse button
+                        and then moving the mouse around. Simpli let go of the mouse button to release the element at the desired location.
+                        <h4>Scrolling</h4>
+                        The canvas supports scrolling up, down left and right. The up/down scroll is done with the mouse wheel, make sure
+                        the mouse is over the canvas area and rotate the mouse wheel to scroll the canvas area.
+                        The left/right scroll is done by holding <b>shift + rotating the mouse wheel</b>.<br>
+                        <h4>Zooming</h4>
+                        The canvas also supports zooming in and out. This scales the elements and makes it easier to view a larger area of the
+                        canvas or to close-up on details in the algorithm. To use the zoom function, hold <b>ctrl + scroll  with the mouse wheel</b>.
+                    </p>
+                </div>
+                <div class="well well-sm">
+                    <h3>Nodes</h3>
+                    <p>
+                        There are two basic node types. The first is the general rectangle node that holds information about certain parts of the algorithm,
+                        the second rhombus node is a decision node, it visualises different flows of the algorithm based on certain parameters.<br>
+                        <h4>Rectangle node</h4>
+                        In the middle lies a short description, which is visible on the canvas and can hold up to 40 characters.
+                    The node contains a longer text area, which is visible in a modal window. In the top left corner is a <b>+</b> (plus)
+                    sign, that controlls the visibility of connections and child nodes.
+                        <ul>
+                            <li>
+                                <h5>Clicking once</h5>
+                                Clicking once on the node surface...
+                            </li>
+                            <li>
+                                <h5>Clicking twice</h5>
+                                ...
+                            </li>
+                            <li>
+                                <h5>Plus sign</h5>
+                                ...
+                            </li>
+                            <li>
+                                <h5>Short text</h5>
+                                ...
+                            </li>
+                        </ul>
+                        <h4>Rhombus node</h4>
+                        ...
+                        <ul>
+                            <li>
+                                <h5>Clicking once</h5>
+                                ...
+                            </li>
+                            <li>
+                                <h5>Clicking twice</h5>
+                                ...
+                            </li>
+                            <li>
+                                <h5>Short text</h5>
+                                ...
+                            </li>
+                        </ul>
+
+                    </p>
+
+                </div>
+                <div class="well well-sm">
+                    <h3>Connections</h3>
+                </div>
+                <div class="well well-sm">
+                    <h3>Deleting elements</h3>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <a href="#top" style="text-align: left">To top</a>
+                <button id="help-close" type="button" class="btn btn-info" data-dismiss="modal">Close</button>
             </div>
         </div>
 
