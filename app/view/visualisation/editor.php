@@ -3,6 +3,17 @@
 if(!isset($_SESSION["user"])){
     header("Location: ../../../DiaGenKri/public/home");
 }
+
+require_once '../app/database/DBfunctions.php';
+include_once '../app/controllers/visualisation.php';
+
+if (isset($_GET['id'])) {
+    $data = DBfunctions::loadGraph($_GET['id']);
+    var_dump($data);
+}
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="sl">
@@ -21,6 +32,7 @@ if(!isset($_SESSION["user"])){
 
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/raphael.pan-zoom.js"></script>
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/nermin/nermin.js"></script>
+    <!--<script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/david.js"></script> -->
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/nermin/test.js"></script>
 
     <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css">
@@ -153,15 +165,6 @@ $description="";
             <div class="well well-sm">
                 <button type="button" data-toggle="modal" data-target="#metaData" id = "edit_description" class="btn btn-block btn-info">Edit description</button>
             </div>
-            <div class="well well-sm">
-                <button type="button" onclick="setModal()" id = "test_modal" class="btn btn-block btn-info">TEST</button>
-            </div>
-
-            <!---<div class="well well-sm">
-                <button id="save" onclick="saveGraph()" type="button" class="btn btn-block btn-success">Save</button>
-            <!---<a href="../../../DiaGenKri/public/visualisation" type="button" class="btn btn-danger row-increased-bottom">Cancel</a>--->
-            <!---    <button id="load" onclick="loadGraph()" type="button" class="btn btn-block btn-success">Load</button>
-            </div>--->
 
         </div>
         <div onclick="looseFocus(event)" ondrop="mainDraw(event)" class="col-sm-8" id="content">
@@ -179,6 +182,15 @@ $description="";
                 <label class="myLabelForm" for="IDdesc">Text (long)</label></br>
                 <textarea class="myInputForm" rows="6" cols="20" disabled id="IDdesc" type="text"></textarea>
             </form>
+            <div class="well well-sm">
+                <button type="button" onclick="setModal()" id = "test_modal" class="btn btn-block btn-info">TEST</button>
+            </div>
+
+            <div class="well well-sm">
+                <button id="save" onclick="saveGraph()" type="button" class="btn btn-block btn-success">Save</button>
+                <button id="cancel" onclick="cancelGraph()" type="button" class="btn btn-block btn-danger">Cancel</button>
+                <button id="load" onclick="loadGraph()" type="button" class="btn btn-block btn-success">Load</button>
+            </div>
         </div>
     </div>
 </div>
@@ -218,13 +230,14 @@ $description="";
                 <h4 class="modal-title">Edit graph information</h4>
             </div>
             <div class="modal-body modal-body-graph">
-                <form class="form-horizontal" role="form">
+                <form name="gForm" class="form-horizontal" role="form">
                     <div class="form-group">
                         <label  class="col-sm-2 control-label"
-                                for="graphName">Graph name</label>
+                                for="graphName">Graph name<label style="color: red">*</label></label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control"
+                            <input name="gName" type="text" class="form-control"
                                    id="graphName" placeholder="Graph name"/>
+                            <label style="color: red; font-size: 14px" id="nameLab"></label>
                         </div>
                     </div>
                     <div class="form-group">
@@ -237,7 +250,7 @@ $description="";
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label"
-                               for="graphType" >Graph type</label>
+                               for="graphType" >Graph type<label style="color: red">*</label></label>
                         <div class="col-sm-10">
                             <div>
                                 <label class="radio-inline" for="typeVisual"><input class="radio" id="typeVisual" type="radio" name="gType" value="visual">Visual</label>
@@ -245,17 +258,17 @@ $description="";
                             <div>
                                 <label class="radio-inline" for="typeDiagnostic"><input class="radio" type="radio" id="typeDiagnostic" name="gType" value="diagnostic">Diagnostic</label>
                             </div>
+                            <label style="color: red; font-size: 14px" id="typeLab"></label>
                         </div>
 
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="sel2">Algorithm type (ctrl+click to select multiple types)</label>
+                        <label class="col-sm-2 control-label" for="sel1">Algorithm type (ctrl+click to select multiple types)</label>
                         <div class="col-sm-10">
-                            <select multiple class="form-control" id="sel2">
-                                <option id="opt1">Diagnostic</option>
-                                <option id="opt2">Treatment</option>
-                                <option id="opt3">???</option>
-                                <option id="opt4">...</option>
+                            <select required multiple class="form-control" id="sel1">
+                                <option value="diagnostic" id="opt1">Diagnostic</option>
+                                <option value="treatment" id="opt2">Treatment</option>
+                                <option value="other" id="opt3">Other</option>
                             </select>
                         </div>
 
@@ -263,7 +276,7 @@ $description="";
                 </form>
             </div>
             <div class="modal-footer">
-                <button id="modal-save-graph" type="button" class="btn btn-success" data-dismiss="modal">Save</button>
+                <button id="modal-save-graph" type="button" class="btn btn-success">Save</button>
                 <button id="modal-cancel-graph" type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
             </div>
         </div>

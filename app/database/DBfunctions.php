@@ -10,11 +10,57 @@ require_once "DBconnect.php";
 
 class DBfunctions {
 
+    public static function saveGraph($email, $data, $name, $description, $gtype, $atype){
+
+        $db = DBconnect::getInstance();
+
+        $statement = $db->prepare("INSERT INTO diagenkri.graph (`e-mail`, `name`, `description`, `visual`, `algorithm_type`, `data`)
+                                             VALUES (:email, :name, :description, :gtype, :atype, :data)");
+        $statement->bindParam(":email", $email);
+        $statement->bindParam(":name", $name);
+        $statement->bindParam(":description", $description);
+        $statement->bindParam(":gtype", $gtype);
+        $statement->bindParam(":atype", $atype);
+        $statement->bindParam(":data", $data);
+
+
+        $result = $statement->execute();
+
+        return $result;
+
+    }
+
+    public static function loadGraph($id){
+        $db = DBconnect::getInstance();
+
+        $statement = $db->prepare("SELECT * FROM diagenkri.graph WHERE graph.id = :id");
+
+        $statement->bindParam(":id", $id);
+
+        $statement->execute();
+
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+
+        return $result;
+    }
+
     public static function getUsersData(){
         $db = DBconnect::getInstance();
 
         $statement1 = $db->prepare("SELECT diagenkri.user.`e-mail`, diagenkri.user.name, diagenkri.user.surname, diagenkri.user_profile.*
                                               FROM diagenkri.user JOIN diagenkri.user_profile ON diagenkri.user.`e-mail`=diagenkri.user_profile.`e-mail`;");
+
+        $statement1->execute();
+
+        $result1 = $statement1->fetchAll(PDO::FETCH_ASSOC);
+
+        return $result1;
+    }
+
+    public static function getGraphs(){
+        $db = DBconnect::getInstance();
+
+        $statement1 = $db->prepare("SELECT * FROM diagenkri.graph;");
 
         $statement1->execute();
 

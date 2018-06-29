@@ -3,30 +3,29 @@
 if(!isset($_SESSION["user"])){
     header("Location: ../../../DiaGenKri/public/home");
 }
+
+
+require_once '../app/database/DBfunctions.php';
+include_once '../app/controllers/administrate.php';
+
+$data = DBfunctions::getGraphs();
+
 ?>
+
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
-    <title>Visualisation</title>
+    <title>Gallery</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="../../../DiaGenKri/app/res/js/raphael/raphael.min.js"></script>
-
-    <!---
-        <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/raphael.pan-zoom.js"></script>
-    --->
-
-    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/nermin/nermin.js"></script>
-
     <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css"
 
 </head>
-<header class="col-12 spacing-increased">
-    <h1>Visualisation - david</h1>
-</header>
+
 
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
@@ -41,7 +40,6 @@ if(!isset($_SESSION["user"])){
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
                 <?php if(isset($_SESSION["user"])): ?>
-                    <li><a href="../../../DiaGenKri/public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             <span class="glyphicon glyphicon-user"></span> 
@@ -55,12 +53,12 @@ if(!isset($_SESSION["user"])){
                             <li>
                                 <div class="navbar-login">
                                     <div class="row">
-                                        <div class="col-lg-4" id="login-size">
+                                        <div class="col-lg-4">
                                             <p class="text-center">
                                                 <span class="glyphicon glyphicon-user icon-size"></span>
                                             </p>
                                         </div>
-                                        <div class="col-lg-8" id="login-size">
+                                        <div class="col-lg-8">
                                             <p class="text-left"><strong><?php
                                                     echo $_SESSION["user-name"] . " " . $_SESSION["user-surname"];
                                                     ?>
@@ -90,74 +88,75 @@ if(!isset($_SESSION["user"])){
                             </li>
                         </ul>
                     </li>
-                <?php else: ?>
-                    <li><a href="../../../DiaGenKri/public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
-                    <li><a href="../../../DiaGenKri/public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
                 <?php endif; ?>
             </ul>
         </div>
     </div>
 </nav>
-<div class="container-fluid text-center">
-    <div class="row content">
-        <div class="col-sm-2 sidenav">
-            <h2>Toolbar</h2>
-            <a ondragstart="startDrag(event)" draggable="true"  id="aSquare" href="javascript:void(0);" style="overflow: hidden; width: 40px; height: 40px; padding: 1px; display: inline-block; cursor: move">
-                <svg class="draggable" id="svgtag"  style="width: 36px; height: 36px; display: block; position: relative; overflow: hidden; left: 2px; top: 2px">
-                    <g>
-                        <g></g>
-                        <g>
-                            <g transform="translate(2,10)" style="visibility: visible;">
-                                <rect id="rectID"  class="draggable" height="16" width="31" fill="#ffffff" stroke="#000000" pointer-events="all"></rect>
-                            </g>
-                        </g>
-                    </g>
-                </svg>
-            </a>
-            <a ondragstart="startDrag(event)" draggable="true"  id="aLink" href="javascript:void(0);" style="overflow: hidden; width: 40px; height: 40px; padding: 1px; display: inline-block; cursor: move">
-                <svg class="draggable" id="svgtag"  style="width: 36px; height: 36px; display: block; position: relative; overflow: hidden; left: 2px; top: 2px">
-                    <g>
-                        <g></g>
-                        <g>
-                            <g transform="translate(0.5,0.5)" style="visibility: visible;">
-                                <line x1="5" y1="5" x2="30" y2="30" id="lineID" class="draggable" stroke="#000000" pointer-events="all"></line>
-                            </g>
-                        </g>
-                    </g>
-                </svg>
-            </a>
-            <a ondragstart="startDrag(event)" draggable="true"  id="aDecision" href="javascript:void(0);" style="overflow: hidden; width: 40px; height: 40px; padding: 1px; display: inline-block; cursor: move">
-                <svg class="draggable" id="svgtag"  style="width: 36px; height: 36px; display: block; position: relative; overflow: hidden; left: 2px; top: 2px">
-                    <g>
-                        <g></g>
-                        <g>
-                            <g transform="translate(18, 8)" style="visibility: visible;">
-                                <rect id="rhombusID" transform="rotate(45)" class="draggable" height="15" width="15" fill="#ffffff" stroke="#000000" pointer-events="all"></rect>
-                            </g>
-                        </g>
-                    </g>
-                </svg>
-            </a>
-        </div>
-        <div onclick="looseFocus(event)" ondrop="mainDraw(event)" class="col-sm-8" id="content">
-            <div id="mapControls"><a id="up" href="javascript:void(0)"></a><a id="down" href="javascript:void(0)"></a></div>
 
+<div>
+    FILTER
+    <div>
+        <a class="btn btn-success" href="../../../DiaGenKri/public/visualisation/editor">New graph</a>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row content">
+        <div class="col-sm-12 text-left">
+            <table class="table table-hover table-responsive table-striped">
+                <thead>
+                <tr style="text-align: center">
+                    <th>ID</th>
+                    <th>Author</th>
+                    <th>Graph name</th>
+                    <th>Graph type</th>
+                    <th>Algorithm type</th>
+                    <th>Created</th>
+                    <th>Edit</th>
+                </tr>
+                </thead>
+                <tbody class="tbody">
+                <?php foreach ($data as $key => $value){
+                    $id = $value["id"];
+                    $email = $value["e-mail"];
+                    $name = $value["name"];
+                    $visual = $value["visual"];
+                    $algorithmType = $value["algorithm_type"];
+                    $created = $value["created"];
+                    $button = "<form action=\"visualisation/edit\" method=\"get\">
+                                <input hidden type=\"text\" value='$id' name=\"id\"><br>
+                                <input class='btn btn-block btn-primary' value='Edit' type=\"submit\">
+                                </form>";
+
+                    echo "<tr><td>$id</td><td>$email</td><td>$name</td><td>$visual</td><td>$algorithmType</td><td>$created</td><td>$button</td></tr>";
+
+                }
+                ?>
+                </tbody>
+            </table>
         </div>
-        <div class="col-sm-2 sidenav">
-            <div class="well">
-                <button onclick="addConnection()" id = "add_connection_button" class="btn btn-primary">add connection</button>
+        <div class="modal fade" id="editModal" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Administration warning</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>You are about to enter the page for changing user privileges. Please proceed with caution, as changes to user rights may affect the content of the application. Do you wish to continue?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="../../../DiaGenKri/public/administrate/change" class="btn btn-warning row-increased-bottom btn-block">Yes, continue</a>
+                        <button class="btn btn-info row-increased-bottom btn-block" data-dismiss="modal">No, cancel</button>
+                    </div>
+                </div>
             </div>
-            <h2>Settings</h2>
-            <form>
-                <label for="IDinput">Element ID</label>
-                <input id="IDinput" disabled type="text" name="fname"><br>
-                <label for="IDtext">Text</label>
-                <input disabled onblur="setText()" id="IDtext" type="text">
-            </form>
         </div>
     </div>
 </div>
 
-<footer class="container-fluid text-center fixed-bottom">
+<footer class="container-fluid text-center">
     <p>©DiaGenKri</p>
 </footer>

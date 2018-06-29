@@ -21,18 +21,46 @@ class Visualisation extends Controller
         $user = $this->model('User');
         $user->name = $name;
 
-        $this->view('visualisation/david', ['name' => $user->name]);
+        $this->view('visualisation/index', ['name' => $user->name]);
+    }
+
+    public function editor($name = ''){
+        $user = $this->model('User');
+        $user->name = $name;
+
+        $this->view('visualisation/editor', ['name' => $user->name]);
+    }
+
+
+    public function edit(){
+        $_GET['link'] =
+        $this->view('visualisation/editor');
     }
 
     public function save(){
 
-        //$data = explode(" ", $_POST['data'], 2);
+        //var_dump($_POST);
 
-        echo($_POST["data"]);
+        if(isset($_SESSION["user"]) && isset($_POST["data"]) && isset($_POST["name"]) && isset($_POST["description"]) && isset($_POST["gtype"]) && isset($_POST["atype"])){
 
 
-        //echo(implode(" ", $_POST));
+            DBfunctions::saveGraph($_SESSION["user"], $_POST["data"], $_POST["name"], $_POST["description"], $_POST["gtype"], $_POST["atype"]);
 
+            ViewHelper::redirect('../../public/visualisation/gallery');
+        }
+        else{
+            // TO DO
+        }
+
+
+
+    }
+
+    public function gallery($name = ''){
+        $user = $this->model('User');
+        $user->name = $name;
+
+        $this->view('visualisation/gallery', ['name' => $user->name]);
     }
 
 }
