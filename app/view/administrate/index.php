@@ -26,9 +26,6 @@ $data = DBfunctions::getUsersData();
 
 </head>
 
-<header class="col-12 spacing-increased">
-    <h1>User administration</h1>
-</header>
 
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">

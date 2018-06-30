@@ -3,30 +3,31 @@
 if(!isset($_SESSION["user"])){
     header("Location: ../../../DiaGenKri/public/home");
 }
+
+
+require_once '../app/database/DBfunctions.php';
+include_once '../app/controllers/administrate.php';
+
+$data = DBfunctions::getGraphs();
+
 ?>
+
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
-    <title>Visualisation</title>
+    <title>Graphs table</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="../../../DiaGenKri/app/res/js/raphael/raphael.min.js"></script>
-
-    <!---
-        <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/raphael.pan-zoom.js"></script>
-    --->
-
-    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/nermin/nermin.js"></script>
-
-    <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css"
+    <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css">
+    <script src="../../../DiaGenKri/app/res/js/david/edit.js"></script>
+    <script src="../../../DiaGenKri/app/res/js/filter.js"></script>
 
 </head>
-<header class="col-12 spacing-increased">
-    <h1>Visualisation - david</h1>
-</header>
+
 
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
@@ -41,7 +42,6 @@ if(!isset($_SESSION["user"])){
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
                 <?php if(isset($_SESSION["user"])): ?>
-                    <li><a href="../../../DiaGenKri/public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             <span class="glyphicon glyphicon-user"></span> 
@@ -55,12 +55,12 @@ if(!isset($_SESSION["user"])){
                             <li>
                                 <div class="navbar-login">
                                     <div class="row">
-                                        <div class="col-lg-4" id="login-size">
+                                        <div class="col-lg-4">
                                             <p class="text-center">
                                                 <span class="glyphicon glyphicon-user icon-size"></span>
                                             </p>
                                         </div>
-                                        <div class="col-lg-8" id="login-size">
+                                        <div class="col-lg-8">
                                             <p class="text-left"><strong><?php
                                                     echo $_SESSION["user-name"] . " " . $_SESSION["user-surname"];
                                                     ?>
@@ -90,74 +90,134 @@ if(!isset($_SESSION["user"])){
                             </li>
                         </ul>
                     </li>
-                <?php else: ?>
-                    <li><a href="../../../DiaGenKri/public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
-                    <li><a href="../../../DiaGenKri/public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
                 <?php endif; ?>
             </ul>
         </div>
     </div>
 </nav>
-<div class="container-fluid text-center">
-    <div class="row content">
-        <div class="col-sm-2 sidenav">
-            <h2>Toolbar</h2>
-            <a ondragstart="startDrag(event)" draggable="true"  id="aSquare" href="javascript:void(0);" style="overflow: hidden; width: 40px; height: 40px; padding: 1px; display: inline-block; cursor: move">
-                <svg class="draggable" id="svgtag"  style="width: 36px; height: 36px; display: block; position: relative; overflow: hidden; left: 2px; top: 2px">
-                    <g>
-                        <g></g>
-                        <g>
-                            <g transform="translate(2,10)" style="visibility: visible;">
-                                <rect id="rectID"  class="draggable" height="16" width="31" fill="#ffffff" stroke="#000000" pointer-events="all"></rect>
-                            </g>
-                        </g>
-                    </g>
-                </svg>
-            </a>
-            <a ondragstart="startDrag(event)" draggable="true"  id="aLink" href="javascript:void(0);" style="overflow: hidden; width: 40px; height: 40px; padding: 1px; display: inline-block; cursor: move">
-                <svg class="draggable" id="svgtag"  style="width: 36px; height: 36px; display: block; position: relative; overflow: hidden; left: 2px; top: 2px">
-                    <g>
-                        <g></g>
-                        <g>
-                            <g transform="translate(0.5,0.5)" style="visibility: visible;">
-                                <line x1="5" y1="5" x2="30" y2="30" id="lineID" class="draggable" stroke="#000000" pointer-events="all"></line>
-                            </g>
-                        </g>
-                    </g>
-                </svg>
-            </a>
-            <a ondragstart="startDrag(event)" draggable="true"  id="aDecision" href="javascript:void(0);" style="overflow: hidden; width: 40px; height: 40px; padding: 1px; display: inline-block; cursor: move">
-                <svg class="draggable" id="svgtag"  style="width: 36px; height: 36px; display: block; position: relative; overflow: hidden; left: 2px; top: 2px">
-                    <g>
-                        <g></g>
-                        <g>
-                            <g transform="translate(18, 8)" style="visibility: visible;">
-                                <rect id="rhombusID" transform="rotate(45)" class="draggable" height="15" width="15" fill="#ffffff" stroke="#000000" pointer-events="all"></rect>
-                            </g>
-                        </g>
-                    </g>
-                </svg>
-            </a>
-        </div>
-        <div onclick="looseFocus(event)" ondrop="mainDraw(event)" class="col-sm-8" id="content">
-            <div id="mapControls"><a id="up" href="javascript:void(0)"></a><a id="down" href="javascript:void(0)"></a></div>
 
-        </div>
-        <div class="col-sm-2 sidenav">
-            <div class="well">
-                <button onclick="addConnection()" id = "add_connection_button" class="btn btn-primary">add connection</button>
+<div class="well well-sm col-sm-12">
+    <h3 style="margin-top: 10px">Filters:</h3>
+    <form name="gForm" role="form" class="form-inline">
+        <div class="well well-sm form-group">
+            <div class="form-group">
+                <label for="gName">Graph name:</label>
+                <input onkeyup="filterTable()" type="email" class="form-control" id="gName" placeholder="enter graph name">
             </div>
-            <h2>Settings</h2>
-            <form>
-                <label for="IDinput">Element ID</label>
-                <input id="IDinput" disabled type="text" name="fname"><br>
-                <label for="IDtext">Text</label>
-                <input disabled onblur="setText()" id="IDtext" type="text">
-            </form>
+            <div>
+                <button type="button" onclick="resetFilters()" class="btn btn-sm btn-warning">Clear filters</button>
+            </div>
+        </div>
+        <div class="well well-sm form-group">
+            <label class="col-sm-6 control-label"
+                    >Graph type:</label>
+            <div class="col-sm-6">
+                <div>
+                    <label class="radio-inline" for="typeDAll"><input onchange="filterTable()" checked class="radio" type="radio" id="typeDAll" name="gType" value="all">All</label>
+                </div>
+                <div>
+                    <label class="radio-inline" for="typeVisual"><input onchange="filterTable()" class="radio" id="typeVisual" type="radio" name="gType" value="visual">Visual</label>
+                </div>
+                <div>
+                    <label class="radio-inline" for="typeDiagnostic"><input onchange="filterTable()" class="radio" type="radio" id="typeDiagnostic" name="gType" value="diagnostic">Diagnostic</label>
+                </div>
+                <label style="color: red; font-size: 14px" id="typeLab"></label>
+            </div>
+        </div>
+        <div class="well well-sm form-group">
+            <label class="col-sm-6 control-label"
+                    >Algorithm type:</label>
+            <div class="col-sm-6">
+                <div>
+                    <label class="radio-inline" for="typeADiagnostic"><input onchange="filterTable()" class="radio" type="checkbox" id="typeADiagnostic" name="aType" value="1">Diagnostic</label>
+                </div>
+                <div>
+                    <label class="radio-inline" for="typeATreatment"><input onchange="filterTable()" class="radio" id="typeATreatment" type="checkbox" name="aType" value="2">Treatment</label>
+                </div>
+                <div>
+                    <label class="radio-inline" for="typeAOther"><input onchange="filterTable()" class="radio" type="checkbox" id="typeAOther" name="aType" value="4">Other</label>
+                </div>
+                <label style="color: red; font-size: 14px" id="typeLab"></label>
+            </div>
+        </div>
+    </form>
+
+    <div>
+        <a class="btn btn-success" href="../../../DiaGenKri/public/visualisation/editor">New graph</a>
+    </div>
+</div>
+
+
+<div class="container-fluid">
+    <div class="row content">
+        <div class="col-sm-12 text-left">
+            <table id="graphTable" class="table table-sc table-hover table-responsive table-striped">
+                <thead>
+                <tr class="tr-sc" style="text-align: center">
+                    <th>ID</th>
+                    <th>Author</th>
+                    <th>Graph name</th>
+                    <th>Graph type</th>
+                    <th>Algorithm type</th>
+                    <th>Created</th>
+                    <th>Edit</th>
+                </tr>
+                </thead>
+                <tbody class="tbody-sc">
+                <?php foreach ($data as $key => $value){
+                    $id = $value["id"];
+                    $email = $value["e-mail"];
+                    $name = $value["name"];
+                    $visual = $value["visual"];
+
+                    if($visual === '0'){
+                        $visual = 'Diagnostic';
+                    }
+                    else{
+                        $visual = 'Visual';
+                    }
+
+                    $algorithmType = $value["algorithm_type"];
+
+                    if($algorithmType === '0') {
+                        $algorithmType = '-';
+                    }
+                    else if($algorithmType === '1'){
+                        $algorithmType = 'Diagnostic';
+                    }
+                    else if($algorithmType === '2'){
+                        $algorithmType = 'Treatment';
+                    }
+                    else if($algorithmType === '3'){
+                        $algorithmType = 'Diagnostic, treatment';
+                    }
+                    else if($algorithmType === '4'){
+                        $algorithmType = 'Other';
+                    }
+                    else if($algorithmType === '5'){
+                        $algorithmType = 'Diagnostic, other';
+                    }
+                    else if($algorithmType === '6'){
+                        $algorithmType = 'Treatment, other';
+                    }
+                    else if($algorithmType === '7'){
+                        $algorithmType = 'Diagnostic, treatment, other';
+                    }
+
+
+                    $created = $value["created"];
+                    $button = "<button class='btn btn-block btn-primary edit-graph-button' id='$id'>Edit</button>";
+
+                    echo "<tr class='tr-sc'><td style=\"white-space: nowrap; width: 6%\">$id</td><td style=\"white-space: nowrap; width: 12%\">$email</td><td style=\"white-space: nowrap; width: 19%\">$name</td><td style=\"white-space: nowrap; width: 16%\">$visual</td><td style=\"white-space: nowrap; width: 21%\">$algorithmType</td><td style=\"white-space: nowrap; width: 12.5%\">$created</td><td style=\"white-space: nowrap; width: 10.2%\">$button</td></tr>";
+
+                }
+                ?>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
-<footer class="container-fluid text-center fixed-bottom">
+<footer class="container-fluid text-center">
     <p>©DiaGenKri</p>
 </footer>

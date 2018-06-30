@@ -36,6 +36,7 @@ function findNode(node_id) {
 function setNode(node) {
     let testdiv = document.getElementById('testdiv');
     let headder = document.getElementById('h3id');
+    let question = document.getElementById('question');
 
     while (testdiv.firstChild) {
         testdiv.removeChild(testdiv.firstChild);
@@ -56,6 +57,7 @@ function setNode(node) {
 
     if(set.length === 3){
         headder.innerHTML = set[2].attr("text");
+        question.innerHTML = set[0].data("desc");
     }
     else{
         headder.innerHTML = set[1].attr("text");
@@ -70,6 +72,7 @@ function setNode(node) {
             continue;
         }
         btn.classList.add('btn');
+        btn.classList.add('btn-block');
         btn.classList.add('btn-info');
         btn.innerHTML = conns[i].text.attr("text");
         btn.addEventListener('click', restart);

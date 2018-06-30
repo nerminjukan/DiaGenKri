@@ -21,18 +21,59 @@ class Visualisation extends Controller
         $user = $this->model('User');
         $user->name = $name;
 
-        $this->view('visualisation/david', ['name' => $user->name]);
+        $this->view('visualisation/index', ['name' => $user->name]);
+    }
+
+    public function editor($name = ''){
+        $user = $this->model('User');
+        $user->name = $name;
+
+        $this->view('visualisation/editor', ['name' => $user->name]);
+    }
+
+
+    // public function edit(){
+        // return '../../public/visualisation/gallery?id=' . isset($_POST["id"]) ? isset($_POST["id"]) : 'new';
+        // ViewHelper::redirect('../../public/visualisation/gallery?id=' . isset($_POST["id"]) ? isset($_POST["id"]) : 'new');
+    // }
+
+    public function load(){
+        // echo "hello world";
+        $result = DBfunctions::loadGraph($_POST['id']);
+        // echo "<pre>";
+        // var_dump($result);
+        // exit();
+        echo json_encode($result);
     }
 
     public function save(){
 
-        //$data = explode(" ", $_POST['data'], 2);
+        //var_dump($_POST);
 
-        echo($_POST["data"]);
+        if(isset($_SESSION["user"]) && isset($_POST["data"]) && isset($_POST["name"]) && isset($_POST["description"]) && isset($_POST["gtype"]) && isset($_POST["atype"])){
 
 
-        //echo(implode(" ", $_POST));
+            DBfunctions::saveGraph($_SESSION["user"], $_POST["data"], $_POST["name"], $_POST["description"], $_POST["gtype"], $_POST["atype"]);
 
+            ViewHelper::redirect('../../public/visualisation/gallery');
+        }
+        else{
+            // TO DO
+        }
+
+
+
+    }
+
+    public function diagnosis(){
+        $this->view('visualisation/diagnosis');
+    }
+
+    public function gallery($name = ''){
+        $user = $this->model('User');
+        $user->name = $name;
+
+        $this->view('visualisation/gallery', ['name' => $user->name]);
     }
 
 }

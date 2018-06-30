@@ -66,31 +66,31 @@ Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000") {
 
         let len = calculate(line);
 
-            if(len !== 0){
-                // console.log('len: ', len);
-                // console.log('line_len: ', line_path.getTotalLength());
-                if(len > line_path.getTotalLength()){
-                    line_path.attr({'stroke': 'white'});
-                }
-                else{
-                    line_path.attr({'stroke': 'black'});
-                }
-                line.subpath.show();
-                line.subpath.data('visible', true);
-
-                let sub_p = line_path.getSubpath(
-                    (line_path.getTotalLength() / 2)-len,
-                    (line_path.getTotalLength() / 2)+len);
-
-                line.subpath.attr({path: sub_p});
-
-                //console.log("ALPHA: ", line_path.getPointAtLength(line_path.getTotalLength() / 2).alpha);
-                //console.log("LENGTH: ", length);
+        if(len !== 0){
+            // console.log('len: ', len);
+            // console.log('line_len: ', line_path.getTotalLength());
+            if(len > line_path.getTotalLength()){
+                line_path.attr({'stroke': 'white'});
             }
             else{
-                line.subpath.hide();
-                line.subpath.data('visible', false);
+                line_path.attr({'stroke': 'black'});
             }
+            line.subpath.show();
+            line.subpath.data('visible', true);
+
+            let sub_p = line_path.getSubpath(
+                (line_path.getTotalLength() / 2)-len,
+                (line_path.getTotalLength() / 2)+len);
+
+            line.subpath.attr({path: sub_p});
+
+            //console.log("ALPHA: ", line_path.getPointAtLength(line_path.getTotalLength() / 2).alpha);
+            //console.log("LENGTH: ", length);
+        }
+        else{
+            line.subpath.hide();
+            line.subpath.data('visible', false);
+        }
 
 
     } else {
@@ -114,10 +114,10 @@ Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000") {
         console.log("[connection] fromTo", line_path.data("fromTo"));
 
         sub_path = paper.path(
-                        line_path.getSubpath(
-                            (line_path.getTotalLength() / 2)-25,
-                            (line_path.getTotalLength() / 2)+25))
-                    .attr({'stroke-width' : '6', 'stroke' : '#f1f1f1'});
+            line_path.getSubpath(
+                (line_path.getTotalLength() / 2)-25,
+                (line_path.getTotalLength() / 2)+25))
+            .attr({'stroke-width' : '6', 'stroke' : '#f1f1f1'});
         sub_path.data("type", "sub_path");
         sub_path.data("id_connection", id_c);
 
@@ -184,7 +184,7 @@ function addDblclickHandlers(){
     inputText.value = txt.attr("text");
     inputText.focus();
     console.log("dbl click handler on path fired");
-    // return;    
+    // return;
 }
 
 // calculate connection text background line
@@ -200,6 +200,7 @@ function calculate (line, direct = false, text = null) {
     let length = alpha / 4;
 
     let the_text = text !== null ? text : line.text
+    // console.log("[calculate] the_text:", the_text);
 
     if(the_text.attr("text").length === 0){
         return 0;
@@ -999,6 +1000,8 @@ function rainingEvents(item, type){
         pathEvents(item, type);
     } else if (type === "hide") {
         pathEvents(item, type);
+    } else if (type === "subpath") {
+        pathEvents(item, type);
     } else if (type === "connection_text") {
         textEvents(item, type);
     } else if (type === "shape_text") {
@@ -1029,6 +1032,7 @@ function rectEvents(item, type){
             }
         });
         item.data('rotate', false);
+        item.data('type', 'rect');
         // increments the global id
         id++;
     }
@@ -1036,7 +1040,7 @@ function rectEvents(item, type){
 
 function pathEvents(item, type){
     if(type === "connection"){
-        
+        item.data('type', 'connection');
     } else if (type === "hide"){
         // console.log("[pathEvents] type", type);
         item.mouseover(hoverIn);
@@ -1051,6 +1055,8 @@ function pathEvents(item, type){
 
         // adds a dblclick handler to the 'hide' rectangle
         item.click(function(){hideNodes(item.data('parentID'))});
+    } else if (type === "subpath"){
+        item.data('type', 'subpath');
     }
     return true;
 }
@@ -1198,6 +1204,7 @@ jQuery(function ($) {
         width = positionInfo.width;
 
     paper = Raphael(document.getElementById('content'), 3000, 3000);
+
     // paper.rect(0, 0, 2000, 2000).attr({"stroke-width": 10});
     //console.log("[main] paper canvas:", paper.canvas);
 
@@ -1280,6 +1287,8 @@ jQuery(function ($) {
         // because we do not want data loss
         if(currentText !== changingText.attr("text")){
             changingText.attr({text: currentText});
+            if (changingText.data("type") === "rect" || changingText.data("type") === "decision")
+                changeWidth(changingText);
             if(changingText.data("id_connection") !== undefined && changingText.data("type") === "connection_text"){
                 // console.log(changingText.data("id_connection"));
                 calculateSubPath(changingText.data("id_connection"));
@@ -1330,17 +1339,34 @@ jQuery(function ($) {
 
     $("#modal-save-graph").click(function(){
         console.log("[modal-save-graph] save, clicked");
-        saveGraph();
+        if(saveGraph()){
+            $("#metaData").modal('hide');
+        }
     });
 
     $("#modal-cancel-graph").click(function(){
         console.log("[modal-save-graph] cancel, clicked");
-        loadGraph();
+        resetModal();
     });
 
 });
 // ************************************** end of zoom
 
+function changeWidth(textShape) {
+    console.log('changeWidth');
+    let parent = paper.getById(textShape.data('parent'));
+    if(textShape.getBBox().width > parent.attr('width') - 15){
+        console.log('Too big!');
+        parent.attr('width', textShape.getBBox().width + 20);
+    }
+    else{
+        console.log('Shorter');
+        if(parent.attr('width')- 4  > textShape.getBBox().width && parent.attr('width') - 4 > 100){
+            console.log('Parent width: ', parent.attr('width'));
+            parent.attr('width', parent.attr('width') - 6);
+        }
+    }
+}
 
 function calculateSubPath(id_c){
     let index = getConnectionById(id_c);
@@ -1420,13 +1446,16 @@ function changeIncomingConnections(node_id, change){
                 connections[i].line.hide();
                 connections[i].text.hide();
                 connections[i].subpath.hide();
+                console.log("[changeIncomingConnections] hiding connection with id", connections[i].id)
             }
             else{
                 connections[i].line.show();
-                connections[i].text.hide();
+                connections[i].text.show();
                 if(connections[i].subpath.data('visible') === true){
                     connections[i].subpath.show();
                 }
+                console.log("[changeIncomingConnections] showing connection with id", connections[i].id)
+
             }
             //console.log(change);
         }
@@ -1573,8 +1602,9 @@ function shapeDraw(arg, ev) {
         shape.data('resizableID', resizable.id);
         // adds a text field
         // adds a text field
-        txt = paper.text(ev.offsetX+50, ev.offsetY+20, "default-text").attr({'font-size': 10, 'fill': 'black', 'text-anchor': 'middle'});
+        txt = paper.text(ev.offsetX+15, ev.offsetY+20, "default-text").attr({'font-size': 10, 'fill': 'black', 'text-anchor': 'start'});
         txt.data("type", "shape_text");
+        txt.data("parent", shape.id);
 
         // adds a dblclick handler to the 'hide' rectangle
         resizable.click(function(){hideNodes(resizable.data('parentID'))});
@@ -1781,7 +1811,107 @@ function looseFocus(ev){
 // TODO fix dragging of decision node, check all event-handlers after re-load
 // TODO fix dragging of decision node, check all event-handlers after re-load
 
+function validation() {
+
+    let success = true;
+
+    if (document.forms["gForm"]["gName"].value === "") {
+        document.getElementById("nameLab").innerHTML = "Please provide a graph name.";
+        console.log('No graph name provided.');
+        success = false;
+    }
+    else{
+        document.getElementById("nameLab").innerHTML = "";
+    }
+    if((document.forms["gForm"]["gType"][0].checked === false) && (document.forms["gForm"]["gType"][1].checked === false)){
+        document.getElementById("typeLab").innerHTML = "Please select a graph type.";
+        console.log('No graph type selected');
+        success =  false;
+    }
+    else{
+        document.getElementById("typeLab").innerHTML = "";
+    }
+
+    if(!success){
+        $("#metaData").modal('show');
+    }
+    return success;
+}
+
+function getGraphDescriptionData(){
+    let data = [];
+
+    data['name'] = document.forms["gForm"]["gName"].value;
+
+    data['description'] = document.getElementById('graphDescritption').value;
+
+    if(document.forms["gForm"]["gType"][0].checked === true){
+        data['gtype'] = 1;
+    }
+    else{
+        data['gtype'] = 0;
+    }
+
+    let select = document.getElementById('sel1'),
+        options = select.getElementsByTagName('option'),
+        values  = [];
+
+    for (let i=options.length; i--;) {
+        if (options[i].selected) values.push(options[i].value)
+    }
+
+    //console.log(values)
+
+    let atype = 0;
+
+    if(values.includes("other")){
+        atype += 4;
+    }
+    if(values.includes("treatment")){
+        atype += 2;
+    }
+    if(values.includes("diagnostic")){
+        atype += 1;
+    }
+
+    if(atype === 0){
+        atype = 4;
+    }
+
+    data['atype'] = atype;
+
+    return data;
+}
+
+function resetModal() {
+    document.forms["gForm"]["gName"].value = "";
+    document.getElementById('graphDescritption').value = "";
+    document.getElementById('typeDiagnostic').checked = false;
+    document.getElementById('typeVisual').checked = false;
+
+    var elements = document.getElementById("sel1").options;
+
+    for(var i = 0; i < elements.length; i++){
+        elements[i].selected = false;
+    }
+}
+
+function cancelGraph() {
+    if(confirm("You are about to leave the page, all your work will be lost. Do you want to proceed?")){
+        window.location.replace("../../../DiaGenKri/public/home");
+    }
+}
+
 function saveGraph() {
+    if(!validation()){
+        return false;
+    }
+
+    let graphDescription = getGraphDescriptionData();
+
+    //console.log (graphDescription);
+
+
     disableInputs(true);
 
     connections = [];
@@ -1815,7 +1945,7 @@ function saveGraph() {
         //     // window.splice(window.indexOf(data.setName), 1);
 
         // }
-        
+
 
         console.log("[saveGraph] type is", el.type);
 
@@ -1824,12 +1954,12 @@ function saveGraph() {
             data.type = el.data("type");
             if(data.type === "connection_text")
                 data.id_connection = el.data("id_connection");
-        } 
+        }
         else if(el.type === 'path'){
             if(el.data('type') === 'hide'){
                 data.parentID = el.data('parentID');
                 data.type = "hide";
-            } else if (el.data("type") === 'sub_path') {    
+            } else if (el.data("type") === 'sub_path') {
                 data.type = "sub_path";
             } else {
                 data.fromTo = el.data("fromTo");
@@ -1837,7 +1967,7 @@ function saveGraph() {
                 data.id_connection = el.data("id_connection");
             }
 
-        } 
+        }
         else if(el.type === 'rect'){
             if(el.data('type') === 'decision'){
                 data.type = "decision";
@@ -1865,7 +1995,7 @@ function saveGraph() {
 
         el.attr('x', el.attr('x') + dx);
         el.attr('y', el.attr('y') + dy);
-        
+
 
         el.matrix.a = 1;
         el.matrix.b = 0;
@@ -1877,25 +2007,34 @@ function saveGraph() {
 
         return data;
     });
-    console.log("[saveGraph] before post ",json);
+    //console.log("[saveGraph] before post ",json);
+
+    //console.log(graphDescription['description']);
+
 
     $.post("../../../DiaGenKri/public/visualisation/save",
         {
-            data: json
+            data: json,
+            name: graphDescription['name'],
+            description: graphDescription['description'],
+            gtype: graphDescription['gtype'],
+            atype: graphDescription['atype']
         },
         function(data, status){
-            //console.log("[saveGraph] in post(data: json)",data, status);
+            //console.log("[saveGraph] in post(data: )",data, status);
             console.log('\n');
-            json = data;
+            //json = data;
         });
 
     //console.log("[saveGraph] after post",json);
 
     paper.clear();
 
+    return true;
+
 }
 
-function loadGraph() {
+function loadGraph(json) {
     disableInputs(true);
 
     console.log('[loadGraph] LOADING started');
@@ -1979,20 +2118,22 @@ function loadGraph() {
                 console.log("[loadGraph] loaded CONNECTION path");
             } else { //subpath, just remove because subpath is created when path(connection) is created
                 el.remove();
-
+                rainingEvents(el, "subpath")
                 console.log("[loadGraph] loaded SUBPATH path");
             }
-        } 
+        }
         else if(el.type === 'text'){ // trick is to remove connection_text, because connection_text is created when path(connection) is created
             console.log("[loadGraph] loaded", data.type, "text");
             rainingEvents(el, data.type);
             if(data.type === "connection_text")
                 el.data("id_connection", data.id_connection);
 
-        } 
+        }
         else if(el.type === 'rect'){
             addToShapes(el);
             rainingEvents(el, data.type);
+            if(data.type === "rect")
+                el.data("desc", data.desc);
             console.log("[loadGraph] loaded", data.type, "rect");
         }
         // // console.log('[loadGraph] setName');
@@ -2038,6 +2179,9 @@ function loadGraph() {
     for (var i = connections.length - 1; i >= 0; i--) {
         calculateSubPath(connections[i].id)
     }
+
+    // increment id, so next connection will have proper id
+    id = connections[connections.length - 1].id + 2;
 
     console.log('[loadGraph] LOADING finished');
 

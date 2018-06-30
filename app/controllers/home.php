@@ -21,4 +21,8 @@ class Home extends Controller
         $this->view('home/index', ['name' => $user->name]);
     }
 
+    public function about(){
+        $this->view('home/about');
+    }
+
 }
