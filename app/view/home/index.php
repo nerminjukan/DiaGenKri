@@ -20,13 +20,42 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="../../../DiaGenKri/public/home">DiaGenKri</a>
+                <div>
+                <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+                <svg class="svg-link" version="1.1" height="45px" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                     viewBox="280 250 280 190" style="enable-background:new 0 0 841.9 595.3;" xml:space="preserve">
+<style type="text/css">
+    .st0{fill:#524FA1;}
+    .st1{font-family:'Rockwell';}
+    .st2{font-size:84.1397px;}
+    .st3{fill:#524FA1;stroke:#524FA1;stroke-width:4.252;stroke-miterlimit:10;}
+    .st4{fill:#FFFFFF;}
+</style>
+                    <a href="../../../DiaGenKri/public/home">
+                    <g id="XMLID_1783_">
+                        <text id="XMLID_1_" transform="matrix(1.244 0 0 1 291.3076 436.5898)" class="st0 st1 st2">ViDis</text>
+                        <g id="XMLID_2190_">
+                            <line id="XMLID_2192_" class="st3" x1="487.9" y1="375.4" x2="487.9" y2="391.2"/>
+                            <line id="XMLID_2191_" class="st3" x1="477.3" y1="383.3" x2="498.6" y2="383.3"/>
+                        </g>
+                    </g>
+                    <path id="XMLID_12_" class="st0" d="M538.7,315.5c-116.8,116.9-247.4,0-247.4,0S421.9,198.7,538.7,315.5z"/>
+                    <ellipse id="XMLID_11_" class="st4" cx="418" cy="315.5" rx="53.2" ry="43.4"/>
+                    <ellipse id="XMLID_10_" class="st0" cx="418" cy="315.5" rx="30" ry="24.5"/>
+                    <g id="XMLID_14_">
+                        <rect id="XMLID_22_" x="416.5" y="302.6" class="st4" width="3" height="25.9"/>
+                        <rect id="XMLID_15_" x="405" y="314" class="st4" width="25.9" height="3"/>
+                    </g>
+                    </a>
+</svg>
+                </div>
+
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav navbar-right">
                     <?php if(isset($_SESSION["user"])): ?>
-                    <li><a href="../../../DiaGenKri/public/visualisation"><span class="glyphicon glyphicon-pencil"></span> Visualisation</a></li>
-                    <li><a href="../../../DiaGenKri/public/visualisation/gallery"><span class="glyphicon glyphicon-th"></span> Gallery</a></li>
+                    <li><a href="../../../DiaGenKri/public/visualisation/editor"><span class="glyphicon glyphicon-pencil"></span> New graph</a></li>
+                    <li><a href="../../../DiaGenKri/public/visualisation"><span class="glyphicon glyphicon-th"></span> Gallery</a></li>
                     <li><a href="../../../DiaGenKri/public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -96,29 +125,44 @@
                 <p>This website is dedicated to visualising algorithms for genetic disease diagnosis.</p>
                 <hr>
                 <h3>What would you like to do?</h3>
-                <div class="col-sm-4 row-increased-top">
-                    <a href="#" title=""><img src="../../../DiaGenKri/app/res/photos/sample.jpg" class="img-responsive img-thumbnail"></a>
+                <div class="container col-sm-4 row-increased-top">
+                    <a href="../../../DiaGenKri/public/visualisation/editor" title=""><img src="../../../DiaGenKri/app/res/photos/graph-example.jpg" class="image img-responsive img-thumbnail"></a>
+                    <div class="middle">
+                        <div class="text"><a class="a-tag" href="../../../DiaGenKri/public/visualisation/editor" title="">Create new graph</a></div>
+                    </div>
                 </div>
-                <div class="col-sm-4 row-increased-top">
-                    <a href="#" title=""><img src="../../../DiaGenKri/app/res/photos/sample.jpg" class="img-responsive img-thumbnail"></a>
+                <div class="container col-sm-4 row-increased-top">
+                    <a href="../../../DiaGenKri/public/visualisation/diagnosis" title=""><img src="../../../DiaGenKri/app/res/photos/disease-modal.jpg" class="image img-responsive img-thumbnail"></a>
+                    <div class="middle">
+                        <div class="text"><a class="a-tag" href="../../../DiaGenKri/public/visualisation/diagnosis" title="">Diagnose yourself</a></div>
+                    </div>
                 </div>
-                <div class="col-sm-4 row-increased-top">
-                    <a href="#" title=""><img src="../../../DiaGenKri/app/res/photos/sample.jpg" class="img-responsive img-thumbnail"></a>
+                <div class="container col-sm-4 row-increased-top">
+                    <a href="../../../DiaGenKri/public/home/about" title=""><img src="../../../DiaGenKri/app/res/photos/ViDis-logo.jpg" class="image img-responsive img-thumbnail"></a>
+                    <div class="middle">
+                        <div class="text"><a class="a-tag" href="../../../DiaGenKri/public/home/about" title="">About ViDis</a></div>
+                    </div>
                 </div>
                 
             </div>
             <div class="col-sm-2 sidenav">
                 <div class="well">
-                    <p>ADS</p>
+                    <img src="../../../DiaGenKri/app/res/photos/UL.png" class="img-responsive">
                 </div>
                 <div class="well">
-                    <p>ADS</p>
+                    <img src="../../../DiaGenKri/app/res/photos/SVN.png" class="img-responsive">
+                </div>
+                <div class="well">
+                    <img src="../../../DiaGenKri/app/res/photos/MIZS_AN.png" class="img-responsive">
+                </div>
+                <div class="well">
+                    <img src="../../../DiaGenKri/app/res/photos/esc_an.jpg" class="img-responsive">
                 </div>
             </div>
         </div>
     </div>
 
-    <footer class="container-fluid text-center">
+    <footer class="col-sm-12 container-fluid text-center">
         <p>©DiaGenKri</p>
     </footer>
 </div>

@@ -1281,6 +1281,7 @@ jQuery(function ($) {
         // because we do not want data loss
         if(currentText !== changingText.attr("text")){
             changingText.attr({text: currentText});
+            changeWidth(changingText);
             if(changingText.data("id_connection") !== undefined && changingText.data("type") === "connection_text"){
                 // console.log(changingText.data("id_connection"));
                 calculateSubPath(changingText.data("id_connection"));
@@ -1344,6 +1345,21 @@ jQuery(function ($) {
 });
 // ************************************** end of zoom
 
+function changeWidth(textShape) {
+    console.log('changeWidth');
+    let parent = paper.getById(textShape.data('parent'));
+    if(textShape.getBBox().width > parent.attr('width') - 15){
+        console.log('Too big!');
+        parent.attr('width', textShape.getBBox().width + 20);
+    }
+    else{
+        console.log('Shorter');
+        if(parent.attr('width')- 4  > textShape.getBBox().width && parent.attr('width') - 4 > 100){
+            console.log('Parent width: ', parent.attr('width'));
+            parent.attr('width', parent.attr('width') - 6);
+        }
+    }
+}
 
 function calculateSubPath(id_c){
     let index = getConnectionById(id_c);
@@ -1576,8 +1592,9 @@ function shapeDraw(arg, ev) {
         shape.data('resizableID', resizable.id);
         // adds a text field
         // adds a text field
-        txt = paper.text(ev.offsetX+50, ev.offsetY+20, "default-text").attr({'font-size': 10, 'fill': 'black', 'text-anchor': 'middle'});
+        txt = paper.text(ev.offsetX+15, ev.offsetY+20, "default-text").attr({'font-size': 10, 'fill': 'black', 'text-anchor': 'start'});
         txt.data("type", "shape_text");
+        txt.data("parent", shape.id);
 
         // adds a dblclick handler to the 'hide' rectangle
         resizable.click(function(){hideNodes(resizable.data('parentID'))});
@@ -1845,6 +1862,10 @@ function getGraphDescriptionData(){
     }
     if(values.includes("diagnostic")){
         atype += 1;
+    }
+
+    if(atype === 0){
+        atype = 4;
     }
 
     data['atype'] = atype;

@@ -178,7 +178,7 @@ $description="";
                 <label class="myLabelForm" for="IDinput">Element ID</label></br>
                 <input class="myInputForm" id="IDinput" disabled type="text" name="fname"><br>
                 <label class="myLabelForm" for="IDtext">Text (short)</label></br>
-                <input class="myInputForm"disabled id="IDtext" type="text" maxlength="20"></br>
+                <input class="myInputForm"disabled id="IDtext" type="text" maxlength="40"></br>
                 <label class="myLabelForm" for="IDdesc">Text (long)</label></br>
                 <textarea class="myInputForm" rows="6" cols="20" disabled id="IDdesc" type="text"></textarea>
             </form>
@@ -392,10 +392,11 @@ $description="";
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">TEST modal for disease diagnosing</h4>
+                <h4 class="modal-title">Disease diagnosing</h4>
             </div>
             <div class="modal-body">
                 <h3 id="h3id"></h3>
+                <pre><p id="question"></p></pre>
                 <div id="testdiv">
 
                 </div>

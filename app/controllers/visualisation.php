@@ -56,6 +56,10 @@ class Visualisation extends Controller
 
     }
 
+    public function diagnosis(){
+        $this->view('visualisation/diagnosis');
+    }
+
     public function gallery($name = ''){
         $user = $this->model('User');
         $user->name = $name;

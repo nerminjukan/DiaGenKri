@@ -16,13 +16,14 @@ $data = DBfunctions::getGraphs();
 <html lang="sl">
 
 <head>
-    <title>Gallery</title>
+    <title>Graphs table</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css"
+    <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css">
+    <script src="../../../DiaGenKri/app/res/js/filter.js"></script>
 
 </head>
 
@@ -94,8 +95,52 @@ $data = DBfunctions::getGraphs();
     </div>
 </nav>
 
-<div>
-    FILTER
+<div class="well well-sm col-sm-12">
+    <h3 style="margin-top: 10px">Filters:</h3>
+    <form name="gForm" role="form" class="form-inline">
+        <div class="well well-sm form-group">
+            <div class="form-group">
+                <label for="gName">Graph name:</label>
+                <input onkeyup="filterTable()" type="email" class="form-control" id="gName" placeholder="enter graph name">
+            </div>
+            <div>
+                <button type="button" onclick="resetFilters()" class="btn btn-sm btn-warning">Clear filters</button>
+            </div>
+        </div>
+        <div class="well well-sm form-group">
+            <label class="col-sm-6 control-label"
+                    >Graph type:</label>
+            <div class="col-sm-6">
+                <div>
+                    <label class="radio-inline" for="typeDAll"><input onchange="filterTable()" checked class="radio" type="radio" id="typeDAll" name="gType" value="all">All</label>
+                </div>
+                <div>
+                    <label class="radio-inline" for="typeVisual"><input onchange="filterTable()" class="radio" id="typeVisual" type="radio" name="gType" value="visual">Visual</label>
+                </div>
+                <div>
+                    <label class="radio-inline" for="typeDiagnostic"><input onchange="filterTable()" class="radio" type="radio" id="typeDiagnostic" name="gType" value="diagnostic">Diagnostic</label>
+                </div>
+                <label style="color: red; font-size: 14px" id="typeLab"></label>
+            </div>
+        </div>
+        <div class="well well-sm form-group">
+            <label class="col-sm-6 control-label"
+                    >Algorithm type:</label>
+            <div class="col-sm-6">
+                <div>
+                    <label class="radio-inline" for="typeADiagnostic"><input onchange="filterTable()" class="radio" type="checkbox" id="typeADiagnostic" name="aType" value="1">Diagnostic</label>
+                </div>
+                <div>
+                    <label class="radio-inline" for="typeATreatment"><input onchange="filterTable()" class="radio" id="typeATreatment" type="checkbox" name="aType" value="2">Treatment</label>
+                </div>
+                <div>
+                    <label class="radio-inline" for="typeAOther"><input onchange="filterTable()" class="radio" type="checkbox" id="typeAOther" name="aType" value="4">Other</label>
+                </div>
+                <label style="color: red; font-size: 14px" id="typeLab"></label>
+            </div>
+        </div>
+    </form>
+
     <div>
         <a class="btn btn-success" href="../../../DiaGenKri/public/visualisation/editor">New graph</a>
     </div>
@@ -105,9 +150,9 @@ $data = DBfunctions::getGraphs();
 <div class="container-fluid">
     <div class="row content">
         <div class="col-sm-12 text-left">
-            <table class="table table-hover table-responsive table-striped">
+            <table id="graphTable" class="table table-sc table-hover table-responsive table-striped">
                 <thead>
-                <tr style="text-align: center">
+                <tr class="tr-sc" style="text-align: center">
                     <th>ID</th>
                     <th>Author</th>
                     <th>Graph name</th>
@@ -117,42 +162,60 @@ $data = DBfunctions::getGraphs();
                     <th>Edit</th>
                 </tr>
                 </thead>
-                <tbody class="tbody">
+                <tbody class="tbody-sc">
                 <?php foreach ($data as $key => $value){
                     $id = $value["id"];
                     $email = $value["e-mail"];
                     $name = $value["name"];
                     $visual = $value["visual"];
+
+                    if($visual === '0'){
+                        $visual = 'Diagnostic';
+                    }
+                    else{
+                        $visual = 'Visual';
+                    }
+
                     $algorithmType = $value["algorithm_type"];
+
+                    if($algorithmType === '0') {
+                        $algorithmType = '-';
+                    }
+                    else if($algorithmType === '1'){
+                        $algorithmType = 'Diagnostic';
+                    }
+                    else if($algorithmType === '2'){
+                        $algorithmType = 'Treatment';
+                    }
+                    else if($algorithmType === '3'){
+                        $algorithmType = 'Diagnostic, treatment';
+                    }
+                    else if($algorithmType === '4'){
+                        $algorithmType = 'Other';
+                    }
+                    else if($algorithmType === '5'){
+                        $algorithmType = 'Diagnostic, other';
+                    }
+                    else if($algorithmType === '6'){
+                        $algorithmType = 'Treatment, other';
+                    }
+                    else if($algorithmType === '7'){
+                        $algorithmType = 'Diagnostic, treatment, other';
+                    }
+
+
                     $created = $value["created"];
                     $button = "<form action=\"visualisation/edit\" method=\"get\">
                                 <input hidden type=\"text\" value='$id' name=\"id\"><br>
                                 <input class='btn btn-block btn-primary' value='Edit' type=\"submit\">
                                 </form>";
 
-                    echo "<tr><td>$id</td><td>$email</td><td>$name</td><td>$visual</td><td>$algorithmType</td><td>$created</td><td>$button</td></tr>";
+                    echo "<tr class='tr-sc'><td style=\"white-space: nowrap; width: 6%\">$id</td><td style=\"white-space: nowrap; width: 12%\">$email</td><td style=\"white-space: nowrap; width: 19%\">$name</td><td style=\"white-space: nowrap; width: 16%\">$visual</td><td style=\"white-space: nowrap; width: 21%\">$algorithmType</td><td style=\"white-space: nowrap; width: 12.5%\">$created</td><td style=\"white-space: nowrap; width: 10.2%\">$button</td></tr>";
 
                 }
                 ?>
                 </tbody>
             </table>
-        </div>
-        <div class="modal fade" id="editModal" role="dialog">
-            <div class="modal-dialog modal-sm">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Administration warning</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p>You are about to enter the page for changing user privileges. Please proceed with caution, as changes to user rights may affect the content of the application. Do you wish to continue?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <a href="../../../DiaGenKri/public/administrate/change" class="btn btn-warning row-increased-bottom btn-block">Yes, continue</a>
-                        <button class="btn btn-info row-increased-bottom btn-block" data-dismiss="modal">No, cancel</button>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </div>
