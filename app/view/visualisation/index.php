@@ -116,7 +116,7 @@ $data = DBfunctions::getGraphs();
                     <label class="radio-inline" for="typeDAll"><input onchange="filterTable()" checked class="radio" type="radio" id="typeDAll" name="gType" value="all">All</label>
                 </div>
                 <div>
-                    <label class="radio-inline" for="typeVisual"><input onchange="filterTable()" class="radio" id="typeVisual" type="radio" name="gType" value="visual">Pacients</label>
+                    <label class="radio-inline" for="typeVisual"><input onchange="filterTable()" class="radio" id="typeVisual" type="radio" name="gType" value="visual">Patients</label>
                 </div>
                 <div>
                     <label class="radio-inline" for="typeDiagnostic"><input onchange="filterTable()" class="radio" type="radio" id="typeDiagnostic" name="gType" value="diagnostic">Doctors</label>
@@ -179,7 +179,7 @@ $data = DBfunctions::getGraphs();
                     $visual = $value["visual"];
 
                     if($visual === '0'){
-                        $visual = 'Pacients';
+                        $visual = 'Patients';
                     }
                     else{
                         $visual = 'Doctors';
