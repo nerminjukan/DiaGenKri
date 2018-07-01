@@ -312,10 +312,10 @@ function radioValue() {
         return 'all';
     }
     else if(document.forms["gForm"]["gType"][1].checked === true){
-        return 'visual';
+        return 'Pacients';
     }
     else{
-        return 'diagnostic';
+        return 'Doctors';
     }
 }
 

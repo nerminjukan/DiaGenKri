@@ -96,35 +96,35 @@ $data = DBfunctions::getGraphs();
     </div>
 </nav>
 
-<div class="well well-sm col-sm-12">
-    <h3 style="margin-top: 10px">Filters:</h3>
-    <form name="gForm" role="form" class="form-inline">
-        <div class="well well-sm form-group">
-            <div class="form-group">
-                <label for="gName">Graph name:</label>
-                <input onkeyup="filterTable()" type="email" class="form-control" id="gName" placeholder="enter graph name">
+<div class="well well-sm col-sm-12 flex-wrap">
+    <form name="gForm" role="form" class="form-inline" id="filterForm">
+        <div class="well well-sm form-group filter-settings">
+            <div class="form-group full-width">
+                <label for="gName">Search:</label>
+                <input onkeyup="filterTable()" type="email" class="form-control full-width" id="gName" placeholder="enter graph name" 
+                style="width:100%;">
             </div>
-            <div>
-                <button type="button" onclick="resetFilters()" class="btn btn-sm btn-warning">Clear filters</button>
-            </div>
+            <!-- <div>
+                <button type="button" onclick="resetFilters()" class="btn btn-sm btn-default full-width clear-filters">Clear filters</button>
+            </div> -->
         </div>
-        <div class="well well-sm form-group">
+        <div class="well well-sm form-group filter-settings">
             <label class="col-sm-6 control-label"
-                    >Graph type:</label>
+                    >Intedent for:</label>
             <div class="col-sm-6">
                 <div>
                     <label class="radio-inline" for="typeDAll"><input onchange="filterTable()" checked class="radio" type="radio" id="typeDAll" name="gType" value="all">All</label>
                 </div>
                 <div>
-                    <label class="radio-inline" for="typeVisual"><input onchange="filterTable()" class="radio" id="typeVisual" type="radio" name="gType" value="visual">Visual</label>
+                    <label class="radio-inline" for="typeVisual"><input onchange="filterTable()" class="radio" id="typeVisual" type="radio" name="gType" value="visual">Pacients</label>
                 </div>
                 <div>
-                    <label class="radio-inline" for="typeDiagnostic"><input onchange="filterTable()" class="radio" type="radio" id="typeDiagnostic" name="gType" value="diagnostic">Diagnostic</label>
+                    <label class="radio-inline" for="typeDiagnostic"><input onchange="filterTable()" class="radio" type="radio" id="typeDiagnostic" name="gType" value="diagnostic">Doctors</label>
                 </div>
                 <label style="color: red; font-size: 14px" id="typeLab"></label>
             </div>
         </div>
-        <div class="well well-sm form-group">
+        <div class="well well-sm form-group filter-settings">
             <label class="col-sm-6 control-label"
                     >Algorithm type:</label>
             <div class="col-sm-6">
@@ -253,6 +253,6 @@ $data = DBfunctions::getGraphs();
     </div>
 </div>
 
-<footer class="container-fluid text-center">
+<!-- <footer class="container-fluid text-center">
     <p>©DiaGenKri</p>
-</footer>
+</footer> -->
