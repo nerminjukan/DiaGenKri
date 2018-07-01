@@ -1,8 +1,8 @@
 <?php
 
-if(!isset($_SESSION["user"])){
-    header("Location: ../../../DiaGenKri/public/home");
-}
+// if(!isset($_SESSION["user"])){
+//     header("Location: ../../../DiaGenKri/public/home");
+// }
 
 
 require_once '../app/database/DBfunctions.php';
@@ -142,28 +142,36 @@ $data = DBfunctions::getGraphs();
         </div>
     </form>
 
-    <div>
+    <!-- <div>
         <a class="btn btn-success" href="../../../DiaGenKri/public/visualisation/editor">New graph</a>
-    </div>
+    </div> -->
 </div>
 
 
 <div class="container-fluid">
     <div class="row content">
-        <div class="col-sm-12 text-left">
-            <table id="graphTable" class="table table-sc table-hover table-responsive table-striped">
+        <div class="col-sm-12 text-left flex-wrap">
+            <table id="graphTable" class="table table-hover table-responsive table-bordered">
                 <thead>
-                <tr class="tr-sc" style="text-align: center">
+                <tr>
                     <th>ID</th>
                     <th>Author</th>
                     <th>Graph name</th>
                     <th>Graph type</th>
                     <th>Algorithm type</th>
+
+                    <?php if(isset($_SESSION["user"])): ?>
                     <th>Created</th>
+                    <?php endif; ?>
+
+                    <th>View</th>
+
+                    <?php if(isset($_SESSION["user"])): ?>
                     <th>Edit</th>
+                    <?php endif; ?>
                 </tr>
                 </thead>
-                <tbody class="tbody-sc">
+                <tbody>
                 <?php foreach ($data as $key => $value){
                     $id = $value["id"];
                     $email = $value["e-mail"];
@@ -171,10 +179,10 @@ $data = DBfunctions::getGraphs();
                     $visual = $value["visual"];
 
                     if($visual === '0'){
-                        $visual = 'Diagnostic';
+                        $visual = 'Pacients';
                     }
                     else{
-                        $visual = 'Visual';
+                        $visual = 'Doctors';
                     }
 
                     $algorithmType = $value["algorithm_type"];
@@ -204,14 +212,41 @@ $data = DBfunctions::getGraphs();
                         $algorithmType = 'Diagnostic, treatment, other';
                     }
 
-
                     $created = $value["created"];
-                    $button = "<button class='btn btn-block btn-primary edit-graph-button' id='$id'>Edit</button>";
 
-                    echo "<tr class='tr-sc'><td style=\"white-space: nowrap; width: 6%\">$id</td><td style=\"white-space: nowrap; width: 12%\">$email</td><td style=\"white-space: nowrap; width: 19%\">$name</td><td style=\"white-space: nowrap; width: 16%\">$visual</td><td style=\"white-space: nowrap; width: 21%\">$algorithmType</td><td style=\"white-space: nowrap; width: 12.5%\">$created</td><td style=\"white-space: nowrap; width: 10.2%\">$button</td></tr>";
+                    // if(isset($_SESSION["user"])){
+                    $button_edit = "<button class='btn btn-block btn-primary edit-graph-button' id='$id'>Edit</button>";
+                    // }
 
+                    $button_view = "<button class='btn btn-block btn-primary view-graph-button' id='$id'>View</button>";
+
+                    // output string, start
+                    $output = "<tr class='tr-graphTable'>";
+
+                    $output = "$output" . "<td>" . "$id" . "</td>";
+                    $output = "$output" . "<td>" . "$email" . "</td>";
+                    $output = "$output" . "<td>" . "$name" . "</td>";
+                    $output = "$output" . "<td>" . "$visual" . "</td>";
+                    $output = "$output" . "<td>" . "$algorithmType" . "</td>";
+
+                    if(isset($_SESSION["user"])){
+                        $output = "$output" . "<td>" . "$created" . "</td>";
+                    }
+
+                    $output = "$output" . "<td>" . "$button_view" . "</td>";
+
+                    if(isset($_SESSION["user"])){
+                        $output = "$output" . "<td>" . "$button_edit" . "</td>"; 
+                    }
+
+                    // end
+                    $output = "$output" . "</tr>";
+
+                    // echo "<tr class='tr-sc'><td style=\"white-space: nowrap; width: 6%\">$id</td><td style=\"white-space: nowrap; width: 12%\">$email</td><td style=\"white-space: nowrap; width: 19%\">$name</td><td style=\"white-space: nowrap; width: 16%\">$visual</td><td style=\"white-space: nowrap; width: 21%\">$algorithmType</td><td style=\"white-space: nowrap; width: 12.5%\">$created</td><td style=\"white-space: nowrap; width: 10.2%\">$button_edit</td></tr>";
+                    echo "$output";
                 }
                 ?>
+                
                 </tbody>
             </table>
         </div>

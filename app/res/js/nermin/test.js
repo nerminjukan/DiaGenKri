@@ -2,10 +2,16 @@ function setModal(id) {
     if(canvasSets.length !== 0){
         let node = findNode(id);
         console.log('FOUND: ', node);
-        setNode(node);
+        if(node)
+            setNode(node);
     }
     else{
-        alert('No elements on the canvas!!');
+        // alert('No elements on the canvas!!');
+        $.notify("Something went wrong",
+        { position: 'top center',
+        className: 'error',
+        gap: 5 }
+        );
     }
 
 

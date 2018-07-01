@@ -25,11 +25,21 @@
                 <svg class="svg-link" version="1.1" height="45px" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                      viewBox="280 250 280 190" style="enable-background:new 0 0 841.9 595.3;" xml:space="preserve">
 <style type="text/css">
-    .st0{fill:#524FA1;}
+    /*.st0:hover{
+        fill: #524FA1;
+    }*/
+    .st0{fill:#6B6B6B;} /* original colors: #524FA1; and #FFFFFF;*/
     .st1{font-family:'Rockwell';}
     .st2{font-size:84.1397px;}
-    .st3{fill:#524FA1;stroke:#524FA1;stroke-width:4.252;stroke-miterlimit:10;}
-    .st4{fill:#FFFFFF;}
+    .st3{fill:#6B6B6B;stroke:#6B6B6B;stroke-width:4.252;stroke-miterlimit:10;}
+    /*.st3:hover{
+        fill: #524FA1;
+        stroke: #524FA1;
+    }*/
+    .st4{fill:#9B9B9B;}
+    /*.st4:hover{
+        fill: #FFFFFF;
+    }*/
 </style>
                     <a href="../../../DiaGenKri/public/home">
                     <g id="XMLID_1783_">
@@ -54,8 +64,8 @@
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav navbar-right">
                     <?php if(isset($_SESSION["user"])): ?>
-                    <li><a href="../../../DiaGenKri/public/visualisation/editor"><span class="glyphicon glyphicon-pencil"></span> New graph</a></li>
-                    <li><a href="../../../DiaGenKri/public/visualisation"><span class="glyphicon glyphicon-th"></span> Gallery</a></li>
+                    <li><a href="../../../DiaGenKri/public/visualisation/editor"><span class="glyphicon glyphicon-pencil"></span> Create graph</a></li>
+                    <li><a href="../../../DiaGenKri/public/visualisation"><span class="glyphicon glyphicon-th"></span> List of graphs</a></li>
                     <li><a href="../../../DiaGenKri/public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -128,7 +138,7 @@
                 <div class="container col-sm-4 row-increased-top">
                     <a href="../../../DiaGenKri/public/visualisation/editor" title=""><img src="../../../DiaGenKri/app/res/photos/graph-example.jpg" class="image img-responsive img-thumbnail"></a>
                     <div class="middle">
-                        <div class="text"><a class="a-tag" href="../../../DiaGenKri/public/visualisation/editor" title="">Create new graph</a></div>
+                        <div class="text"><a class="a-tag" href="../../../DiaGenKri/public/visualisation/editor" title="">Create graph</a></div>
                     </div>
                 </div>
                 <div class="container col-sm-4 row-increased-top">

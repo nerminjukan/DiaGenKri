@@ -31,6 +31,13 @@ class Visualisation extends Controller
         $this->view('visualisation/editor', ['name' => $user->name]);
     }
 
+    public function viewonly($name = ''){
+        $user = $this->model('User');
+        $user->name = $name;
+
+        $this->view('visualisation/view', ['name' => $user->name]);
+    }
+
 
     public function edit(){
         if(isset($_SESSION["user"]) && isset($_POST["data"]) && isset($_POST["name"]) && isset($_POST["description"]) && isset($_POST["gtype"]) && isset($_POST["atype"]) && isset($_POST["id"])){

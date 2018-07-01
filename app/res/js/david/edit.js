@@ -1,6 +1,6 @@
 $(function(){
    $('button.edit-graph-button').click(function(){
-   	const id_graph = $(this).attr('id');
+   		const id_graph = $(this).attr('id');
 	// console.log( id_graph);
 
 	// $.post("visualisation/edit",
@@ -16,6 +16,14 @@ $(function(){
 	//   });
 
 	// similar behavior as an HTTP redirect
-	window.location.replace("../../../DiaGenKri/public/visualisation/editor?id=" + id_graph);
+		window.location.replace("../../../DiaGenKri/public/visualisation/editor?id=" + id_graph);
+   });
+
+   // do something hen user clicks view button
+   $('button.view-graph-button').click(function(){
+		const id_graph = $(this).attr('id');
+		console.log("id:", id_graph);
+		window.location.replace("../../../DiaGenKri/public/visualisation/viewonly?id=" + id_graph);
    });
 });
+

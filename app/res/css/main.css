@@ -300,3 +300,62 @@ input:disabled, textarea:disabled {
 .a-tag:hover{
     color: white;
 }
+
+/* style for table on diagnosis tab */
+.flex-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.wrap-table {
+  margin-top: 1em;
+  height: calc(100% - 2em);
+  margin-bottom: 1em;
+}
+
+#pacientTable {
+  max-width: 960px;
+  display: block;
+  height: 100%;
+}
+
+#pacientTable > td {
+  width: 400px;
+}
+
+.pacient-disease {
+  width: 450px;
+}
+
+.pacient-button {
+  width: 140px;
+}
+
+/* style for table on list algorithms tab */
+#graphTable {
+  background-color: #F9F9F9;
+  max-width: 960px;
+}
+
+.tr-graphTable {
+  background-color: #FFFFFF;
+}
+
+/* style for table on viewonly page*/
+#viewonlyTable {
+  display: block;
+  height: 100%;
+  margin-bottom: 0;
+}
+
+#viewOnlyTable > th, td {
+  text-align: left;
+}
+
+/* style for div that wraps #viewonlyTable*/
+#table {
+  height: calc(100vh - 50px);
+  padding: 1px;
+}
+
+
