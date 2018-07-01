@@ -32,10 +32,16 @@ class Visualisation extends Controller
     }
 
 
-    // public function edit(){
-        // return '../../public/visualisation/gallery?id=' . isset($_POST["id"]) ? isset($_POST["id"]) : 'new';
-        // ViewHelper::redirect('../../public/visualisation/gallery?id=' . isset($_POST["id"]) ? isset($_POST["id"]) : 'new');
-    // }
+    public function edit(){
+        if(isset($_SESSION["user"]) && isset($_POST["data"]) && isset($_POST["name"]) && isset($_POST["description"]) && isset($_POST["gtype"]) && isset($_POST["atype"]) && isset($_POST["id"])){
+
+
+            DBfunctions::editGraph($_SESSION["user"], $_POST["data"], $_POST["name"], $_POST["description"], $_POST["gtype"], $_POST["atype"],
+                $_POST["id"]);
+
+            // ViewHelper::redirect('../../public/visualisation/gallery');
+        }
+    }
 
     public function load(){
         // echo "hello world";
@@ -55,7 +61,7 @@ class Visualisation extends Controller
 
             DBfunctions::saveGraph($_SESSION["user"], $_POST["data"], $_POST["name"], $_POST["description"], $_POST["gtype"], $_POST["atype"]);
 
-            ViewHelper::redirect('../../public/visualisation/gallery');
+            // ViewHelper::redirect('../../public/visualisation/gallery');
         }
         else{
             // TO DO

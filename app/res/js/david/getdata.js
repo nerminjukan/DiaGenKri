@@ -41,7 +41,7 @@ $(function(){
 		const myArray = $.parseJSON(data);
 		// const podatki = $.parseJSON(myArray["data"]);
 		// window["f_json"] = myArray["data"]
-		// console.log(myArray);
+		console.log("[getData.js] myArray:", myArray);
 		// console.log(podatki);
 
 		loadGraph(myArray["data"]);

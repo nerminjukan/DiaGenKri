@@ -30,6 +30,7 @@ include_once '../app/controllers/visualisation.php';
     <script src="../../../DiaGenKri/app/res/js/raphael/raphael.min.js"></script>
     <script src="../../../DiaGenKri/app/res/js/raphael/raphael.json.js"></script>
 
+    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/notify.min.js"></script>
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/raphael.pan-zoom.js"></script>
     <!-- <script type="text/javascript" src="../../../DiaGenKri/app/res/js/nermin/nermin.js"></script> -->
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/david.js"></script> 

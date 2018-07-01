@@ -416,6 +416,10 @@ let Colors = {
 // variable to know for which "text" shape the text is being edited
 let changingText = null;
 
+// if the same graph is being edited and id of that graph
+let editingGraph = false;
+let graphId = null;
+
 // $(window).resize(function(){
 //     scale = getScale(paper);
 //     console.log("[window] resized")
@@ -1099,6 +1103,51 @@ function getConnectionById(id_c){
     return null;
 }
 
+
+// extracts parameter from given string(url), www.google.com?abc=3, it will extract abc and output 3
+function extractParameters( name, url ) {
+    if (!url) url = location.href;
+    name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+    let regexS = "[\\?&]"+name+"=([^&#]*)";
+    let regex = new RegExp( regexS );
+    let results = regex.exec( url );
+    return results == null ? null : results[1];
+}
+
+// get data about graph with certain id
+function getGraphData(id_graph_load) {
+    let info = null
+    $.post("../../../DiaGenKri/public/visualisation/load",
+    {
+        id: id_graph_load
+    },
+    function(data, status){
+        const myArray = $.parseJSON(data);
+        // const podatki = $.parseJSON(myArray["data"]);
+        // window["f_json"] = myArray["data"]
+        console.log("[david.js] myArray", myArray);
+        // console.log(podatki);
+
+        info = {
+            id: myArray["id"],
+            email: myArray["e-mail"],
+            name: myArray["name"],
+            description: myArray["description"],
+            visual: myArray["visual"],
+            algorithm_type: myArray["algorithm_type"]
+        };
+        // console.log("info about graph, without data:", info);
+        populateForm("name", info);
+    }
+    );
+    
+}
+
+// populates form with name with data(object)
+function populateForm(name, data){
+    console.log("[populateForm] will fill data with ",data);
+}
+
 // ************* end of some other functions
 // window.onload = function () {
 // set focus to div with paper
@@ -1244,6 +1293,9 @@ jQuery(function ($) {
     panZoom.enable();
     // paper.safari();
 
+    // set default class for notifications
+    // $.notify.defaults({ className: "success" });.
+
     $("#up").click(function (e) {
         //console.log("[mapContainer up]");
 
@@ -1341,6 +1393,7 @@ jQuery(function ($) {
         console.log("[modal-save-graph] save, clicked");
         if(saveGraph()){
             $("#metaData").modal('hide');
+            resetModal();
         }
     });
 
@@ -1348,6 +1401,19 @@ jQuery(function ($) {
         console.log("[modal-save-graph] cancel, clicked");
         resetModal();
     });
+
+
+    // **** not needed anymore, because editingGraph can be set to true in loadGraph() method,
+    // **** that works because loadGraph is caled from getData.js which executes it only when graph 
+    // **** is being loaded
+    // check wheter user is editing graph or its completly new graph
+    graphId = extractParameters('id', window.location.href);
+    editingGraph = graphId === null ? false : true
+    // get data about graph and populate form
+    if(editingGraph)
+        getGraphData(graphId);
+    
+
 
 });
 // ************************************** end of zoom
@@ -1812,7 +1878,6 @@ function looseFocus(ev){
 // TODO fix dragging of decision node, check all event-handlers after re-load
 
 function validation() {
-
     let success = true;
 
     if (document.forms["gForm"]["gName"].value === "") {
@@ -1903,6 +1968,14 @@ function cancelGraph() {
 }
 
 function saveGraph() {
+    if(canvasSets.length === 0){
+        $.notify("Add some elements first",
+        { position: 'bottom center',
+        className: 'info',
+        gap: 5 }
+        );
+        return false;
+    }
     if(!validation()){
         return false;
     }
@@ -1911,6 +1984,7 @@ function saveGraph() {
 
     //console.log (graphDescription);
 
+    console.log("[saveGraph] TYPE:", !editingGraph ? "save new graph" : "edit existing graph")
 
     disableInputs(true);
 
@@ -2012,29 +2086,111 @@ function saveGraph() {
     //console.log(graphDescription['description']);
 
 
-    $.post("../../../DiaGenKri/public/visualisation/save",
-        {
-            data: json,
-            name: graphDescription['name'],
-            description: graphDescription['description'],
-            gtype: graphDescription['gtype'],
-            atype: graphDescription['atype']
-        },
-        function(data, status){
-            //console.log("[saveGraph] in post(data: )",data, status);
-            console.log('\n');
-            //json = data;
+    if(!editingGraph){
+        // $.post("../../../DiaGenKri/public/visualisation/save",
+        //     {
+        //         data: json,
+        //         name: graphDescription['name'],
+        //         description: graphDescription['description'],
+        //         gtype: graphDescription['gtype'],
+        //         atype: graphDescription['atype']
+        //     },
+        //     function(data, status){
+        //         //console.log("[saveGraph] in post(data: )",data, status);
+        //         console.log('[saveGraph] SAVE:', status === "success" ? "saved successfuly" : "not saved successfuly", "\ndata:", data);
+        //         //json = data;
+        //     });
+        $.ajax({
+            type: "POST",
+            url: "../../../DiaGenKri/public/visualisation/save",
+            data: {
+                data: json,
+                name: graphDescription['name'],
+                description: graphDescription['description'],
+                gtype: graphDescription['gtype'],
+                atype: graphDescription['atype']
+            },
+            success: function(data, status){
+                console.log('[saveGraph] save', status === "success" ? "saved successfuly" : "not saved successfuly", "\ndata:", data);
+                if(data === "1"){
+                    $.notify("Algorithm successfuly saved",
+                    { position: 'bottom center',
+                    className: 'success',
+                    gap: 5 }
+                    );
+                } else {
+                    $.notify("Something went wrong, algorithm not saved",
+                    { position: 'bottom center',
+                    className: 'error',
+                    gap: 5 }
+                    );
+                }
+            }
         });
+    } else {
+        // $.post("../../../DiaGenKri/public/visualisation/edit",
+        //     {
+        //         data: json,
+        //         id: graphId,
+        //         name: graphDescription['name'],
+        //         description: graphDescription['description'],
+        //         gtype: graphDescription['gtype'],
+        //         atype: graphDescription['atype']
+        //     },
+        //     function(data, status){
+        //         console.log('[saveGraph]', status === "success" ? "saved successfuly" : "not saved successfuly", "\ndata:", data);
+        //         $.notify("Algorithm successfuly saved!",
+        //             { position: 'bottom center',
+        //              className: 'success',
+        //              gap: 5 }
+        //         );
+        //     });
+
+        $.ajax({
+            type: "POST",
+            url: "../../../DiaGenKri/public/visualisation/edit",
+            data: {
+                data: json,
+                id: graphId,
+                name: graphDescription['name'],
+                description: graphDescription['description'],
+                gtype: graphDescription['gtype'],
+                atype: graphDescription['atype']
+            },
+            success: function(data, status){
+                console.log('[saveGraph] EDIT:', status === "success" ? "saved successfuly" : "not saved successfuly", "\ndata:", data);
+                if(data === "1"){
+                    $.notify("Algorithm successfuly saved!",
+                    { position: 'bottom center',
+                    className: 'success',
+                    gap: 5 }
+                    );
+                } else {
+                    $.notify("Something went wrong, algorithm not saved",
+                    { position: 'bottom center',
+                    className: 'error',
+                    gap: 5 }
+                    );
+                }
+            }
+        });
+    }
 
     //console.log("[saveGraph] after post",json);
 
     paper.clear();
+
+    // when graph is saved, user can make new graph
+    editingGraph = false;
 
     return true;
 
 }
 
 function loadGraph(json) {
+    // graph is being loaded, so user will be definitly editing one
+    editingGraph = true;
+
     disableInputs(true);
 
     console.log('[loadGraph] LOADING started');
@@ -2181,7 +2337,8 @@ function loadGraph(json) {
     }
 
     // increment id, so next connection will have proper id
-    id = connections[connections.length - 1].id + 2;
+    if(connections.length > 0)
+        id = connections[connections.length - 1].id + 2;
 
     console.log('[loadGraph] LOADING finished');
 
