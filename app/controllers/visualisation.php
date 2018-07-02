@@ -31,10 +31,32 @@ class Visualisation extends Controller
         $this->view('visualisation/editor', ['name' => $user->name]);
     }
 
+    public function viewonly($name = ''){
+        $user = $this->model('User');
+        $user->name = $name;
+
+        $this->view('visualisation/view', ['name' => $user->name]);
+    }
+
 
     public function edit(){
-        $_GET['link'] =
-        $this->view('visualisation/editor');
+        if(isset($_SESSION["user"]) && isset($_POST["data"]) && isset($_POST["name"]) && isset($_POST["description"]) && isset($_POST["gtype"]) && isset($_POST["atype"]) && isset($_POST["id"])){
+
+
+            DBfunctions::editGraph($_SESSION["user"], $_POST["data"], $_POST["name"], $_POST["description"], $_POST["gtype"], $_POST["atype"],
+                $_POST["id"]);
+
+            // ViewHelper::redirect('../../public/visualisation/gallery');
+        }
+    }
+
+    public function load(){
+        // echo "hello world";
+        $result = DBfunctions::loadGraph($_POST['id']);
+        // echo "<pre>";
+        // var_dump($result);
+        // exit();
+        echo json_encode($result);
     }
 
     public function save(){
@@ -46,7 +68,7 @@ class Visualisation extends Controller
 
             DBfunctions::saveGraph($_SESSION["user"], $_POST["data"], $_POST["name"], $_POST["description"], $_POST["gtype"], $_POST["atype"]);
 
-            ViewHelper::redirect('../../public/visualisation/gallery');
+            // ViewHelper::redirect('../../public/visualisation/gallery');
         }
         else{
             // TO DO

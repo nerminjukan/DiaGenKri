@@ -1,8 +1,8 @@
 <?php
 
-if(!isset($_SESSION["user"])){
-    header("Location: ../../../DiaGenKri/public/home");
-}
+// if(!isset($_SESSION["user"])){
+//     header("Location: ../../../DiaGenKri/public/home");
+// }
 
 
 require_once '../app/database/DBfunctions.php';
@@ -23,6 +23,7 @@ $data = DBfunctions::getGraphs();
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css">
+    <script src="../../../DiaGenKri/app/res/js/david/edit.js"></script>
     <script src="../../../DiaGenKri/app/res/js/filter.js"></script>
 
 </head>
@@ -95,74 +96,82 @@ $data = DBfunctions::getGraphs();
     </div>
 </nav>
 
-<div class="well well-sm col-sm-12">
-    <h3 style="margin-top: 10px">Filters:</h3>
-    <form name="gForm" role="form" class="form-inline">
-        <div class="well well-sm form-group">
-            <div class="form-group">
-                <label for="gName">Graph name:</label>
-                <input onkeyup="filterTable()" type="email" class="form-control" id="gName" placeholder="enter graph name">
+<div class="well well-sm col-sm-12 flex-wrap">
+    <form name="gForm" role="form" class="form-inline" id="filterForm">
+        <div class="well well-sm form-group filter-settings">
+            <div class="form-group full-width">
+                <label for="gName">Search:</label>
+                <input onkeyup="filterTable()" type="email" class="form-control full-width" id="gName" placeholder="enter graph name" 
+                style="width:100%;">
             </div>
-            <div>
-                <button type="button" onclick="resetFilters()" class="btn btn-sm btn-warning">Clear filters</button>
-            </div>
+            <!-- <div>
+                <button type="button" onclick="resetFilters()" class="btn btn-sm btn-default full-width clear-filters">Clear filters</button>
+            </div> -->
         </div>
-        <div class="well well-sm form-group">
+        <div class="well well-sm form-group filter-settings">
             <label class="col-sm-6 control-label"
-                    >Graph type:</label>
+                    >Intedent for:</label>
             <div class="col-sm-6">
                 <div>
                     <label class="radio-inline" for="typeDAll"><input onchange="filterTable()" checked class="radio" type="radio" id="typeDAll" name="gType" value="all">All</label>
                 </div>
                 <div>
-                    <label class="radio-inline" for="typeVisual"><input onchange="filterTable()" class="radio" id="typeVisual" type="radio" name="gType" value="visual">Visual</label>
+                    <label class="radio-inline" for="typeVisual"><input onchange="filterTable()" class="radio" id="typeVisual" type="radio" name="gType" value="visual">Patients</label>
                 </div>
                 <div>
-                    <label class="radio-inline" for="typeDiagnostic"><input onchange="filterTable()" class="radio" type="radio" id="typeDiagnostic" name="gType" value="diagnostic">Diagnostic</label>
+                    <label class="radio-inline" for="typeDiagnostic"><input onchange="filterTable()" class="radio" type="radio" id="typeDiagnostic" name="gType" value="diagnostic">Doctors</label>
                 </div>
                 <label style="color: red; font-size: 14px" id="typeLab"></label>
             </div>
         </div>
-        <div class="well well-sm form-group">
+        <div class="well well-sm form-group filter-settings">
             <label class="col-sm-6 control-label"
                     >Algorithm type:</label>
             <div class="col-sm-6">
                 <div>
-                    <label class="radio-inline" for="typeADiagnostic"><input onchange="filterTable()" class="radio" type="checkbox" id="typeADiagnostic" name="aType" value="1">Diagnostic</label>
+                    <label class="radio-inline" for="typeADiagnostic"><input checked onchange="filterTable()" class="radio" type="checkbox" id="typeADiagnostic" name="aType" value="1">Diagnostic</label>
                 </div>
                 <div>
-                    <label class="radio-inline" for="typeATreatment"><input onchange="filterTable()" class="radio" id="typeATreatment" type="checkbox" name="aType" value="2">Treatment</label>
+                    <label class="radio-inline" for="typeATreatment"><input checked onchange="filterTable()" class="radio" id="typeATreatment" type="checkbox" name="aType" value="2">Treatment</label>
                 </div>
                 <div>
-                    <label class="radio-inline" for="typeAOther"><input onchange="filterTable()" class="radio" type="checkbox" id="typeAOther" name="aType" value="4">Other</label>
+                    <label class="radio-inline" for="typeAOther"><input checked onchange="filterTable()" class="radio" type="checkbox" id="typeAOther" name="aType" value="4">Other</label>
                 </div>
                 <label style="color: red; font-size: 14px" id="typeLab"></label>
             </div>
         </div>
     </form>
 
-    <div>
+    <!-- <div>
         <a class="btn btn-success" href="../../../DiaGenKri/public/visualisation/editor">New graph</a>
-    </div>
+    </div> -->
 </div>
 
 
 <div class="container-fluid">
     <div class="row content">
-        <div class="col-sm-12 text-left">
-            <table id="graphTable" class="table table-sc table-hover table-responsive table-striped">
+        <div class="col-sm-12 text-left flex-wrap">
+            <table id="graphTable" class="table table-hover table-responsive table-bordered">
                 <thead>
-                <tr class="tr-sc" style="text-align: center">
+                <tr>
                     <th>ID</th>
                     <th>Author</th>
                     <th>Graph name</th>
                     <th>Graph type</th>
                     <th>Algorithm type</th>
+
+                    <?php if(isset($_SESSION["user"])): ?>
                     <th>Created</th>
+                    <?php endif; ?>
+
+                    <th>View</th>
+
+                    <?php if(isset($_SESSION["user"])): ?>
                     <th>Edit</th>
+                    <?php endif; ?>
                 </tr>
                 </thead>
-                <tbody class="tbody-sc">
+                <tbody>
                 <?php foreach ($data as $key => $value){
                     $id = $value["id"];
                     $email = $value["e-mail"];
@@ -170,10 +179,10 @@ $data = DBfunctions::getGraphs();
                     $visual = $value["visual"];
 
                     if($visual === '0'){
-                        $visual = 'Diagnostic';
+                        $visual = 'Patients';
                     }
                     else{
-                        $visual = 'Visual';
+                        $visual = 'Doctors';
                     }
 
                     $algorithmType = $value["algorithm_type"];
@@ -203,23 +212,47 @@ $data = DBfunctions::getGraphs();
                         $algorithmType = 'Diagnostic, treatment, other';
                     }
 
-
                     $created = $value["created"];
-                    $button = "<form action=\"visualisation/edit\" method=\"get\">
-                                <input hidden type=\"text\" value='$id' name=\"id\"><br>
-                                <input class='btn btn-block btn-primary' value='Edit' type=\"submit\">
-                                </form>";
 
-                    echo "<tr class='tr-sc'><td style=\"white-space: nowrap; width: 6%\">$id</td><td style=\"white-space: nowrap; width: 12%\">$email</td><td style=\"white-space: nowrap; width: 19%\">$name</td><td style=\"white-space: nowrap; width: 16%\">$visual</td><td style=\"white-space: nowrap; width: 21%\">$algorithmType</td><td style=\"white-space: nowrap; width: 12.5%\">$created</td><td style=\"white-space: nowrap; width: 10.2%\">$button</td></tr>";
+                    // if(isset($_SESSION["user"])){
+                    $button_edit = "<button class='btn btn-block btn-primary edit-graph-button' id='$id'>Edit</button>";
+                    // }
 
+                    $button_view = "<button class='btn btn-block btn-primary view-graph-button' id='$id'>View</button>";
+
+                    // output string, start
+                    $output = "<tr class='tr-graphTable'>";
+
+                    $output = "$output" . "<td>" . "$id" . "</td>";
+                    $output = "$output" . "<td>" . "$email" . "</td>";
+                    $output = "$output" . "<td>" . "$name" . "</td>";
+                    $output = "$output" . "<td>" . "$visual" . "</td>";
+                    $output = "$output" . "<td>" . "$algorithmType" . "</td>";
+
+                    if(isset($_SESSION["user"])){
+                        $output = "$output" . "<td>" . "$created" . "</td>";
+                    }
+
+                    $output = "$output" . "<td>" . "$button_view" . "</td>";
+
+                    if(isset($_SESSION["user"])){
+                        $output = "$output" . "<td>" . "$button_edit" . "</td>"; 
+                    }
+
+                    // end
+                    $output = "$output" . "</tr>";
+
+                    // echo "<tr class='tr-sc'><td style=\"white-space: nowrap; width: 6%\">$id</td><td style=\"white-space: nowrap; width: 12%\">$email</td><td style=\"white-space: nowrap; width: 19%\">$name</td><td style=\"white-space: nowrap; width: 16%\">$visual</td><td style=\"white-space: nowrap; width: 21%\">$algorithmType</td><td style=\"white-space: nowrap; width: 12.5%\">$created</td><td style=\"white-space: nowrap; width: 10.2%\">$button_edit</td></tr>";
+                    echo "$output";
                 }
                 ?>
+                
                 </tbody>
             </table>
         </div>
     </div>
 </div>
 
-<footer class="container-fluid text-center">
+<!-- <footer class="container-fluid text-center">
     <p>©DiaGenKri</p>
-</footer>
+</footer> -->

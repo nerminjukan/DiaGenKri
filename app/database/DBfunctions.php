@@ -14,19 +14,83 @@ class DBfunctions {
 
         $db = DBconnect::getInstance();
 
-        $statement = $db->prepare("INSERT INTO diagenkri.graph (`e-mail`, `name`, `description`, `visual`, `algorithm_type`, `data`)
-                                             VALUES (:email, :name, :description, :gtype, :atype, :data)");
-        $statement->bindParam(":email", $email);
-        $statement->bindParam(":name", $name);
-        $statement->bindParam(":description", $description);
-        $statement->bindParam(":gtype", $gtype);
-        $statement->bindParam(":atype", $atype);
-        $statement->bindParam(":data", $data);
+        try {
+            $statement = $db->prepare("INSERT INTO diagenkri.graph (`e-mail`, `name`, `description`, `visual`, `algorithm_type`, `data`)
+                                                 VALUES (:email, :name, :description, :gtype, :atype, :data)");
+            $statement->bindParam(":email", $email);
+            $statement->bindParam(":name", $name);
+            $statement->bindParam(":description", $description);
+            $statement->bindParam(":gtype", $gtype);
+            $statement->bindParam(":atype", $atype);
+            $statement->bindParam(":data", $data);
 
+            $result = $statement->execute();
 
-        $result = $statement->execute();
+            echo $result;
+        } catch (Exception $e) {
+            echo 'Caught exception: ',  $e->getMessage(), "\n";
+        }
+
+        // var_dump($result);
 
         return $result;
+
+    }
+
+    public static function editGraph($email, $data, $name, $description, $gtype, $atype, $id){
+
+        $db = DBconnect::getInstance();
+
+        try {
+            $statement = $db->prepare("UPDATE diagenkri.graph SET `name`=:name,`description`=:description,`visual`=:gtype,
+            `algorithm_type`=:atype,`data`=:data WHERE `id`=:id ");
+            $statement->bindParam(":name", $name);
+            $statement->bindParam(":description", $description);
+            $statement->bindParam(":gtype", $gtype);
+            $statement->bindParam(":atype", $atype);
+            $statement->bindParam(":data", $data);
+            $statement->bindParam(":id", $id);
+
+            $result = $statement->execute();
+            // var_dump("first", $result);
+
+            // add to graph edits
+            $statement1= $db->prepare("INSERT INTO `graph-edits` (`graph-id`, `edited-by`)
+                                                 VALUES (:id, :email)");
+            $statement1->bindParam(":id", $id);
+            $statement1->bindParam(":email", $email);
+
+            $result1 = $statement1->execute();
+
+            $fin = $result && $result1;
+            echo $fin;
+        } catch (Exception $e) {
+            echo 'Caught exception: ',  $e->getMessage(), "\n";
+        }
+
+        // $statement = $db->prepare("UPDATE diagenkri.graph SET `name`=:name,`description`=:description,`visual`=:gtype,
+        //     `algorithm_type`=:atype,`data`=:data WHERE `id`=:id ");
+        // $statement->bindParam(":name", $name);
+        // $statement->bindParam(":description", $description);
+        // $statement->bindParam(":gtype", $gtype);
+        // $statement->bindParam(":atype", $atype);
+        // $statement->bindParam(":data", $data);
+        // $statement->bindParam(":id", $id);
+
+        // $result = $statement->execute();
+        // // var_dump("first", $result);
+
+        // // add to graph edits
+        // $statement1= $db->prepare("INSERT INTO `graph-edits` (`graph-id`, `edited-by`)
+        //                                      VALUES (:id, :email)");
+        // $statement1->bindParam(":id", $id);
+        // $statement1->bindParam(":email", $email);
+
+        // $result1 = $statement1->execute();
+
+        // $fin = $result && $result1;
+        // echo $fin;
+        return $result && $result1;
 
     }
 

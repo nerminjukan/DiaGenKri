@@ -7,10 +7,10 @@ if(!isset($_SESSION["user"])){
 require_once '../app/database/DBfunctions.php';
 include_once '../app/controllers/visualisation.php';
 
-if (isset($_GET['id'])) {
-    $data = DBfunctions::loadGraph($_GET['id']);
-    var_dump($data);
-}
+// if (isset($_GET['id'])) {
+    // $data = DBfunctions::loadGraph($_GET['id']);
+    // var_dump($data);
+// }
 
 
 
@@ -30,10 +30,13 @@ if (isset($_GET['id'])) {
     <script src="../../../DiaGenKri/app/res/js/raphael/raphael.min.js"></script>
     <script src="../../../DiaGenKri/app/res/js/raphael/raphael.json.js"></script>
 
+    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/notify.min.js"></script>
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/raphael.pan-zoom.js"></script>
-    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/nermin/nermin.js"></script>
-    <!--<script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/david.js"></script> -->
+    <!-- <script type="text/javascript" src="../../../DiaGenKri/app/res/js/nermin/nermin.js"></script> -->
+    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/david.js"></script> 
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/nermin/test.js"></script>
+    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/getdata.js"></script> 
+
 
     <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css">
 
@@ -189,7 +192,6 @@ $description="";
             <div class="well well-sm">
                 <button id="save" onclick="saveGraph()" type="button" class="btn btn-block btn-success">Save</button>
                 <button id="cancel" onclick="cancelGraph()" type="button" class="btn btn-block btn-danger">Cancel</button>
-                <button id="load" onclick="loadGraph()" type="button" class="btn btn-block btn-success">Load</button>
             </div>
         </div>
     </div>

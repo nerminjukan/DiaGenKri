@@ -66,31 +66,31 @@ Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000") {
 
         let len = calculate(line);
 
-            if(len !== 0){
-                // console.log('len: ', len);
-                // console.log('line_len: ', line_path.getTotalLength());
-                if(len > line_path.getTotalLength()){
-                    line_path.attr({'stroke': 'white'});
-                }
-                else{
-                    line_path.attr({'stroke': 'black'});
-                }
-                line.subpath.show();
-                line.subpath.data('visible', true);
-
-                let sub_p = line_path.getSubpath(
-                    (line_path.getTotalLength() / 2)-len,
-                    (line_path.getTotalLength() / 2)+len);
-
-                line.subpath.attr({path: sub_p});
-
-                //console.log("ALPHA: ", line_path.getPointAtLength(line_path.getTotalLength() / 2).alpha);
-                //console.log("LENGTH: ", length);
+        if(len !== 0){
+            // console.log('len: ', len);
+            // console.log('line_len: ', line_path.getTotalLength());
+            if(len > line_path.getTotalLength()){
+                line_path.attr({'stroke': 'white'});
             }
             else{
-                line.subpath.hide();
-                line.subpath.data('visible', false);
+                line_path.attr({'stroke': 'black'});
             }
+            line.subpath.show();
+            line.subpath.data('visible', true);
+
+            let sub_p = line_path.getSubpath(
+                (line_path.getTotalLength() / 2)-len,
+                (line_path.getTotalLength() / 2)+len);
+
+            line.subpath.attr({path: sub_p});
+
+            //console.log("ALPHA: ", line_path.getPointAtLength(line_path.getTotalLength() / 2).alpha);
+            //console.log("LENGTH: ", length);
+        }
+        else{
+            line.subpath.hide();
+            line.subpath.data('visible', false);
+        }
 
 
     } else {
@@ -104,9 +104,11 @@ Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000") {
 
         //line_path.setID = id_c;
         line_path.data('fromTo', obj1.id + " " + obj2.id);
-        line_path.mouseover(deleteConnection);
-        line_path.mouseout(noDelete);
-        line_path.click(deleteConnectionOnClick);
+        if(!viewonly_graph){
+            line_path.mouseover(deleteConnection);
+            line_path.mouseout(noDelete);
+            line_path.click(deleteConnectionOnClick);
+        }
         line_path.data("id_connection", id_c);
 
 
@@ -114,10 +116,10 @@ Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000") {
         console.log("[connection] fromTo", line_path.data("fromTo"));
 
         sub_path = paper.path(
-                        line_path.getSubpath(
-                            (line_path.getTotalLength() / 2)-25,
-                            (line_path.getTotalLength() / 2)+25))
-                    .attr({'stroke-width' : '6', 'stroke' : '#f1f1f1'});
+            line_path.getSubpath(
+                (line_path.getTotalLength() / 2)-25,
+                (line_path.getTotalLength() / 2)+25))
+            .attr({'stroke-width' : '6', 'stroke' : '#f1f1f1'});
         sub_path.data("type", "sub_path");
         sub_path.data("id_connection", id_c);
 
@@ -143,20 +145,21 @@ Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000") {
         conn_text.data("id_connection", id_c);
         conn_text.toFront();
 
-        line_path.dblclick(addDblclickHandlers);
-        // line_path.dblclick(function(){
-        //     completeResetInputs();
-        //     console.log("POVEZAVE POVEZAVE");
-        //     disableInputs(true, "#IDdesc");
-        //     disableInputs(false, "#IDtext");
-        //     changingText = conn_text;
-        //     let inputText = document.getElementById("IDtext");
-        //     inputText.value = conn_text.attr("text");
-        //     inputText.focus();
-        //     return;
-        // });
-        sub_path.dblclick(addDblclickHandlers);
-
+        if(!viewonly_graph){
+            line_path.dblclick(addDblclickHandlers);
+            // line_path.dblclick(function(){
+            //     completeResetInputs();
+            //     console.log("POVEZAVE POVEZAVE");
+            //     disableInputs(true, "#IDdesc");
+            //     disableInputs(false, "#IDtext");
+            //     changingText = conn_text;
+            //     let inputText = document.getElementById("IDtext");
+            //     inputText.value = conn_text.attr("text");
+            //     inputText.focus();
+            //     return;
+            // });
+            sub_path.dblclick(addDblclickHandlers);
+        }
         sub_path.data('visible', true);
 
         return {
@@ -184,7 +187,7 @@ function addDblclickHandlers(){
     inputText.value = txt.attr("text");
     inputText.focus();
     console.log("dbl click handler on path fired");
-    // return;    
+    // return;
 }
 
 // calculate connection text background line
@@ -200,6 +203,7 @@ function calculate (line, direct = false, text = null) {
     let length = alpha / 4;
 
     let the_text = text !== null ? text : line.text
+    // console.log("[calculate] the_text:", the_text);
 
     if(the_text.attr("text").length === 0){
         return 0;
@@ -414,6 +418,13 @@ let Colors = {
 
 // variable to know for which "text" shape the text is being edited
 let changingText = null;
+
+// if the same graph is being edited and id of that graph
+let editingGraph = false;
+let graphId = null;
+
+// if app should be in view only state
+let viewonly_graph = false;
 
 // $(window).resize(function(){
 //     scale = getScale(paper);
@@ -965,7 +976,7 @@ function resetText(textShape, vertexShape, focus=false){
     inputText.value = textShape.attr("text");
     descriptionText.value = vertexShape.data("desc"); // active is currently active shape
     if(focus)
-        inputText.focus();
+        inputText.focus(); 
 }
 
 // completly resets anything related to inputs
@@ -999,6 +1010,8 @@ function rainingEvents(item, type){
         pathEvents(item, type);
     } else if (type === "hide") {
         pathEvents(item, type);
+    } else if (type === "subpath") {
+        pathEvents(item, type);
     } else if (type === "connection_text") {
         textEvents(item, type);
     } else if (type === "shape_text") {
@@ -1029,6 +1042,7 @@ function rectEvents(item, type){
             }
         });
         item.data('rotate', false);
+        item.data('type', 'rect');
         // increments the global id
         id++;
     }
@@ -1036,7 +1050,7 @@ function rectEvents(item, type){
 
 function pathEvents(item, type){
     if(type === "connection"){
-        
+        item.data('type', 'connection');
     } else if (type === "hide"){
         // console.log("[pathEvents] type", type);
         item.mouseover(hoverIn);
@@ -1051,6 +1065,8 @@ function pathEvents(item, type){
 
         // adds a dblclick handler to the 'hide' rectangle
         item.click(function(){hideNodes(item.data('parentID'))});
+    } else if (type === "subpath"){
+        item.data('type', 'subpath');
     }
     return true;
 }
@@ -1060,25 +1076,29 @@ function textEvents(item, type){
         // console.log("[textEvents] type", type);
         item.data("type", "shape_text");
         // adds a dblclick handler to the text field
-        item.click(textClicked);
-        item.mouseover(function (){
-            this.attr({'font-size': 11});
-        });
-        item.mouseout(function (){
-            this.attr({'font-size': 10});
-        });
+        if(!viewonly_graph){
+            item.click(textClicked);
+            item.mouseover(function (){
+                this.attr({'font-size': 11});
+            });
+            item.mouseout(function (){
+                this.attr({'font-size': 10});
+            });
+        }
     } else if(type === "connection_text"){
         // console.log("[textEvents] type", type);
 
         item.attr({'fill': 'black', 'font-size': 12});
         item.data("type", "connection_text");
-        item.click(textClicked);
-        item.mouseover(function (){
-            this.attr({'font-size': 13});
-        });
-        item.mouseout(function (){
-            this.attr({'font-size': 12});
-        });
+        if(!viewonly_graph){
+            item.click(textClicked);
+            item.mouseover(function (){
+                this.attr({'font-size': 13});
+            });
+            item.mouseout(function (){
+                this.attr({'font-size': 12});
+            });
+        }
         item.toFront();
     }
     return true;
@@ -1091,6 +1111,51 @@ function getConnectionById(id_c){
             return i;
     }
     return null;
+}
+
+
+// extracts parameter from given string(url), www.google.com?abc=3, it will extract abc and output 3
+function extractParameters( name, url ) {
+    if (!url) url = location.href;
+    name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+    let regexS = "[\\?&]"+name+"=([^&#]*)";
+    let regex = new RegExp( regexS );
+    let results = regex.exec( url );
+    return results == null ? null : results[1];
+}
+
+// get data about graph with certain id
+function getGraphData(id_graph_load) {
+    let info = null
+    $.post("../../../DiaGenKri/public/visualisation/load",
+    {
+        id: id_graph_load
+    },
+    function(data, status){
+        const myArray = $.parseJSON(data);
+        // const podatki = $.parseJSON(myArray["data"]);
+        // window["f_json"] = myArray["data"]
+        console.log("[david.js] myArray", myArray);
+        // console.log(podatki);
+
+        info = {
+            id: myArray["id"],
+            email: myArray["e-mail"],
+            name: myArray["name"],
+            description: myArray["description"],
+            visual: myArray["visual"],
+            algorithm_type: myArray["algorithm_type"]
+        };
+        // console.log("info about graph, without data:", info);
+        populateForm("name", info);
+    }
+    );
+    
+}
+
+// populates form with name with data(object)
+function populateForm(name, data){
+    console.log("[populateForm] will fill data with ",data);
 }
 
 // ************* end of some other functions
@@ -1198,6 +1263,7 @@ jQuery(function ($) {
         width = positionInfo.width;
 
     paper = Raphael(document.getElementById('content'), 3000, 3000);
+
     // paper.rect(0, 0, 2000, 2000).attr({"stroke-width": 10});
     //console.log("[main] paper canvas:", paper.canvas);
 
@@ -1236,6 +1302,9 @@ jQuery(function ($) {
     panZoom = paper.panzoom();
     panZoom.enable();
     // paper.safari();
+
+    // set default class for notifications
+    // $.notify.defaults({ className: "success" });.
 
     $("#up").click(function (e) {
         //console.log("[mapContainer up]");
@@ -1280,6 +1349,8 @@ jQuery(function ($) {
         // because we do not want data loss
         if(currentText !== changingText.attr("text")){
             changingText.attr({text: currentText});
+            if (changingText.data("type") === "shape_text")
+                changeWidth(changingText);
             if(changingText.data("id_connection") !== undefined && changingText.data("type") === "connection_text"){
                 // console.log(changingText.data("id_connection"));
                 calculateSubPath(changingText.data("id_connection"));
@@ -1330,17 +1401,53 @@ jQuery(function ($) {
 
     $("#modal-save-graph").click(function(){
         console.log("[modal-save-graph] save, clicked");
-        saveGraph();
+        if(saveGraph()){
+            $("#metaData").modal('hide');
+            resetModal();
+        }
     });
 
     $("#modal-cancel-graph").click(function(){
         console.log("[modal-save-graph] cancel, clicked");
-        loadGraph();
+        resetModal();
     });
+
+
+    // **** not needed anymore, because editingGraph can be set to true in loadGraph() method,
+    // **** that works because loadGraph is caled from getData.js which executes it only when graph 
+    // **** is being loaded
+    // check wheter user is editing graph or its completly new graph
+    graphId = extractParameters('id', window.location.href);
+    editingGraph = graphId === null ? false : true
+    // get data about graph and populate form
+    if(editingGraph)
+        getGraphData(graphId);
+    
+
 
 });
 // ************************************** end of zoom
 
+function changeWidth(textShape) {
+    console.log('changeWidth of', textShape);
+    let parent = paper.getById(textShape.data('parent'));
+    if(textShape.getBBox().width > parent.attr('width') - 15){
+        console.log('Too big!');
+        parent.attr('width', textShape.getBBox().width + 20);
+    }
+    else{
+        console.log('Shorter');
+        if(parent.attr('width')- 4  > textShape.getBBox().width && parent.attr('width') - 4 > 100){
+            console.log('Parent width: ', parent.attr('width'));
+            parent.attr('width', parent.attr('width') - 6);
+        }
+    }
+
+    // update connections
+    for (let i = connections.length; i--;) {
+        paper.connection(connections[i]);
+    }
+}
 
 function calculateSubPath(id_c){
     let index = getConnectionById(id_c);
@@ -1385,7 +1492,8 @@ function addToShapes(shape){
     shape.data("paper", paper);
     // shape.drag(move, dragger, up);
     //shape.dblclick(removeShape);
-    shape.click(onShapeClicked);
+    if(!viewonly_graph)
+        shape.click(onShapeClicked);
     if(shapes.length === 0){
         shape.data("root", true);
     }
@@ -1420,13 +1528,16 @@ function changeIncomingConnections(node_id, change){
                 connections[i].line.hide();
                 connections[i].text.hide();
                 connections[i].subpath.hide();
+                // console.log("[changeIncomingConnections] hiding connection with id", connections[i].id)
             }
             else{
                 connections[i].line.show();
-                connections[i].text.hide();
+                connections[i].text.show();
                 if(connections[i].subpath.data('visible') === true){
                     connections[i].subpath.show();
                 }
+                // console.log("[changeIncomingConnections] showing connection with id", connections[i].id)
+
             }
             //console.log(change);
         }
@@ -1573,8 +1684,9 @@ function shapeDraw(arg, ev) {
         shape.data('resizableID', resizable.id);
         // adds a text field
         // adds a text field
-        txt = paper.text(ev.offsetX+50, ev.offsetY+20, "default-text").attr({'font-size': 10, 'fill': 'black', 'text-anchor': 'middle'});
+        txt = paper.text(ev.offsetX+15, ev.offsetY+20, "default-text").attr({'font-size': 10, 'fill': 'black', 'text-anchor': 'start'});
         txt.data("type", "shape_text");
+        txt.data("parent", shape.id);
 
         // adds a dblclick handler to the 'hide' rectangle
         resizable.click(function(){hideNodes(resizable.data('parentID'))});
@@ -1614,6 +1726,8 @@ function shapeDraw(arg, ev) {
         shape.data('type', 'decision');
         txt = paper.text(ev.offsetX+25, ev.offsetY+25, "default-text").attr({'font-size': 10, 'fill': 'black'});
         txt.data("type", "shape_text");
+        txt.data("parent", shape.id);
+
 
 
         shape.data('connections', true);
@@ -1781,7 +1895,115 @@ function looseFocus(ev){
 // TODO fix dragging of decision node, check all event-handlers after re-load
 // TODO fix dragging of decision node, check all event-handlers after re-load
 
+function validation() {
+    let success = true;
+
+    if (document.forms["gForm"]["gName"].value === "") {
+        document.getElementById("nameLab").innerHTML = "Please provide a graph name.";
+        console.log('No graph name provided.');
+        success = false;
+    }
+    else{
+        document.getElementById("nameLab").innerHTML = "";
+    }
+    if((document.forms["gForm"]["gType"][0].checked === false) && (document.forms["gForm"]["gType"][1].checked === false)){
+        document.getElementById("typeLab").innerHTML = "Please select a graph type.";
+        console.log('No graph type selected');
+        success =  false;
+    }
+    else{
+        document.getElementById("typeLab").innerHTML = "";
+    }
+
+    if(!success){
+        $("#metaData").modal('show');
+    }
+    return success;
+}
+
+function getGraphDescriptionData(){
+    let data = [];
+
+    data['name'] = document.forms["gForm"]["gName"].value;
+
+    data['description'] = document.getElementById('graphDescritption').value;
+
+    if(document.forms["gForm"]["gType"][0].checked === true){
+        data['gtype'] = 1;
+    }
+    else{
+        data['gtype'] = 0;
+    }
+
+    let select = document.getElementById('sel1'),
+        options = select.getElementsByTagName('option'),
+        values  = [];
+
+    for (let i=options.length; i--;) {
+        if (options[i].selected) values.push(options[i].value)
+    }
+
+    //console.log(values)
+
+    let atype = 0;
+
+    if(values.includes("other")){
+        atype += 4;
+    }
+    if(values.includes("treatment")){
+        atype += 2;
+    }
+    if(values.includes("diagnostic")){
+        atype += 1;
+    }
+
+    if(atype === 0){
+        atype = 4;
+    }
+
+    data['atype'] = atype;
+
+    return data;
+}
+
+function resetModal() {
+    document.forms["gForm"]["gName"].value = "";
+    document.getElementById('graphDescritption').value = "";
+    document.getElementById('typeDiagnostic').checked = false;
+    document.getElementById('typeVisual').checked = false;
+
+    var elements = document.getElementById("sel1").options;
+
+    for(var i = 0; i < elements.length; i++){
+        elements[i].selected = false;
+    }
+}
+
+function cancelGraph() {
+    if(confirm("You are about to leave the page, all your work will be lost. Do you want to proceed?")){
+        window.location.replace("../../../DiaGenKri/public/home");
+    }
+}
+
 function saveGraph() {
+    if(canvasSets.length === 0){
+        $.notify("Create algorithm first",
+                    { position: 'bottom center',
+                    className: 'info',
+                    gap: 5 }
+                    );
+        return false;
+    }
+    if(!validation()){
+        return false;
+    }
+
+    let graphDescription = getGraphDescriptionData();
+
+    //console.log (graphDescription);
+
+    console.log("[saveGraph] TYPE:", !editingGraph ? "save new graph" : "edit existing graph")
+
     disableInputs(true);
 
     connections = [];
@@ -1815,7 +2037,7 @@ function saveGraph() {
         //     // window.splice(window.indexOf(data.setName), 1);
 
         // }
-        
+
 
         console.log("[saveGraph] type is", el.type);
 
@@ -1824,12 +2046,15 @@ function saveGraph() {
             data.type = el.data("type");
             if(data.type === "connection_text")
                 data.id_connection = el.data("id_connection");
-        } 
+            else if(data.type === "shape_text")
+                data.parent = el.data("parent");
+
+        }
         else if(el.type === 'path'){
             if(el.data('type') === 'hide'){
                 data.parentID = el.data('parentID');
                 data.type = "hide";
-            } else if (el.data("type") === 'sub_path') {    
+            } else if (el.data("type") === 'sub_path') {
                 data.type = "sub_path";
             } else {
                 data.fromTo = el.data("fromTo");
@@ -1837,7 +2062,7 @@ function saveGraph() {
                 data.id_connection = el.data("id_connection");
             }
 
-        } 
+        }
         else if(el.type === 'rect'){
             if(el.data('type') === 'decision'){
                 data.type = "decision";
@@ -1865,7 +2090,7 @@ function saveGraph() {
 
         el.attr('x', el.attr('x') + dx);
         el.attr('y', el.attr('y') + dy);
-        
+
 
         el.matrix.a = 1;
         el.matrix.b = 0;
@@ -1877,26 +2102,143 @@ function saveGraph() {
 
         return data;
     });
-    console.log("[saveGraph] before post ",json);
+    //console.log("[saveGraph] before post ",json);
 
-    $.post("../../../DiaGenKri/public/visualisation/save",
-        {
-            data: json
-        },
-        function(data, status){
-            //console.log("[saveGraph] in post(data: json)",data, status);
-            console.log('\n');
-            json = data;
+    //console.log(graphDescription['description']);
+
+
+    if(!editingGraph){
+        // $.post("../../../DiaGenKri/public/visualisation/save",
+        //     {
+        //         data: json,
+        //         name: graphDescription['name'],
+        //         description: graphDescription['description'],
+        //         gtype: graphDescription['gtype'],
+        //         atype: graphDescription['atype']
+        //     },
+        //     function(data, status){
+        //         //console.log("[saveGraph] in post(data: )",data, status);
+        //         console.log('[saveGraph] SAVE:', status === "success" ? "saved successfuly" : "not saved successfuly", "\ndata:", data);
+        //         //json = data;
+        //     });
+        $.ajax({
+            type: "POST",
+            url: "../../../DiaGenKri/public/visualisation/save",
+            data: {
+                data: json,
+                name: graphDescription['name'],
+                description: graphDescription['description'],
+                gtype: graphDescription['gtype'],
+                atype: graphDescription['atype']
+            },
+            success: function(data, status){
+                console.log('[saveGraph] save', status === "success" ? "saved successfuly" : "not saved successfuly", "\ndata:", data);
+                if(data === "1"){
+                    $.notify("Algorithm successfuly saved",
+                    { position: 'bottom center',
+                    className: 'success',
+                    gap: 5 }
+                    );
+                } else {
+                    $.notify("Something went wrong, algorithm not saved",
+                    { position: 'bottom center',
+                    className: 'error',
+                    gap: 5 }
+                    );
+                }
+            }
         });
+    } else {
+        // $.post("../../../DiaGenKri/public/visualisation/edit",
+        //     {
+        //         data: json,
+        //         id: graphId,
+        //         name: graphDescription['name'],
+        //         description: graphDescription['description'],
+        //         gtype: graphDescription['gtype'],
+        //         atype: graphDescription['atype']
+        //     },
+        //     function(data, status){
+        //         console.log('[saveGraph]', status === "success" ? "saved successfuly" : "not saved successfuly", "\ndata:", data);
+        //         $.notify("Algorithm successfuly saved!",
+        //             { position: 'bottom center',
+        //              className: 'success',
+        //              gap: 5 }
+        //         );
+        //     });
+
+        $.ajax({
+            type: "POST",
+            url: "../../../DiaGenKri/public/visualisation/edit",
+            data: {
+                data: json,
+                id: graphId,
+                name: graphDescription['name'],
+                description: graphDescription['description'],
+                gtype: graphDescription['gtype'],
+                atype: graphDescription['atype']
+            },
+            success: function(data, status){
+                console.log('[saveGraph] EDIT:', status === "success" ? "saved successfuly" : "not saved successfuly", "\ndata:", data);
+                if(data === "1"){
+                    $.notify("Algorithm successfuly saved!",
+                    { position: 'bottom center',
+                    className: 'success',
+                    gap: 5 }
+                    );
+                } else {
+                    $.notify("Something went wrong, algorithm not saved",
+                    { position: 'bottom center',
+                    className: 'error',
+                    gap: 5 }
+                    );
+                }
+            }
+        });
+    }
 
     //console.log("[saveGraph] after post",json);
 
     paper.clear();
 
+    // when graph is saved, user can make new graph
+    editingGraph = false;
+
+    return true;
+
 }
 
-function loadGraph() {
-    disableInputs(true);
+function loadGraph(json, pacient=false, viewonly=false) {
+    // application should go in view only state
+    viewonly_graph = viewonly;
+
+    // graph is being loaded, so user will be definitly editing one
+    editingGraph = true;
+
+    // reset everything to make sure it will be ok
+    connections = [];
+    shapes = [];
+    canvasSets = [];
+    id = 0; // id for shapes, connections, probably obsolete right now
+    // also resets variables in window
+
+    if(pacient){
+
+        console.log("CLEAR WINDOW CLEAR WINDOW CLEAR WINDOW CLEAR WINDOW")
+        paper.fromJSON(json, function(el, data) {
+            console.log(data.setName);
+            console.log("before:", window[data.setName]);
+            window[data.setName] = null;
+            console.log("after:", window[data.setName]);
+
+        });
+        console.log("CLEAR WINDOW CLEAR WINDOW CLEAR WINDOW CLEAR WINDOW")
+    }
+
+
+
+    if(!viewonly_graph)
+        disableInputs(true);
 
     console.log('[loadGraph] LOADING started');
     // paper = Raphael('content');
@@ -1904,6 +2246,8 @@ function loadGraph() {
     // console.log("[loadGraph] paper:", paper);
     // if(1+1)
     //     return;
+
+    paper.clear();
 
     paper.fromJSON(json, function(el, data) {
         el.id = data.id;
@@ -1922,6 +2266,8 @@ function loadGraph() {
                 canvasSets.push(window[data.setName]);
 
                 console.log("[loadGraph] data.setName:", data.setName, canvasSets);
+            } else {
+                console.log("[loadGraph] SET EXISTS EXISTS:", data.setName, window[data.setName])
             }
 
             // Place each element back into the set
@@ -1979,20 +2325,24 @@ function loadGraph() {
                 console.log("[loadGraph] loaded CONNECTION path");
             } else { //subpath, just remove because subpath is created when path(connection) is created
                 el.remove();
-
+                rainingEvents(el, "subpath")
                 console.log("[loadGraph] loaded SUBPATH path");
             }
-        } 
+        }
         else if(el.type === 'text'){ // trick is to remove connection_text, because connection_text is created when path(connection) is created
             console.log("[loadGraph] loaded", data.type, "text");
             rainingEvents(el, data.type);
             if(data.type === "connection_text")
                 el.data("id_connection", data.id_connection);
+            else if(data.type === "shape_text")
+                el.data("parent", data.parent);
 
-        } 
+        }
         else if(el.type === 'rect'){
             addToShapes(el);
             rainingEvents(el, data.type);
+            if(data.type === "rect")
+                el.data("desc", data.desc);
             console.log("[loadGraph] loaded", data.type, "rect");
         }
         // // console.log('[loadGraph] setName');
@@ -2009,8 +2359,10 @@ function loadGraph() {
     });
 
     // make sets draggable
-    for (let i = canvasSets.length - 1; i >= 0; i--) {
-        canvasSets[i].draggable();
+    if(!viewonly_graph){
+        for (let i = canvasSets.length - 1; i >= 0; i--) {
+            canvasSets[i].draggable();
+        }
     }
 
     // map texts to connections
@@ -2026,18 +2378,29 @@ function loadGraph() {
                     // console.log("WOHOOOOOOOOOOOO! after", connections[i].text, element);
                     // console.log("[pathEvents] type", type);
                     // add handlers
-                    connections[i].line.dblclick(addDblclickHandlers);
-                    connections[i].subpath.dblclick(addDblclickHandlers);
+                    if(!viewonly_graph){
+                        connections[i].line.dblclick(addDblclickHandlers);
+                        connections[i].subpath.dblclick(addDblclickHandlers);
+                    }
                     break;
                 }
             }
         }
+
+        // meantime change width of all text elements to correct size
+        //if(element.data("type") === "shape_text")
+        //    changeWidth(element);
     });
 
     // recalculate subpaths
     for (var i = connections.length - 1; i >= 0; i--) {
         calculateSubPath(connections[i].id)
     }
+
+    // increment id, so next connection will have proper id
+    if(connections.length > 0)
+        id = connections[connections.length - 1].id + 2;
+
 
     console.log('[loadGraph] LOADING finished');
 
