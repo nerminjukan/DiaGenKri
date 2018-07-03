@@ -1,8 +1,10 @@
 <?php
 
+
 // if(!isset($_SESSION["user"])){
 //     header("Location: ../../../DiaGenKri/public/home");
 // }
+
 
 
 require_once '../app/database/DBfunctions.php';
@@ -28,9 +30,11 @@ $data = DBfunctions::getGraphs();
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
+
     <!-- additional javascript and stylesheets -->
     <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css">
     <script src="../../../DiaGenKri/app/res/js/david/notify.min.js"></script>
+
     <script src="../../../DiaGenKri/app/res/js/david/edit.js"></script>
     <script src="../../../DiaGenKri/app/res/js/filter.js"></script>
 
@@ -71,6 +75,7 @@ $data = DBfunctions::getGraphs();
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
                 <?php if(isset($_SESSION["user"])): ?>
+
                 <li><a href="../../../DiaGenKri/public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
                     </span> Create algorithm</a></li>
                 <li><a href="../../../DiaGenKri/public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
@@ -104,6 +109,7 @@ $data = DBfunctions::getGraphs();
                                         <p class="text-left">
                                             <a href="../../../DiaGenKri/public/profile" class="btn btn-primary btn-block btn-sm">My profile</a>
                                         </p>
+
                                     </div>
                                 </div>
                             </div>
@@ -118,6 +124,7 @@ $data = DBfunctions::getGraphs();
                                         </p>
                                     </div>
                                 </div>
+
                             </div>
                         </li>
                     </ul>
@@ -125,6 +132,7 @@ $data = DBfunctions::getGraphs();
                 <?php else: ?>
                 <li><a href="../../../DiaGenKri/public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
                 <li><a href="../../../DiaGenKri/public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
+
                 <?php endif; ?>
             </ul>
         </div>
@@ -145,12 +153,15 @@ $data = DBfunctions::getGraphs();
         </div>
         <div class="well well-sm form-group filter-settings">
             <label class="col-sm-6 control-label"
+
                     >Intended for:</label>
+
             <div class="col-sm-6">
                 <div>
                     <label class="radio-inline" for="typeDAll"><input onchange="filterTable()" checked class="radio" type="radio" id="typeDAll" name="gType" value="all">All</label>
                 </div>
                 <div>
+
                     <label class="radio-inline" for="typeVisual"><input onchange="filterTable()" class="radio" id="typeVisual" type="radio" name="gType" value="visual" <?php if(!isset($_SESSION["user"])): ?> checked="checked" <?php endif; ?> >Patients</label>
                 </div>
                 <?php if(isset($_SESSION["user"])): ?>
@@ -158,6 +169,7 @@ $data = DBfunctions::getGraphs();
                     <label class="radio-inline" for="typeDiagnostic"><input onchange="filterTable()" class="radio" type="radio" id="typeDiagnostic" name="gType" value="diagnostic">Doctors</label>
                 </div>
                 <?php endif; ?>
+
 
                 <label style="color: red; font-size: 14px" id="typeLab"></label>
             </div>
@@ -167,22 +179,26 @@ $data = DBfunctions::getGraphs();
                     >Algorithm type:</label>
             <div class="col-sm-6">
                 <div>
-                    <label class="radio-inline" for="typeADiagnostic"><input onchange="filterTable()" class="radio" type="checkbox" id="typeADiagnostic" name="aType" value="1">Diagnostic</label>
+
+                    <label class="radio-inline" for="typeADiagnostic"><input checked onchange="filterTable()" class="radio" type="checkbox" id="typeADiagnostic" name="aType" value="1">Diagnostic</label>
                 </div>
                 <div>
-                    <label class="radio-inline" for="typeATreatment"><input onchange="filterTable()" class="radio" id="typeATreatment" type="checkbox" name="aType" value="2">Treatment</label>
+                    <label class="radio-inline" for="typeATreatment"><input checked onchange="filterTable()" class="radio" id="typeATreatment" type="checkbox" name="aType" value="2">Treatment</label>
                 </div>
                 <div>
-                    <label class="radio-inline" for="typeAOther"><input onchange="filterTable()" class="radio" type="checkbox" id="typeAOther" name="aType" value="4">Other</label>
+                    <label class="radio-inline" for="typeAOther"><input checked onchange="filterTable()" class="radio" type="checkbox" id="typeAOther" name="aType" value="4">Other</label>
+
                 </div>
                 <label style="color: red; font-size: 14px" id="typeLab"></label>
             </div>
         </div>
     </form>
 
+
     <!-- <div>
         <a class="btn btn-success" href="../../../DiaGenKri/public/visualisation/editor">New graph</a>
     </div> -->
+
 </div>
 
 
@@ -195,6 +211,7 @@ $data = DBfunctions::getGraphs();
                     <th>ID</th>
                     <th>Author</th>
                     <th>Graph name</th>
+
                     <th style="width: 100px;">Intended for</th>
                     <th>Algorithm type</th>
 
@@ -207,6 +224,7 @@ $data = DBfunctions::getGraphs();
                     <?php if(isset($_SESSION["user"])): ?>
                     <th>Edit</th>
                     <th>Delete</th>
+
                     <?php endif; ?>
                 </tr>
                 </thead>
@@ -259,6 +277,7 @@ $data = DBfunctions::getGraphs();
 
                     $button_view = "<button class='btn btn-block btn-primary view-graph-button' id='$id'>View</button>";
 
+
                     $delete_alg = "<i id='$id' class='fa fa-times'></i>";
 
 
@@ -293,6 +312,7 @@ $data = DBfunctions::getGraphs();
                         // end
                         $output = "$output" . "</tr>";
                     }
+
 
                     // echo "<tr class='tr-sc'><td style=\"white-space: nowrap; width: 6%\">$id</td><td style=\"white-space: nowrap; width: 12%\">$email</td><td style=\"white-space: nowrap; width: 19%\">$name</td><td style=\"white-space: nowrap; width: 16%\">$visual</td><td style=\"white-space: nowrap; width: 21%\">$algorithmType</td><td style=\"white-space: nowrap; width: 12.5%\">$created</td><td style=\"white-space: nowrap; width: 10.2%\">$button_edit</td></tr>";
                     echo "$output";

@@ -114,7 +114,9 @@ footer {
 }
 
 
+
 /* login style */
+
 /* Size for login */
 .navbar-login
 {
@@ -134,16 +136,19 @@ footer {
     font-size: 5em;
 }
 
+
 /* login row, wraps picture, name & surname, email, my profile button */
 #login-row{
   display: flex;
   flex-direction: column;
 }
 
+
 /* login divs */
 #login-size {
     width: 100%;
 }
+
 
 /* so that login is well placed*/
 @media (min-width: 1200px) {
@@ -151,6 +156,7 @@ footer {
     width: auto;
   }
 }
+
 
 /* raphael js css*/
 #content {
@@ -329,6 +335,7 @@ input:disabled, textarea:disabled {
 
 #pacientTable {
   max-width: 960px;
+
   background-color: #F9F9F9;
   
 /*  display: block;
@@ -340,12 +347,15 @@ input:disabled, textarea:disabled {
   width: 400px;
 }*/
 
+
 .pacient-disease {
   width: 450px;
 }
 
 .pacient-button {
+
   width: 150px;
+
 }
 
 /* style for table on list algorithms tab */
@@ -396,6 +406,7 @@ input:disabled, textarea:disabled {
 .full-height {
   height: 100%;
 }
+
 
 /* style to center any single line, inline(single line?) elements inside a block element */
 .center-me{
@@ -463,5 +474,30 @@ input:disabled, textarea:disabled {
 }
 
 
+/* style for table cell on administrate/index */
+.flex-cell {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+/* style for div inside table cell on administrate/index */
+.flex-div {
+  flex: 0 0 auto;
+}
+
+.flex-div > input {
+  margin-right: 5px;
+}
+
+/* style for pre element used in modals to display long text */
+pre {
+  font-family: Helvetica;
+}
 
 
+
+/* style for button that clears filters on visualisation/index */
+.clear-filters {
+  margin-top: 1em;
+}

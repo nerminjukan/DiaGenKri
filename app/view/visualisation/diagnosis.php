@@ -40,6 +40,7 @@ $data = DBfunctions::getGraphs();
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
+
             <div class="logo-wrap">
                     <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
                     <svg class="svg-link" version="1.1" height="35px" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -62,10 +63,12 @@ $data = DBfunctions::getGraphs();
                         </a>
                     </svg>
                 </div>
+
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
                 <?php if(isset($_SESSION["user"])): ?>
+
                 <li><a href="../../../DiaGenKri/public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
                     </span> Create algorithm</a></li>
                 <?php endif; ?>
@@ -123,11 +126,13 @@ $data = DBfunctions::getGraphs();
                 <?php else: ?>
                 <li><a href="../../../DiaGenKri/public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
                 <li><a href="../../../DiaGenKri/public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
+
                 <?php endif; ?>
             </ul>
         </div>
     </div>
 </nav>
+
 
 <!-- <div class=flex-wrap id="main-container">
     <div class=wrap-table>
@@ -165,6 +170,7 @@ $data = DBfunctions::getGraphs();
                 </tbody>
             </table>
         </div>
+
     </div>
 </div>
 
@@ -174,6 +180,8 @@ $data = DBfunctions::getGraphs();
 
         <!-- Modal content-->
         <div class="modal-content">
+
+
             <div class="modal-body">
                 <h3 id="h3id"></h3>
                 <pre><p id="question"></p></pre>
@@ -192,6 +200,8 @@ $data = DBfunctions::getGraphs();
 <div class="modal" id="content"></div>
 
 
+
 <!-- <footer class="container-fluid text-center">
     <p>©DiaGenKri</p>
 </footer> -->
+

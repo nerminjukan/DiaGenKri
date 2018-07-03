@@ -26,6 +26,7 @@ $(function(){
 		window.location.replace("../../../DiaGenKri/public/visualisation/viewonly?id=" + id_graph);
    });
 
+
    // delete algorithm
 	$('.fa-times').click(function(){
 		var el = this;
@@ -66,5 +67,6 @@ $(function(){
 		}
 		);
 	});
+
 });
 

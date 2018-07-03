@@ -50,11 +50,17 @@ class LogIn extends Controller
                 $_SESSION["user"] = $_POST["email"];
 
                 // get name of that user
-                $name = DBfunctions::getUser($_POST["email"]);
+                $data = DBfunctions::getUser($_POST["email"]);
                 // var_dump("dumping in login", $name[0]);
                 // exit();
-                $_SESSION["user-name"] = $name[0];
-                $_SESSION["user-surname"] = $name[1];
+                $_SESSION["user-name"] = $data['name'];
+                $_SESSION["user-surname"] = $data['surname'];
+                $_SESSION["user-admin"] = $data['admin'];
+                $_SESSION["user-read"] = $data['readPR'];
+                $_SESSION["user-edit"] = $data['editPR'];
+                $_SESSION["user-delete"] = $data['deletePR'];
+                $_SESSION["user-add"] = $data['addPR'];
+                $_SESSION["user-confirm"] = $data['confirmPR'];
 
                 // check if user is remembered
                 if (!empty($_POST["remember-me"])){

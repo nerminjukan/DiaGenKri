@@ -36,12 +36,17 @@ class Administrate extends Controller
             $email = $_POST["userChange"];
             unset($_POST["userChange"]);
 
-            DBfunctions::saveAdimistrationChanges($email, $_POST);
+            // echo $email, $_POST;
+            // var_dump($email, $_POST);
+            // exit();
 
-            ViewHelper::redirect('../../public/administrate/change');
+            $result = DBfunctions::saveAdimistrationChanges($email, $_POST);
+
+            echo $result;
+            // ViewHelper::redirect('../../public/administrate/change');
         }
         else{
-            // TO DO
+            echo "0";
         }
 
     }
