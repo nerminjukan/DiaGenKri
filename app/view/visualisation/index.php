@@ -1,10 +1,6 @@
 <?php
 
 
-// if(!isset($_SESSION["user"])){
-//     header("Location: ../../../DiaGenKri/public/home");
-// }
-
 
 
 require_once '../app/database/DBfunctions.php';
@@ -221,10 +217,11 @@ $data = DBfunctions::getGraphs();
 
                     <th>View</th>
 
-                    <?php if(isset($_SESSION["user"])): ?>
-                    <th>Edit</th>
-                    <th>Delete</th>
-
+                    <?php if(isset($_SESSION["user"]) && (isset($_SESSION["user-edit"]) ||  isset($_SESSION["user-admin"])) && ($_SESSION["user-edit"] == 1 || $_SESSION["user-admin"] == 1)): ?>
+                        <th>Edit</th>
+                    <?php endif; ?>
+                    <?php if(isset($_SESSION["user"]) && (isset($_SESSION["user-delete"]) ||  isset($_SESSION["user-admin"])) && ($_SESSION["user-delete"] == 1 || $_SESSION["user-admin"] == 1)): ?>
+                        <th>Delete</th>
                     <?php endif; ?>
                 </tr>
                 </thead>
@@ -271,9 +268,7 @@ $data = DBfunctions::getGraphs();
 
                     $created = $value["created"];
 
-                    // if(isset($_SESSION["user"])){
                     $button_edit = "<button class='btn btn-block btn-primary edit-graph-button' id='$id'>Edit</button>";
-                    // }
 
                     $button_view = "<button class='btn btn-block btn-primary view-graph-button' id='$id'>View</button>";
 
@@ -305,8 +300,17 @@ $data = DBfunctions::getGraphs();
                         $output = "$output" . "<td>" . "$button_view" . "</td>";
 
                         if(isset($_SESSION["user"])){
-                            $output = "$output" . "<td>" . "$button_edit" . "</td>";
-                            $output = "$output" . "<td class='center-me'>" . "$delete_alg" . "</td>";
+                            if(isset($_SESSION["user"]) && (isset($_SESSION["user-edit"]) ||  isset($_SESSION["user-admin"])) && ($_SESSION["user-edit"] == 1 || $_SESSION["user-admin"] == 1)){
+                                $output = "$output" . "<td>" . "$button_edit" . "</td>";
+                            }
+                            //$output = "$output" . "<td>" . "$button_edit" . "</td>";
+                            if(isset($_SESSION["user"]) && (isset($_SESSION["user-delete"]) ||  isset($_SESSION["user-admin"])) && ($_SESSION["user-delete"] == 1 || $_SESSION["user-admin"] == 1)){
+                                $output = "$output" . "<td class='center-me'>";
+                                    if($email == $_SESSION["user"] || $_SESSION["user-admin"] == 1){
+                                        $output = $output . "$delete_alg";
+                                    }
+                                    $output = $output . "</td>";
+                            }
                         }
 
                         // end
