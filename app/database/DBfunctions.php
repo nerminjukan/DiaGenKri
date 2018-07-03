@@ -248,8 +248,9 @@ class DBfunctions {
         $statement->bindParam(":email", $email);
 
 
-        $statement->execute();
-        return true;
+        $result = $statement->execute();
+
+        return $result;
 
     }
 

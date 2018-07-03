@@ -1509,6 +1509,8 @@ function showModalSave(){
 function changeWidth(textShape) {
     console.log('changeWidth of', textShape);
     let parent = paper.getById(textShape.data('parent'));
+    if(parent.data("type") !== "rect")
+        return;
     if(textShape.getBBox().width > parent.attr('width') - 15){
         console.log('Too big!');
         parent.attr('width', textShape.getBBox().width + 20);
@@ -2122,10 +2124,16 @@ function saveGraph() {
         // if element is text
         if(el.type === 'text') {
             data.type = el.data("type");
-            if(data.type === "connection_text")
+            console.log("DATA.PARENT print print print", data.type, el.data("type"));
+
+            if(data.type == "connection_text"){
+                console.log("DATA.PARENT connection_text")
                 data.id_connection = el.data("id_connection");
-            else if(data.type === "shape_text")
+            }
+            else if(data.type == "shape_text"){
+                console.log("DATA.PARENT shape_text")
                 data.parent = el.data("parent");
+            }
 
         }
         else if(el.type === 'path'){

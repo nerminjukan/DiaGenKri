@@ -3,6 +3,8 @@
 
 
 
+
+
 require_once '../app/database/DBfunctions.php';
 include_once '../app/controllers/administrate.php';
 
@@ -217,11 +219,13 @@ $data = DBfunctions::getGraphs();
 
                     <th>View</th>
 
+
                     <?php if(isset($_SESSION["user"]) && (isset($_SESSION["user-edit"]) ||  isset($_SESSION["user-admin"])) && ($_SESSION["user-edit"] == 1 || $_SESSION["user-admin"] == 1)): ?>
                         <th>Edit</th>
                     <?php endif; ?>
                     <?php if(isset($_SESSION["user"]) && (isset($_SESSION["user-delete"]) ||  isset($_SESSION["user-admin"])) && ($_SESSION["user-delete"] == 1 || $_SESSION["user-admin"] == 1)): ?>
                         <th>Delete</th>
+
                     <?php endif; ?>
                 </tr>
                 </thead>

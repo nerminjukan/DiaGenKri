@@ -474,8 +474,26 @@ input:disabled, textarea:disabled {
 }
 
 
+/* style for table cell on administrate/index */
+.flex-cell {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
 
+/* style for div inside table cell on administrate/index */
+.flex-div {
+  flex: 0 0 auto;
+}
 
+.flex-div > input {
+  margin-right: 5px;
+}
+
+/* style for pre element used in modals to display long text */
+pre {
+  font-family: Helvetica;
+}
 
 /* style for button that clears filters on visualisation/index */
 .clear-filters {
