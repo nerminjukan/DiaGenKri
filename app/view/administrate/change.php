@@ -131,7 +131,7 @@ $data = DBfunctions::getUsersData();
 <div class="container-fluid">
     <div class="row content">
         <div class="col-sm-12 text-left flex-wrap" style="margin-bottom: 0">
-            <a href="../../../DiaGenKri/public/administrate" type="button" class="btn btn-info row-increased-bottom row-increased-top" style="width: 100%; max-width: 960px;">Done</a>
+            <a href="../../../DiaGenKri/public/administrate" type="button" class="btn btn-primary row-increased-bottom row-increased-top" style="width: 100%; max-width: 960px;">Done</a>
         </div>
        <!--  <div class="col-sm-12 text-left flex-wrap" style="margin-bottom: 0; margin-top: 0">
             <a href="../../../DiaGenKri/public/administrate" type="button" class="btn btn-danger row-increased-bottom" style="width: 100%; max-width: 960px;">Cancel</a>
@@ -194,7 +194,7 @@ $data = DBfunctions::getUsersData();
                     // $privileges = $privileges . $adminString . $readString . $editString . $deleteString . $addString . $confirmString; 
                     $privileges = $adminString . $readString . $editString . $deleteString . $addString . $confirmString; 
 
-                    $button = "<button type='button' class='btn btn-info save-permissions' name='$i' id='$email'>Save</button>";
+                    $button = "<button type='button' class='btn btn-primary save-permissions' name='$i' id='$email'>Save</button>";
                     // output string, start
                     $output = "<tr class='tr-graphTable'>";
 
