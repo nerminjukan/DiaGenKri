@@ -11,7 +11,9 @@
 
 </head>
 
+
 <!-- <div class="box"> -->
+
     <nav class="navbar navbar-inverse">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -20,6 +22,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
+
                 <div class="logo-wrap">
                     <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
                     <svg class="svg-link" version="1.1" height="35px" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -41,18 +44,24 @@
                         </g>
                         </a>
                     </svg>
+
                 </div>
 
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav navbar-right">
                     <?php if(isset($_SESSION["user"])): ?>
-                    <li><a href="../../../DiaGenKri/public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
-                        </span> Create algorithm</a></li>
-                    <?php endif; ?>
-                    <li><a href="../../../DiaGenKri/public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
-                    <?php if(isset($_SESSION["user"])): ?> <!-- && $_SESSION[user_level] === 6, which is admin for example-->
-                    <li><a href="../../../DiaGenKri/public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
+
+                        <?php if(isset($_SESSION["user-add"]) && $_SESSION['user-add'] == 1): ?>
+                            <li><a href="../../../DiaGenKri/public/visualisation/editor"><span class="glyphicon glyphicon-pencil"></span> Create graph</a></li>
+                        <?php endif; ?>
+                        <?php if(isset($_SESSION["user-read"])): ?>
+                            <li><a href="../../../DiaGenKri/public/visualisation"><span class="glyphicon glyphicon-th"></span> List of graphs</a></li>
+                        <?php endif; ?>
+                        <?php if(isset($_SESSION["user-admin"]) && $_SESSION["user-admin"] == 1): ?>
+                            <li><a href="../../../DiaGenKri/public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
+                        <?php endif; ?>
+
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             <span class="glyphicon glyphicon-user"></span> 
@@ -65,7 +74,9 @@
                         <ul class="dropdown-menu">
                             <li>
                                 <div class="navbar-login">
+
                                     <div class="row" id="login-row">
+
                                         <div class="col-lg-4">
                                             <p class="text-center">
                                                 <span class="glyphicon glyphicon-user icon-size"></span>
@@ -93,7 +104,9 @@
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <p>
+
                                                 <a href="../../../DiaGenKri/public/logIn/logOutUser/" class="btn btn-danger btn-block">Log out</a>
+
                                             </p>
                                         </div>
                                     </div>
@@ -102,8 +115,10 @@
                         </ul>
                     </li>
                     <?php else: ?>
+
                     <li><a href="../../../DiaGenKri/public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
                     <li><a href="../../../DiaGenKri/public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
+
                     <?php endif; ?>
                 </ul>
             </div>
@@ -161,4 +176,6 @@
     <footer class="col-sm-12 container-fluid text-center">
         <p>©DiaGenKri</p>
     </footer>
+
 <!-- </div> -->
+

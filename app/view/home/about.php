@@ -1,5 +1,7 @@
+
 <!DOCTYPE html>
 <html lang="sl">
+
 <head>
     <title>Graphs table</title>
     <meta charset="utf-8">
@@ -21,6 +23,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
+
             <div class="logo-wrap">
                     <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
                     <svg class="svg-link" version="1.1" height="35px" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -43,6 +46,7 @@
                         </a>
                     </svg>
                 </div>
+
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
@@ -59,7 +63,9 @@
                         <ul class="dropdown-menu">
                             <li>
                                 <div class="navbar-login">
+
                                     <div class="row" id="login-row">
+
                                         <div class="col-lg-4">
                                             <p class="text-center">
                                                 <span class="glyphicon glyphicon-user icon-size"></span>
@@ -87,7 +93,9 @@
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <p>
+
                                                 <a href="../../../DiaGenKri/public/logIn/logOutUser/" class="btn btn-danger btn-block">Log out</a>
+
                                             </p>
                                         </div>
                                     </div>

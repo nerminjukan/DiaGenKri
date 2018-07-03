@@ -652,8 +652,10 @@ function onShapeClicked(){
 
     // connect shapes
     connections.push(paper.connection(shapes[indexes.f], shapes[indexes.s], "#000", id++));
+
     // refresh
     paper.connection(connections[connections.length - 1]);
+
     //console.log("[connect shapes] DONE");
 
     // reset adding connections
@@ -1145,7 +1147,9 @@ function getGraphData(id_graph_load) {
             email: myArray["e-mail"],
             name: myArray["name"],
             description: myArray["description"],
+
             intended: myArray["visual"], // 1 are doctors
+
             algorithm_type: myArray["algorithm_type"]
         };
         // console.log("info about graph, without data:", info);
@@ -1157,6 +1161,7 @@ function getGraphData(id_graph_load) {
 
 // populates form with name with data(object)
 function populateForm(name, data){
+
     try{
         document.getElementById("graphName").value = data.name;
         document.getElementById("graphDescritption").value = data.description;
@@ -1204,6 +1209,7 @@ function populateForm(name, data){
     } catch(err){
         console.log("No save modal", err);
     }
+
 }
 
 // ************* end of some other functions
@@ -1312,12 +1318,14 @@ jQuery(function ($) {
 
     paper = Raphael(document.getElementById('content'), 3000, 3000);
 
+
     // // paper.print(100, 100, "Test string", paper.getFont("Times", 800), 30);
     // let txxt = paper.print(10, 50, "print", paper.getFont("Museo"), 30).attr({fill: "#fff"});
     // // following line will paint first letter in red
     // txxt.attr({fill: "#f00"}).toFront();;
 
     // paper.rect(200, 200, 200, 200).attr({"stroke-width": 10});
+
     //console.log("[main] paper canvas:", paper.canvas);
 
     // TESTING
@@ -1465,6 +1473,7 @@ jQuery(function ($) {
         resetModal();
     });
 
+
     // listen for change in events so you can show TEST button when needed
     $("#typeDiagnostic").click(function(){
         $("#test_patients").removeClass("hide-me");
@@ -1474,6 +1483,7 @@ jQuery(function ($) {
         $("#test_patients").addClass("hide-me");
 
     });
+
 
     // **** not needed anymore, because editingGraph can be set to true in loadGraph() method,
     // **** that works because loadGraph is caled from getData.js which executes it only when graph 
@@ -1489,9 +1499,11 @@ jQuery(function ($) {
 
 });
 
+
 function showModalSave(){
     $("#metaData").modal('show');
 }
+
 // ************************************** end of zoom
 
 function changeWidth(textShape) {
@@ -2464,6 +2476,7 @@ function loadGraph(json, pacient=false, viewonly=false) {
     }
 
     // increment id, so next connection will have proper id
+
     if(connections.length > 0){
         id = connections[connections.length - 1].id + 2;
         // refresh things by "placing" just one connection, that way misplaced items will fix themselves
@@ -2475,6 +2488,7 @@ function loadGraph(json, pacient=false, viewonly=false) {
     for (let i = connections.length; i--;) {
         paper.connection(connections[i]);
     }
+
 
 
     console.log('[loadGraph] LOADING finished');

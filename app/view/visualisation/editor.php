@@ -1,6 +1,8 @@
 <?php
 
-if(!isset($_SESSION["user"])){
+
+if(!isset($_SESSION["user"]) || isset($_SESSION["user-edit"]) || $_SESSION["user-edit"] == 1){
+
     header("Location: ../../../DiaGenKri/public/home");
 }
 
@@ -58,6 +60,7 @@ $description="";
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
+
             <div class="logo-wrap">
                     <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
                     <svg class="svg-link" version="1.1" height="35px" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -137,6 +140,7 @@ $description="";
                 <?php else: ?>
                 <li><a href="../../../DiaGenKri/public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
                 <li><a href="../../../DiaGenKri/public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
+
                 <?php endif; ?>
             </ul>
         </div>
@@ -146,6 +150,7 @@ $description="";
     <div class="row content">
         <div class="col-sm-2 sidenav">
             <h2>Toolbar</h2>
+
             <div class="well well-sm">
                 <a ondragstart="startDrag(event)" draggable="true"  id="aSquare" href="javascript:void(0);" style="overflow: hidden; width: 80px; height: 60px; padding: 1px; display: inline-block; cursor: move">
                     <svg class="draggable" id="svgtag"  style="width: 80px; height: 60px; display: block; position: relative; overflow: hidden; left: 2px; top: 2px">
@@ -186,6 +191,7 @@ $description="";
                 <button onclick="setDeleteShape()" id = "delete_shape_button" class="btn btn-block btn-warning">Delete vertex</button>
             </div>
 
+
             <div class="well well-sm" id="test_patients">
                 <button type="button" onclick="setModal()" id = "test_modal" class="btn btn-block btn-info">TEST</button>
             </div>
@@ -193,6 +199,7 @@ $description="";
             <div class="well well-sm">
                 <button id="save" onclick="showModalSave()" type="button" class="btn btn-block btn-info">Save</button>
             </div>
+
         </div>
         <div onclick="looseFocus(event)" ondrop="mainDraw(event)" class="col-sm-8" id="content">
         </div>
@@ -210,8 +217,10 @@ $description="";
                 <textarea class="myInputForm" rows="6" cols="20" disabled id="IDdesc" type="text"></textarea>
             </form>
 
+
             <div class="well well-sm" style="margin-top: 20px">
                 <button type="button" data-toggle="modal" data-target="#helpModal" id = "help_btn" class="btn btn-block btn-info">Help</button>
+
             </div>
         </div>
     </div>
@@ -272,6 +281,7 @@ $description="";
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label"
+
                                for="graphType" >Intendent for<label style="color: red">*</label></label>
                         <div class="col-sm-10">
                             <div>
@@ -279,6 +289,7 @@ $description="";
                             </div>
                             <div>
                                 <label class="radio-inline" for="typeDiagnostic"><input class="radio" type="radio" id="typeDiagnostic" name="gType" value="diagnostic">Patients</label>
+
                             </div>
                             <label style="color: red; font-size: 14px" id="typeLab"></label>
                         </div>
@@ -412,6 +423,8 @@ $description="";
 
         <!-- Modal content-->
         <div class="modal-content">
+
+
             <div class="modal-body">
                 <h3 id="h3id"></h3>
                 <pre><p id="question"></p></pre>
