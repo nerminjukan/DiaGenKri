@@ -2485,6 +2485,7 @@ function loadGraph(json, pacient=false, viewonly=false) {
         // meantime change width of all text elements to correct size
         if(element.data("type") === "shape_text")
             changeWidth(element);
+
     });
 
     // recalculate subpaths
