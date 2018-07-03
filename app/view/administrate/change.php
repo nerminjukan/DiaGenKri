@@ -1,6 +1,6 @@
 <?php
 
-if(!isset($_SESSION["user"])){
+if(!isset($_SESSION["user"]) && $_SESSION["user-admin"] != 1){
     header("Location: ../../../DiaGenKri/public/home");
 }
 
@@ -8,8 +8,6 @@ require_once '../app/database/DBfunctions.php';
 include_once '../app/controllers/administrate.php';
 
 $data = DBfunctions::getUsersData();
-
-
 
 
 ?>
