@@ -1,8 +1,8 @@
 <?php
 
-// if(!isset($_SESSION["user"])){
-//     header("Location: ../../../DiaGenKri/public/home");
-// }
+if(!isset($_SESSION["user"]) || !isset($_SESSION["user-read"]) || $_SESSION["user-read"] != 1){
+    header("Location: ../../../DiaGenKri/public/home");
+}
 
 require_once '../app/database/DBfunctions.php';
 include_once '../app/controllers/administrate.php';

@@ -64,9 +64,15 @@
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav navbar-right">
                     <?php if(isset($_SESSION["user"])): ?>
-                    <li><a href="../../../DiaGenKri/public/visualisation/editor"><span class="glyphicon glyphicon-pencil"></span> Create graph</a></li>
-                    <li><a href="../../../DiaGenKri/public/visualisation"><span class="glyphicon glyphicon-th"></span> List of graphs</a></li>
-                    <li><a href="../../../DiaGenKri/public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
+                        <?php if(isset($_SESSION["user-add"]) && $_SESSION['user-add'] == 1): ?>
+                            <li><a href="../../../DiaGenKri/public/visualisation/editor"><span class="glyphicon glyphicon-pencil"></span> Create graph</a></li>
+                        <?php endif; ?>
+                        <?php if(isset($_SESSION["user-read"])): ?>
+                            <li><a href="../../../DiaGenKri/public/visualisation"><span class="glyphicon glyphicon-th"></span> List of graphs</a></li>
+                        <?php endif; ?>
+                        <?php if(isset($_SESSION["user-admin"]) && $_SESSION["user-admin"] == 1): ?>
+                            <li><a href="../../../DiaGenKri/public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
+                        <?php endif; ?>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             <span class="glyphicon glyphicon-user"></span> 

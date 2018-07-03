@@ -249,10 +249,11 @@ class DBfunctions {
     public static function getUser($email){
         $db = DBconnect::getInstance();
 
-        $statement1 = $db->prepare("SELECT `name`, `surname` FROM diagenkri.user WHERE `e-mail` = :eposta");
+        $statement1 = $db->prepare("SELECT diagenkri.user.name, diagenkri.user.surname, diagenkri.user_profile.*
+                                              FROM diagenkri.user JOIN diagenkri.user_profile ON diagenkri.user.`e-mail` = diagenkri.user_profile.`e-mail` WHERE diagenkri.user.`e-mail` = :eposta");
         $statement1->bindParam(":eposta", $email);
         $statement1->execute();
-        $result1 = $statement1->fetch(PDO::FETCH_NUM);
+        $result1 = $statement1->fetch(PDO::FETCH_ASSOC);
 
 
         // var_dump($result1);

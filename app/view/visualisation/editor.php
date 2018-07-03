@@ -1,6 +1,6 @@
 <?php
 
-if(!isset($_SESSION["user"])){
+if(!isset($_SESSION["user"]) || isset($_SESSION["user-edit"]) || $_SESSION["user-edit"] == 1){
     header("Location: ../../../DiaGenKri/public/home");
 }
 

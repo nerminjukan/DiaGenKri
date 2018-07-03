@@ -1,8 +1,8 @@
 <?php
 
-// if(!isset($_SESSION["user"])){
-//     header("Location: ../../../DiaGenKri/public/home");
-// }
+ if(!isset($_SESSION["user"])){
+     header("Location: ../../../DiaGenKri/public/home");
+ }
 
 
 require_once '../app/database/DBfunctions.php';
@@ -142,9 +142,6 @@ $data = DBfunctions::getGraphs();
         </div>
     </form>
 
-    <!-- <div>
-        <a class="btn btn-success" href="../../../DiaGenKri/public/visualisation/editor">New graph</a>
-    </div> -->
 </div>
 
 
@@ -161,13 +158,15 @@ $data = DBfunctions::getGraphs();
                     <th>Algorithm type</th>
 
                     <?php if(isset($_SESSION["user"])): ?>
-                    <th>Created</th>
+                        <th>Created</th>
                     <?php endif; ?>
 
-                    <th>View</th>
+                    <?php if(isset($_SESSION["user"]) && isset($_SESSION["user-read"]) && $_SESSION["user-read"] == 1): ?>
+                        <th>View</th>
+                    <?php endif; ?>
 
-                    <?php if(isset($_SESSION["user"])): ?>
-                    <th>Edit</th>
+                    <?php if(isset($_SESSION["user"]) && isset($_SESSION["user-edit"]) && $_SESSION["user-edit"] == 1): ?>
+                        <th>Edit</th>
                     <?php endif; ?>
                 </tr>
                 </thead>
@@ -233,9 +232,11 @@ $data = DBfunctions::getGraphs();
                         $output = "$output" . "<td>" . "$created" . "</td>";
                     }
 
-                    $output = "$output" . "<td>" . "$button_view" . "</td>";
+                    if(isset($_SESSION["user"]) && isset($_SESSION["user-read"]) && $_SESSION["user-read"] == 1){
+                        $output = "$output" . "<td>" . "$button_view" . "</td>";
+                    }
 
-                    if(isset($_SESSION["user"])){
+                    if(isset($_SESSION["user"]) && isset($_SESSION["user-edit"]) && $_SESSION["user-edit"] == 1){
                         $output = "$output" . "<td>" . "$button_edit" . "</td>"; 
                     }
 
