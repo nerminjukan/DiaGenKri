@@ -10,11 +10,141 @@ require_once "DBconnect.php";
 
 class DBfunctions {
 
+    public static function saveGraph($email, $data, $name, $description, $gtype, $atype){
+
+        $db = DBconnect::getInstance();
+
+        try {
+            $statement = $db->prepare("INSERT INTO diagenkri.graph (`e-mail`, `name`, `description`, `visual`, `algorithm_type`, `data`)
+                                                 VALUES (:email, :name, :description, :gtype, :atype, :data)");
+            $statement->bindParam(":email", $email);
+            $statement->bindParam(":name", $name);
+            $statement->bindParam(":description", $description);
+            $statement->bindParam(":gtype", $gtype);
+            $statement->bindParam(":atype", $atype);
+            $statement->bindParam(":data", $data);
+
+            $result = $statement->execute();
+
+            echo $result;
+        } catch (Exception $e) {
+            echo 'Caught exception: ',  $e->getMessage(), "\n";
+        }
+
+        // var_dump($result);
+
+        return $result;
+
+    }
+
+    public static function editGraph($email, $data, $name, $description, $gtype, $atype, $id){
+
+        $db = DBconnect::getInstance();
+
+        try {
+            $statement = $db->prepare("UPDATE diagenkri.graph SET `name`=:name,`description`=:description,`visual`=:gtype,
+            `algorithm_type`=:atype,`data`=:data WHERE `id`=:id ");
+            $statement->bindParam(":name", $name);
+            $statement->bindParam(":description", $description);
+            $statement->bindParam(":gtype", $gtype);
+            $statement->bindParam(":atype", $atype);
+            $statement->bindParam(":data", $data);
+            $statement->bindParam(":id", $id);
+
+            $result = $statement->execute();
+            // var_dump("first", $result);
+
+            // add to graph edits
+            $statement1= $db->prepare("INSERT INTO `graph-edits` (`graph-id`, `edited-by`)
+                                                 VALUES (:id, :email)");
+            $statement1->bindParam(":id", $id);
+            $statement1->bindParam(":email", $email);
+
+            $result1 = $statement1->execute();
+
+            $fin = $result && $result1;
+            echo $fin;
+        } catch (Exception $e) {
+            echo 'Caught exception: ',  $e->getMessage(), "\n";
+        }
+
+        // $statement = $db->prepare("UPDATE diagenkri.graph SET `name`=:name,`description`=:description,`visual`=:gtype,
+        //     `algorithm_type`=:atype,`data`=:data WHERE `id`=:id ");
+        // $statement->bindParam(":name", $name);
+        // $statement->bindParam(":description", $description);
+        // $statement->bindParam(":gtype", $gtype);
+        // $statement->bindParam(":atype", $atype);
+        // $statement->bindParam(":data", $data);
+        // $statement->bindParam(":id", $id);
+
+        // $result = $statement->execute();
+        // // var_dump("first", $result);
+
+        // // add to graph edits
+        // $statement1= $db->prepare("INSERT INTO `graph-edits` (`graph-id`, `edited-by`)
+        //                                      VALUES (:id, :email)");
+        // $statement1->bindParam(":id", $id);
+        // $statement1->bindParam(":email", $email);
+
+        // $result1 = $statement1->execute();
+
+        // $fin = $result && $result1;
+        // echo $fin;
+        return $result && $result1;
+
+    }
+
+    public static function deleteGraph($email, $id){
+        $db = DBconnect::getInstance();
+
+        try {
+            $statement = $db->prepare("DELETE FROM `graph-edits` WHERE `graph-id` = :id;");
+            $statement->bindParam(":id", $id);
+            $result = $statement->execute();
+
+            $statement1 = $db->prepare("DELETE FROM `graph` WHERE `id` = :id;");
+            $statement1->bindParam(":id", $id);
+            $result1 = $statement1->execute();
+
+            $fin = $result && $result1;
+            echo $fin;
+        } catch(Exception $e){
+            echo 'Caught exception: ',  $e->getMessage(), "\n";
+        }
+    }
+
+
+    public static function loadGraph($id){
+        $db = DBconnect::getInstance();
+
+        $statement = $db->prepare("SELECT * FROM diagenkri.graph WHERE graph.id = :id");
+
+        $statement->bindParam(":id", $id);
+
+        $statement->execute();
+
+        $result = $statement->fetch(PDO::FETCH_ASSOC);
+
+        return $result;
+    }
+
     public static function getUsersData(){
         $db = DBconnect::getInstance();
 
         $statement1 = $db->prepare("SELECT diagenkri.user.`e-mail`, diagenkri.user.name, diagenkri.user.surname, diagenkri.user_profile.*
                                               FROM diagenkri.user JOIN diagenkri.user_profile ON diagenkri.user.`e-mail`=diagenkri.user_profile.`e-mail`;");
+
+        $statement1->execute();
+
+        $result1 = $statement1->fetchAll(PDO::FETCH_ASSOC);
+
+        return $result1;
+    }
+
+    public static function getGraphs(){
+        $db = DBconnect::getInstance();
+
+        $statement1 = $db->prepare("SELECT * FROM diagenkri.graph;");
 
         $statement1->execute();
 

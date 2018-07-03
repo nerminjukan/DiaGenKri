@@ -1,73 +1,109 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+/* wrapper literarly around evertything */
+.box {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+}
+
+
+/* <EXPERIMENTAL> */
+.box .row {
+  border: 1px dotted grey;
+}
+
+.box .row.header {
+  flex: 0 1 auto;
+  /* The above is shorthand for:
+  flex-grow: 0,
+  flex-shrink: 1,
+  flex-basis: auto
+  */
+}
+
+.box .row.content {
+  flex: 1 1 auto;
+}
+
+.box .row.footer {
+  flex: 0 1 40px;
+}
+/* </EXPERIMENTAL> */
+
 /* Remove the navbar's default margin-bottom and rounded borders */
-    .navbar {
-        margin-bottom: 0;
-        border-radius: 0;
-    }
+.navbar {
+    margin-bottom: 0;
+    border-radius: 0;
+}
 
 /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
-    .row.content {height: 450px}
+.row.content {height: 450px}
 
 /* Set gray background color and 100% height */
-    .sidenav {
-        padding-top: 20px;
-        background-color: #f1f1f1;
-        height: 100%;
-    }
+.sidenav {
+    padding-top: 20px;
+    background-color: #f1f1f1;
+    height: 100%;
+}
 
 /* Set black background color, white text and some padding */
-    footer {
-        background-color: #555;
-        color: white;
-        padding: 15px;
-    }
+footer {
+    background-color: #555;
+    color: white;
+    padding: 15px;
+}
 
 /* On small screens, set height to 'auto' for sidenav and grid */
-    @media screen and (max-width: 767px) {
-        .sidenav {
-            height: auto;
-            padding: 15px;
-        }
-        .row.content {height:auto;}
+@media screen and (max-width: 767px) {
+    .sidenav {
+        height: auto;
+        padding: 15px;
     }
+    .row.content {height:auto;}
+}
 
 /* Increase spacing between rows */
-    .row-increased-top {
-        margin-top : 20px;
-    }
+.row-increased-top {
+    margin-top : 20px;
+}
 
 /* Increase spacing for lead titles */
-    .spacing-increased {
-        padding-left: 15px;
-    }
+.spacing-increased {
+    padding-left: 15px;
+}
 
 /* Increase spacing for lead titles */
-    .row-increased-bottom {
-        margin-bottom: 20px;
-    }
+.row-increased-bottom {
+    margin-bottom: 20px;
+}
 
 /* Increase spacing for checkbox form group */
-    .check-box-spacing {
-        margin-left: 10px;
-        margin-right: 10px;
-    }
+.check-box-spacing {
+    margin-left: 10px;
+    margin-right: 10px;
+}
 /* Create a scrollable table */
-    .tr-sc {
-        width: 100%;
-        display: inline-table;
-        height:30px;
-    }
+.tr-sc {
+    width: 100%;
+    display: inline-table;
+    height:30px;
+}
 
-    .table-sc {
-        height:350px;
-        display: -moz-groupbox;
-    }
+.table-sc {
+    height:350px;
+    display: -moz-groupbox;
+}
 
-    .tbody-sc {
-        overflow-y: scroll;
-        height: 300px;
-        width: 100%;
-        position: absolute;
-    }
+.tbody-sc {
+    overflow-y: scroll;
+    height: 300px;
+    width: 98%;
+    position: absolute;
+}
 
 /* Crop the image to size */
 .center-cropped {
@@ -78,9 +114,10 @@
 }
 
 
+/* login style */
+/* Size for login */
 .navbar-login
 {
-    width: 15em;
     padding: 1em;
     padding-bottom: 0px;
 }
@@ -96,5 +133,335 @@
 {
     font-size: 5em;
 }
+
+/* login row, wraps picture, name & surname, email, my profile button */
+#login-row{
+  display: flex;
+  flex-direction: column;
+}
+
+/* login divs */
+#login-size {
+    width: 100%;
+}
+
+/* so that login is well placed*/
+@media (min-width: 1200px) {
+  .col-lg-8, .col-lg-4  {
+    width: auto;
+  }
+}
+
+/* raphael js css*/
+#content {
+    height: 100%;
+    padding: 0;
+    overflow: auto;
+    background: #f3f3f3;
+    background-image: linear-gradient(rgba(100, 100, 100, .1) .1em, transparent .1em), linear-gradient(90deg, rgba(100,100,100, .1) .1em, transparent .1em);
+    background-size: 1em 1em;
+}
+
+/* if button is checked */
+.button_checked {
+    padding: 6px 12px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: #fff;
+    background-color: #286090;
+    border-color: #204d74;
+}
+
+/*#add_connection_button {
+    white-space: pre-wrap;
+}*/
+
+/*@media screen and (min-width: 768px) {
+    .fixed_bottom {
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+    }
+}*/
+
+
+/* style for navigation bar */
+ .navbar {
+  min-height: 50px;
+}
+
+.navbar-brand {
+  padding: 0 15px;
+  height: 50px;
+  line-height: 50px;
+  max-height: 50px;
+}
+
+.navbar-toggle {
+  /* (80px - button height 34px) / 2 = 23px */
+  margin-top: 23px;
+  padding: 9px 10px !important;
+}
+
+@media (min-width: 768px) {
+  .navbar-nav > li > a {
+    /* (80px - line-height of 27px) / 2 = 26.5px */
+    padding-top: 17px;
+    padding-bottom: 17px;
+    line-height: 14px;
+  }
+}
+
+
+/* main row that contains toolbar, canvas and settings*/
+.row.content {
+   height: 100%;
+}
+
+/* wrapper around content, navbar and footer not included*/
+#main-container{
+    height: calc(100vh - 50px);
+}
+
+/* buttons in toolbar */
+.btn {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* how should be input in settings(visualisation tab) styled*/
+.myInputForm {
+    width: 85%;
+    max-width: 85%;
+    min-width: 85%;
+}
+
+/* when input is disabled */
+input:disabled, textarea:disabled {
+  color: gray;
+  border: 1px solid gray;
+}
+
+/* style for modals */
+
+.modal-body .form-horizontal .col-sm-2,
+.modal-body .form-horizontal .col-sm-10 {
+    width: 100%
+}
+
+.modal-body .form-horizontal .control-label {
+    text-align: left;
+}
+.modal-body .form-horizontal .col-sm-offset-2 {
+    margin-left: 15px;
+}
+
+.modal-dialog{
+    overflow-y: initial !important
+}
+.modal-body{
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.svg-link{
+    padding: 0px;
+}
+.svg-link:hover{
+    cursor: pointer;
+}
+
+.image {
+    opacity: 1;
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: .5s ease;
+    backface-visibility: hidden;
+}
+
+.middle {
+    transition: .5s ease;
+    opacity: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.container:hover .image {
+    opacity: 0.3;
+}
+
+.container:hover .middle {
+    opacity: 1;
+}
+
+.text {
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    padding: 16px 32px;
+}
+
+.a-tag{
+    color: white;
+}
+
+.a-tag:hover{
+    color: white;
+}
+
+/* style for table on diagnosis tab */
+.flex-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.wrap-table {
+  margin-top: 1em;
+  height: calc(100% - 2em);
+  margin-bottom: 1em;
+}
+
+#pacientTable {
+  max-width: 960px;
+  background-color: #F9F9F9;
+  
+/*  display: block;
+  height: 100%;*/
+  margin-top: 20px;
+}
+
+/*#pacientTable > td {
+  width: 400px;
+}*/
+
+.pacient-disease {
+  width: 450px;
+}
+
+.pacient-button {
+  width: 150px;
+}
+
+/* style for table on list algorithms tab */
+#graphTable {
+  background-color: #F9F9F9;
+  max-width: 960px;
+}
+
+.tr-graphTable {
+  background-color: #FFFFFF;
+}
+
+/* style for table on viewonly page*/
+#viewonlyTable {
+  display: block;
+  height: 100%;
+  margin-bottom: 0;
+}
+
+#viewOnlyTable > th, td {
+  text-align: left;
+}
+
+/* style for div that wraps #viewonlyTable*/
+#table {
+  height: calc(100vh - 50px);
+  padding: 1px;
+}
+
+/* style for filter settings in visualisation/index */
+.filter-settings {
+  width: 33.3333%;
+}
+
+#filterForm{
+  width: 100%;
+  max-width: 960px;
+  display: flex;
+  flex: 1 1 auto;
+  align-items: stretch;
+}
+
+/* style for any items that need 100% width or height */
+.full-width {
+  width: 100%;
+}
+
+.full-height {
+  height: 100%;
+}
+
+/* style to center any single line, inline(single line?) elements inside a block element */
+.center-me{
+  vertical-align: middle !important;
+  text-align: center;
+}
+
+/* style to hide element */
+.hide-me{
+  display: none;
+}
+
+/* style for button that clears filters on visualisation/index */
+.clear-filters {
+  margin-top: 1em;
+}
+
+/* style for logo */
+.logo-wrap {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  width: 65px;
+  justify-content: center;
+}
+
+.logo-wrap:hover .svg-link{
+  height: 40px;
+}
+
+.st0{fill:#524FA1;}  /*original colors: #524FA1; and #FFFFFF;*/
+.st1{font-family:'Rockwell';}
+.st2{font-size:84.1397px;}
+.st3{fill:#524FA1;stroke:#524FA1;stroke-width:4.252;stroke-miterlimit:10;}
+.st4{fill:#FFFFFF;}
+
+.logo-wrap:hover .st0 {
+  fill: #524FA1;
+}
+
+.logo-wrap:hover .st3 {
+  fill:#524FA1;
+  stroke:#524FA1;
+}
+
+.logo-wrap:hover .st4 {
+  fill:#FFFFFF;
+}
+
+/* style for icon delete on visualisation/index */
+.fa-times{
+  color: rgba(255,0,0,0.8)
+}
+
+.fa-times:hover{
+  transition: all 0.05s;
+  color: rgba(200,0,0,1);
+  font-size: 1.2em;
+  cursor: pointer;
+}
+
+/* overwritting bootstrap table style */
+.table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+  vertical-align: middle;
+}
+
+
 
 

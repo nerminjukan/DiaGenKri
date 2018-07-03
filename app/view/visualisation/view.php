@@ -1,16 +1,13 @@
 <?php
 
-if(!isset($_SESSION["user"])){
-    header("Location: ../../../DiaGenKri/public/home");
-}
+// if(!isset($_SESSION["user"])){
+//     header("Location: ../../../DiaGenKri/public/home");
+// }
 
 require_once '../app/database/DBfunctions.php';
 include_once '../app/controllers/administrate.php';
 
-// SET USER MAIL
-$userMail = $_SESSION['user'];
-// ENTER USER EMAIL PARAMETER FROM SESSION AS ARG
-$data = DBfunctions::getUserProfile($userMail);
+$data = DBfunctions::getGraphs();
 
 ?>
 
@@ -18,15 +15,29 @@ $data = DBfunctions::getUserProfile($userMail);
 <html lang="sl">
 
 <head>
-    <title>Profile</title>
+    <title>View graph only</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css">
+    <script src="../../../DiaGenKri/app/res/js/filter.js"></script>
+
+
+    <script src="../../../DiaGenKri/app/res/js/raphael/raphael.min.js"></script>
+    <script src="../../../DiaGenKri/app/res/js/raphael/raphael.json.js"></script>
+
+    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/notify.min.js"></script>
+    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/raphael.pan-zoom.js"></script>
+
+    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/david.js"></script>
+    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/viewonly.js"></script>
+
 
 </head>
+
+
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -124,113 +135,68 @@ $data = DBfunctions::getUserProfile($userMail);
     </div>
 </nav>
 
-<div class="container text-center">
+<!-- <div>
+    THIS PAGE IS CURRENTLY UNDER PRODUCTION
+</div> -->
+<div class="container-fluid text-center" id="main-container">
     <div class="row content">
-        <div class="col-sm-4">
-            <picture>
-                <?php
-                    if(file_exists("../app/res/photos/profilePhotos/" . $userMail . ".jpg")){
-                        $picture = "../app/res/photos/profilePhotos/" . $userMail . ".jpg";
-                        echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 50%\">";
-                    }
-                    elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".JPG")){
-                        $picture = "../app/res/photos/profilePhotos/" . $userMail . ".JPG";
-                        echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 50%\">";
-                    }
-                    elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".png")){
-                        $picture = "../app/res/photos/profilePhotos/" . $userMail . ".png";
-                        echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 50%\">";
-                    }
-                    elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".PNG")){
-                        $picture = "../app/res/photos/profilePhotos/" . $userMail . ".PNG";
-                        echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 50%\">";
-                    }
-                    elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".jpeg")){
-                        $picture = "../app/res/photos/profilePhotos/" . $userMail . ".jpeg";
-                        echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 50%\">";
-                    }
-                    elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".JPEG")){
-                        $picture = "../app/res/photos/profilePhotos/" . $userMail . ".JPEG";
-                        echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 50%\">";
-                    }
-                    else{
-                        echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=\"../../../DiaGenKri/app/res/photos/avatar.jpg\" style=\"max-width: 50%\">";
-                    }
-                ?>
-
-            </picture>
-        </div>
-        <div class="col-sm-8 text-left">
-            <table class="row-increased-top table table-bordered table-responsive table-striped">
-
+        <div class="col-sm-10" id="content"></div>
+        <div class="col-sm-2" id="table">
+            <table id="viewonlyTable" class="table table-hover table-responsive table-bordered">
+                <thead>
+                <tr>
+                    <th>Algorithm</th>
+                </tr>
+                </thead>
                 <tbody>
                 <?php foreach ($data as $key => $value){
+                    $id = $value["id"];
                     $name = $value["name"];
-                    $surname = $value["surname"];
-                    $email = $value["e-mail"];
-                    $fow = $value["fieldofwork"];
-                    $admin = $value["admin"];
-                    $readPR = $value["readPR"];
-                    $editPR = $value["editPR"];
-                    $deletePR = $value["deletePR"];
-                    $addPR = $value["addPR"];
-                    $confirmPR = $value["confirmPR"];
 
-                    if($fow == ""){
-                        $fow = "-";
-                    }
+                    // output string, start
+                    $output = "<tr class='tr-graphTable tr-viewonly-click' id='$id'>";
+                    $output = "$output" . "<td>" . "$name" . "</td>";
 
-                    if($admin == 1){
-                        $adminString = "admin, ";
-                    }else{
-                        $adminString = "";
-                    }
+                    // end
+                    $output = "$output" . "</tr>";
 
-                    if($readPR == 1){
-                        $readString = "read, ";
-                    }else{
-                        $readString = "";
-                    }
-
-                    if($editPR == 1){
-                        $editString = "edit, ";
-                    }else{
-                        $editString = "";
-                    }
-
-                    if($deletePR == 1){
-                        $deleteString = "delete, ";
-                    }else{
-                        $deleteString = "";
-                    }
-
-                    if($addPR == 1){
-                        $addString = "add, ";
-                    }else{
-                        $addString = "";
-                    }
-
-                    if($confirmPR == 1){
-                        $confirmString = "confirm";
-                    }else{
-                        $confirmString = "";
-                    }
-
-                    echo "<tr><th class='th-st'>Name: </th><td>" . $name . "</td></tr>" .
-                         "<tr><th class='th-st'>Surname: </th><td style=\"white-space: nowrap\">" . $surname . "</td></tr>" .
-                         "<tr><th class='th-st'>E-mail: </th><td>" . $email . "</td></tr>" .
-                         "<tr><th class='th-st'>Field of work: </th><td>" . $fow . "</td></tr>" .
-                         "<tr><th class='th-st'>Administration rights: </th><td style=\"white-space: nowrap\">" . $adminString . $readString . $editString . $deleteString . $addString . $confirmString . "</td></tr>";
-
+                    // echo "<tr class='tr-sc'><td style=\"white-space: nowrap; width: 6%\">$id</td><td style=\"white-space: nowrap; width: 12%\">$email</td><td style=\"white-space: nowrap; width: 19%\">$name</td><td style=\"white-space: nowrap; width: 16%\">$visual</td><td style=\"white-space: nowrap; width: 21%\">$algorithmType</td><td style=\"white-space: nowrap; width: 12.5%\">$created</td><td style=\"white-space: nowrap; width: 10.2%\">$button_edit</td></tr>";
+                    echo "$output";
                 }
                 ?>
+                
                 </tbody>
             </table>
-            <a href="../../../DiaGenKri/public/profile/edit" type="button" class="btn btn-info row-increased-bottom row-increased-top">Edit</a>
         </div>
     </div>
 </div>
 
-<footer class="container-fluid text-center">
+<!-- Modal Long text -->
+<div class="modal fade" id="longText" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 id="h4ID" class="modal-title">
+                    Detailed node description
+                    <!---<script>document.getElementById('h4ID').innerText=document.getElementById('IDtext').value</script>--->
+                </h4>
+            </div>
+            <div class="modal-body">
+                <pre><span style="word-wrap: break-word" id="descText"></span></pre>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+<!-- <footer class="container-fluid text-center">
     <p>©DiaGenKri</p>
-</footer>
+</footer> -->
