@@ -64,6 +64,7 @@ function filterTable() {
                     else if((!cbs.cb1 && !cbs.cb2 && !cbs.cb3)){
                         console.log("no CB checked");
                         tr[i].style.display = "none";
+
                     }
                     else if(cbs.cb1){
                         console.log("CB1");
@@ -127,6 +128,7 @@ function filterTable() {
                     else if(!cbs.cb1 && !cbs.cb2 && !cbs.cb3){
                         console.log("no CB checked");
                         tr[i].style.display = "none";
+
                     }
                     else if(cbs.cb1){
                         console.log("CB1 checked");

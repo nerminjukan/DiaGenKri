@@ -652,6 +652,10 @@ function onShapeClicked(){
 
     // connect shapes
     connections.push(paper.connection(shapes[indexes.f], shapes[indexes.s], "#000", id++));
+
+    // refresh
+    paper.connection(connections[connections.length - 1]);
+
     //console.log("[connect shapes] DONE");
 
     // reset adding connections
@@ -1143,7 +1147,9 @@ function getGraphData(id_graph_load) {
             email: myArray["e-mail"],
             name: myArray["name"],
             description: myArray["description"],
-            visual: myArray["visual"],
+
+            intended: myArray["visual"], // 1 are doctors
+
             algorithm_type: myArray["algorithm_type"]
         };
         // console.log("info about graph, without data:", info);
@@ -1155,7 +1161,55 @@ function getGraphData(id_graph_load) {
 
 // populates form with name with data(object)
 function populateForm(name, data){
-    console.log("[populateForm] will fill data with ",data);
+
+    try{
+        document.getElementById("graphName").value = data.name;
+        document.getElementById("graphDescritption").value = data.description;
+        console.log("data intended", data.intended);
+
+        if(data.intended == 0){
+            console.log("in 0 if");
+            document.getElementById("typeDiagnostic").checked = true;
+            $("#test_patients").removeClass("hide-me");
+        } else if(data.intended == 1){
+            document.getElementById("typeVisual").checked = true;
+            $("#test_patients").addClass("hide-me");
+
+        }
+
+        let diagnostic = document.getElementById("opt1");
+        let treatment = document.getElementById("opt2");
+        let other = document.getElementById("opt3");
+
+
+        if(data.algorithm_type == 7){
+            diagnostic.selected = true;
+            treatment.selected = true;
+            other.selected = true;
+        } else if (data.algorithm_type == 6){
+            treatment.selected = true;
+            other.selected = true;
+        } else if (data.algorithm_type == 5){
+            diagnostic.selected = true;
+            other.selected = true;
+        } else if (data.algorithm_type == 4){
+            other.selected = true;
+        } else if (data.algorithm_type == 3){
+            diagnostic.selected = true;
+            treatment.selected = true;
+        } else if (data.algorithm_type == 2){
+            treatment.selected = true;
+        } else if (data.algorithm_type == 1){
+            diagnostic.selected = true;
+        } else {
+            console.log("should say nothing, yup, silly me, oh silly mo moo")
+        }
+
+        console.log("[populateForm] will fill data with ", data);
+    } catch(err){
+        console.log("No save modal", err);
+    }
+
 }
 
 // ************* end of some other functions
@@ -1264,7 +1318,14 @@ jQuery(function ($) {
 
     paper = Raphael(document.getElementById('content'), 3000, 3000);
 
-    // paper.rect(0, 0, 2000, 2000).attr({"stroke-width": 10});
+
+    // // paper.print(100, 100, "Test string", paper.getFont("Times", 800), 30);
+    // let txxt = paper.print(10, 50, "print", paper.getFont("Museo"), 30).attr({fill: "#fff"});
+    // // following line will paint first letter in red
+    // txxt.attr({fill: "#f00"}).toFront();;
+
+    // paper.rect(200, 200, 200, 200).attr({"stroke-width": 10});
+
     //console.log("[main] paper canvas:", paper.canvas);
 
     // TESTING
@@ -1413,6 +1474,17 @@ jQuery(function ($) {
     });
 
 
+    // listen for change in events so you can show TEST button when needed
+    $("#typeDiagnostic").click(function(){
+        $("#test_patients").removeClass("hide-me");
+    });
+
+    $("#typeVisual").click(function(){
+        $("#test_patients").addClass("hide-me");
+
+    });
+
+
     // **** not needed anymore, because editingGraph can be set to true in loadGraph() method,
     // **** that works because loadGraph is caled from getData.js which executes it only when graph 
     // **** is being loaded
@@ -1426,6 +1498,12 @@ jQuery(function ($) {
 
 
 });
+
+
+function showModalSave(){
+    $("#metaData").modal('show');
+}
+
 // ************************************** end of zoom
 
 function changeWidth(textShape) {
@@ -2398,8 +2476,19 @@ function loadGraph(json, pacient=false, viewonly=false) {
     }
 
     // increment id, so next connection will have proper id
-    if(connections.length > 0)
+
+    if(connections.length > 0){
         id = connections[connections.length - 1].id + 2;
+        // refresh things by "placing" just one connection, that way misplaced items will fix themselves
+        // paper.connection(connections[connections.length - 1]);
+
+    }
+
+    // update connections
+    for (let i = connections.length; i--;) {
+        paper.connection(connections[i]);
+    }
+
 
 
     console.log('[loadGraph] LOADING finished');

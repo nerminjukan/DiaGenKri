@@ -114,6 +114,9 @@ footer {
 }
 
 
+
+/* login style */
+
 /* Size for login */
 .navbar-login
 {
@@ -133,10 +136,27 @@ footer {
     font-size: 5em;
 }
 
+
+/* login row, wraps picture, name & surname, email, my profile button */
+#login-row{
+  display: flex;
+  flex-direction: column;
+}
+
+
 /* login divs */
 #login-size {
     width: 100%;
 }
+
+
+/* so that login is well placed*/
+@media (min-width: 1200px) {
+  .col-lg-8, .col-lg-4  {
+    width: auto;
+  }
+}
+
 
 /* raphael js css*/
 #content {
@@ -315,20 +335,27 @@ input:disabled, textarea:disabled {
 
 #pacientTable {
   max-width: 960px;
-  display: block;
-  height: 100%;
+
+  background-color: #F9F9F9;
+  
+/*  display: block;
+  height: 100%;*/
+  margin-top: 20px;
 }
 
-#pacientTable > td {
+/*#pacientTable > td {
   width: 400px;
-}
+}*/
+
 
 .pacient-disease {
   width: 450px;
 }
 
 .pacient-button {
-  width: 140px;
+
+  width: 150px;
+
 }
 
 /* style for table on list algorithms tab */
@@ -379,6 +406,76 @@ input:disabled, textarea:disabled {
 .full-height {
   height: 100%;
 }
+
+
+/* style to center any single line, inline(single line?) elements inside a block element */
+.center-me{
+  vertical-align: middle !important;
+  text-align: center;
+}
+
+/* style to hide element */
+.hide-me{
+  display: none;
+}
+
+/* style for button that clears filters on visualisation/index */
+.clear-filters {
+  margin-top: 1em;
+}
+
+/* style for logo */
+.logo-wrap {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  width: 65px;
+  justify-content: center;
+}
+
+.logo-wrap:hover .svg-link{
+  height: 40px;
+}
+
+.st0{fill:#524FA1;}  /*original colors: #524FA1; and #FFFFFF;*/
+.st1{font-family:'Rockwell';}
+.st2{font-size:84.1397px;}
+.st3{fill:#524FA1;stroke:#524FA1;stroke-width:4.252;stroke-miterlimit:10;}
+.st4{fill:#FFFFFF;}
+
+.logo-wrap:hover .st0 {
+  fill: #524FA1;
+}
+
+.logo-wrap:hover .st3 {
+  fill:#524FA1;
+  stroke:#524FA1;
+}
+
+.logo-wrap:hover .st4 {
+  fill:#FFFFFF;
+}
+
+/* style for icon delete on visualisation/index */
+.fa-times{
+  color: rgba(255,0,0,0.8)
+}
+
+.fa-times:hover{
+  transition: all 0.05s;
+  color: rgba(200,0,0,1);
+  font-size: 1.2em;
+  cursor: pointer;
+}
+
+/* overwritting bootstrap table style */
+.table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+  vertical-align: middle;
+}
+
+
+
+
 
 /* style for button that clears filters on visualisation/index */
 .clear-filters {

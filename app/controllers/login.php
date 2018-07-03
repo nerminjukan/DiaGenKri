@@ -85,6 +85,7 @@ class LogIn extends Controller
     }
 
     public function logOutUser(){
+        session_unset();  
         session_destroy();
         ViewHelper::redirect('../../home');
     }
