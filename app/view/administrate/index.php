@@ -124,18 +124,22 @@ $data = DBfunctions::getUsersData();
     </div>
 </nav>
 
-<div class="container-fluid text-center">
+<div class="container-fluid">
     <div class="row content">
-        <div class="col-sm-12 text-left">
-            <table class="table table-sc table-hover table-responsive table-striped">
+        <div class="col-sm-12 text-left flex-wrap" style="margin-bottom: 0">
+            <button type="button" class="btn btn-info row-increased-bottom row-increased-top" data-toggle="modal" data-target="#editModal" style="width: 100%; max-width: 960px;">Edit privileges</button>
+        </div>
+        <div class="col-sm-12 text-left flex-wrap">
+            <table id="graphTable" class="table table-hover table-responsive table-bordered" style="margin-top: 0px;">
                 <thead>
-                <tr class="tr-sc" style="text-align: center">
+                <tr>
                     <th>User</th>
                     <th>E-mail</th>
-                    <th style="width: auto">Privileges</th>
+                    <th>Privileges</th>
                 </tr>
                 </thead>
-                <tbody class="tbody-sc">
+                <tbody>
+                <?php $i = 0; ?>
                 <?php foreach ($data as $key => $value){
                     $name = $value["name"];
                     $surname = $value["surname"];
@@ -148,106 +152,78 @@ $data = DBfunctions::getUsersData();
                     $addPR = $value["addPR"];
                     $confirmPR = $value["confirmPR"];
 
-                    if($admin == 1){
-                        $adminString = "<div class=\"form-check form-check-inline form-group check-box-spacing\">
-  <input class=\"form-check-input\" type=\"checkbox\" checked=\"checked\" id=\"inlineCheckbox1\" value=\"option1\" disabled>
-  <label class=\"form-check-label active\" for=\"inlineCheckbox1\">Admin</label>
-</div> | ";
-                    }else{
-                        $adminString = "<div class=\"form-check form-check-inline form-group check-box-spacing\">
-  <input class=\"form-check-input\" type=\"checkbox\" id=\"inlineCheckbox1\" value=\"option1\" disabled>
-  <label class=\"form-check-label active\" for=\"inlineCheckbox1\">Admin</label>
-</div> | ";
-                    }
+                    $adminString = "<div class='flex-div'><input disabled type='checkbox' id='admin"."$i'";
+                    if($admin == 1)
+                        $adminString = $adminString . " checked='checked' ";
+                    $adminString = $adminString . "><label for='admin"."$i'>admin</label></input></div>";
 
-                    if($readPR == 1){
-                        $readString = "<div class=\"form-check form-check-inline form-group check-box-spacing\">
-  <input class=\"form-check-input\" type=\"checkbox\" checked=\"checked\" id=\"inlineCheckbox1\" value=\"option1\" disabled>
-  <label class=\"form-check-label active\" for=\"inlineCheckbox1\">Read</label>
-</div> | ";
-                    }else{
-                        $readString = "<div class=\"form-check form-check-inline form-group check-box-spacing\">
-  <input class=\"form-check-input\" type=\"checkbox\" id=\"inlineCheckbox1\" value=\"option1\" disabled>
-  <label class=\"form-check-label active\" for=\"inlineCheckbox1\">Read</label>
-</div> | ";
-                    }
+                    $readString = "<div class='flex-div'><input disabled type='checkbox' id='read"."$i'";
+                    if($readPR == 1)
+                        $readString = $readString . " checked='checked' ";
+                    $readString = $readString . "><label for='read"."$i'>read</label></input></div>";
 
-                    if($editPR == 1){
-                        $editString = "<div class=\"form-check form-check-inline form-group check-box-spacing\">
-  <input class=\"form-check-input\" type=\"checkbox\" checked=\"checked\" id=\"inlineCheckbox1\" value=\"option1\" disabled>
-  <label class=\"form-check-label active\" for=\"inlineCheckbox1\">Edit</label>
-</div> | ";
-                    }else{
-                        $editString = "<div class=\"form-check form-check-inline form-group check-box-spacing\">
-  <input class=\"form-check-input\" type=\"checkbox\" id=\"inlineCheckbox1\" value=\"option1\" disabled>
-  <label class=\"form-check-label active\" for=\"inlineCheckbox1\">Edit</label>
-</div> | ";
-                    }
+                    $editString = "<div class='flex-div'><input disabled type='checkbox' id='edit"."$i'";
+                    if($editPR == 1)
+                        $editString = $editString . " checked='checked' ";
+                    $editString = $editString . "><label for='edit"."$i'>edit</label></input></div>";
 
-                    if($deletePR == 1){
-                        $deleteString = "<div class=\"form-check form-check-inline form-group check-box-spacing\">
-  <input class=\"form-check-input\" type=\"checkbox\" checked=\"checked\" id=\"inlineCheckbox1\" value=\"option1\" disabled>
-  <label class=\"form-check-label active\" for=\"inlineCheckbox1\">Delete</label>
-</div> | ";
-                    }else{
-                        $deleteString = "<div class=\"form-check form-check-inline form-group check-box-spacing\">
-  <input class=\"form-check-input\" type=\"checkbox\" id=\"inlineCheckbox1\" value=\"option1\" disabled>
-  <label class=\"form-check-label active\" for=\"inlineCheckbox1\">Delete</label>
-</div> | ";
-                    }
+                    $deleteString = "<div class='flex-div'><input disabled type='checkbox' id='delete"."$i'";
+                    if($deletePR == 1)
+                        $deleteString = $deleteString . " checked='checked' ";
+                    $deleteString = $deleteString . "><label for='delete"."$i'>delete</label></input></div>";
 
-                    if($addPR == 1){
-                        $addString = "<div class=\"form-check form-check-inline form-group check-box-spacing\">
-  <input class=\"form-check-input\" type=\"checkbox\" checked=\"checked\" id=\"inlineCheckbox1\" value=\"option1\" disabled>
-  <label class=\"form-check-label active\" for=\"inlineCheckbox1\">Add</label>
-</div> | ";
-                    }else{
-                        $addString = "<div class=\"form-check form-check-inline form-group check-box-spacing\">
-  <input class=\"form-check-input\" type=\"checkbox\" id=\"inlineCheckbox1\" value=\"option1\" disabled>
-  <label class=\"form-check-label active\" for=\"inlineCheckbox1\">Add</label>
-</div> | ";
-                    }
+                    $addString = "<div class='flex-div'><input disabled type='checkbox' id='add"."$i'";
+                    if($addPR == 1)
+                        $addString = $addString . " checked='checked' ";
+                    $addString = $addString . "><label for='add"."$i'>add</label></input></div>";
 
-                    if($confirmPR == 1){
-                        $confirmString = "<div class=\"form-check form-check-inline form-group check-box-spacing\">
-  <input class=\"form-check-input\" type=\"checkbox\" checked=\"checked\" id=\"inlineCheckbox1\" value=\"option1\" disabled>
-  <label class=\"form-check-label active\" for=\"inlineCheckbox1\">Confirm</label>
-</div>";
-                    }else{
-                        $confirmString = "<div class=\"form-check form-check-inline form-group check-box-spacing\">
-  <input class=\"form-check-input\" type=\"checkbox\" id=\"inlineCheckbox1\" value=\"option1\" disabled>
-  <label class=\"form-check-label active\" for=\"inlineCheckbox1\">Confirm</label>
-</div>";
-                    }
+                    $confirmString = "<div class='flex-div'><input disabled type='checkbox' id='confirm"."$i'";
+                    if($confirmPR == 1)
+                        $confirmString = $confirmString . " checked='checked' ";
+                    $confirmString = $confirmString . "><label for='confirm"."$i'>confirm</label></input></div>";
 
-                    echo "<tr class='tr-sc'><td style=\"white-space: nowrap; width: 25%\">$name $surname</td><td>$email</td><td style=\"white-space: nowrap; width: 50%\"><form class='form-inline'>" . $adminString . $readString . $editString . $deleteString . $addString . $confirmString . "</form></td></tr>";
 
+                    $privileges = $adminString . $readString . $editString . $deleteString . $addString . $confirmString; 
+                    // output string, start
+                    $output = "<tr class='tr-graphTable'>";
+
+                    $output = "$output" . "<td style='width: 25%;'>" . "$name" . " " . "$surname" . "</td>";
+                    $output = "$output" . "<td style='width: 25%;'>" . "$email" . "</td>";
+                    $output = "$output" . "<td class='flex-cell'>" . $privileges . "</td>";
+                    // end
+                    $output = "$output" . "</tr>";
+                    
+                    echo "$output";
+
+                    // 
+                    $i++;
                 }
                 ?>
+                
                 </tbody>
             </table>
-            <button type="button" class="btn btn-info row-increased-bottom row-increased-top" data-toggle="modal" data-target="#editModal">Change</button>
         </div>
-        <div class="modal fade" id="editModal" role="dialog">
-            <div class="modal-dialog modal-sm">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Administration warning</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p>You are about to enter the page for changing user privileges. Please proceed with caution, as changes to user rights may affect the content of the application. Do you wish to continue?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <a href="../../../DiaGenKri/public/administrate/change" class="btn btn-warning row-increased-bottom btn-block">Yes, continue</a>
-                        <button class="btn btn-info row-increased-bottom btn-block" data-dismiss="modal">No, cancel</button>
-                    </div>
-                </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editModal" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Administration warning</h4>
+            </div>
+            <div class="modal-body">
+                <p>You are about to enter the page for changing user privileges. Please proceed with caution, as changes to user rights may affect the content of the application. Do you wish to continue?</p>
+            </div>
+            <div class="modal-footer">
+                <a href="../../../DiaGenKri/public/administrate/change" class="btn btn-warning row-increased-bottom btn-block">Yes, continue</a>
+                <button class="btn btn-info row-increased-bottom btn-block" data-dismiss="modal">No, cancel</button>
             </div>
         </div>
     </div>
 </div>
 
-<footer class="container-fluid text-center">
+<!-- <footer class="container-fluid text-center">
     <p>©DiaGenKri</p>
-</footer>
+</footer> -->

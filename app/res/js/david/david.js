@@ -980,7 +980,7 @@ function resetText(textShape, vertexShape, focus=false){
     inputText.value = textShape.attr("text");
     descriptionText.value = vertexShape.data("desc"); // active is currently active shape
     if(focus)
-        inputText.focus(); 
+        inputText.focus();
 }
 
 // completly resets anything related to inputs
@@ -1132,31 +1132,31 @@ function extractParameters( name, url ) {
 function getGraphData(id_graph_load) {
     let info = null
     $.post("../../../DiaGenKri/public/visualisation/load",
-    {
-        id: id_graph_load
-    },
-    function(data, status){
-        const myArray = $.parseJSON(data);
-        // const podatki = $.parseJSON(myArray["data"]);
-        // window["f_json"] = myArray["data"]
-        console.log("[david.js] myArray", myArray);
-        // console.log(podatki);
+        {
+            id: id_graph_load
+        },
+        function(data, status){
+            const myArray = $.parseJSON(data);
+            // const podatki = $.parseJSON(myArray["data"]);
+            // window["f_json"] = myArray["data"]
+            console.log("[david.js] myArray", myArray);
+            // console.log(podatki);
 
-        info = {
-            id: myArray["id"],
-            email: myArray["e-mail"],
-            name: myArray["name"],
-            description: myArray["description"],
+            info = {
+                id: myArray["id"],
+                email: myArray["e-mail"],
+                name: myArray["name"],
+                description: myArray["description"],
 
-            intended: myArray["visual"], // 1 are doctors
+                intended: myArray["visual"], // 1 are doctors
 
-            algorithm_type: myArray["algorithm_type"]
-        };
-        // console.log("info about graph, without data:", info);
-        populateForm("name", info);
-    }
+                algorithm_type: myArray["algorithm_type"]
+            };
+            // console.log("info about graph, without data:", info);
+            populateForm("name", info);
+        }
     );
-    
+
 }
 
 // populates form with name with data(object)
@@ -1494,7 +1494,7 @@ jQuery(function ($) {
     // get data about graph and populate form
     if(editingGraph)
         getGraphData(graphId);
-    
+
 
 
 });
@@ -1509,6 +1509,8 @@ function showModalSave(){
 function changeWidth(textShape) {
     console.log('changeWidth of', textShape);
     let parent = paper.getById(textShape.data('parent'));
+    if(parent.data("type") !== "rect")
+        return;
     if(textShape.getBBox().width > parent.attr('width') - 15){
         console.log('Too big!');
         parent.attr('width', textShape.getBBox().width + 20);
@@ -2066,10 +2068,10 @@ function cancelGraph() {
 function saveGraph() {
     if(canvasSets.length === 0){
         $.notify("Create algorithm first",
-                    { position: 'bottom center',
-                    className: 'info',
-                    gap: 5 }
-                    );
+            { position: 'bottom center',
+                className: 'info',
+                gap: 5 }
+        );
         return false;
     }
     if(!validation()){
@@ -2122,10 +2124,16 @@ function saveGraph() {
         // if element is text
         if(el.type === 'text') {
             data.type = el.data("type");
-            if(data.type === "connection_text")
+            console.log("DATA.PARENT print print print", data.type, el.data("type"));
+
+            if(data.type == "connection_text"){
+                console.log("DATA.PARENT connection_text")
                 data.id_connection = el.data("id_connection");
-            else if(data.type === "shape_text")
+            }
+            else if(data.type == "shape_text"){
+                console.log("DATA.PARENT shape_text")
                 data.parent = el.data("parent");
+            }
 
         }
         else if(el.type === 'path'){
@@ -2213,15 +2221,15 @@ function saveGraph() {
                 console.log('[saveGraph] save', status === "success" ? "saved successfuly" : "not saved successfuly", "\ndata:", data);
                 if(data === "1"){
                     $.notify("Algorithm successfuly saved",
-                    { position: 'bottom center',
-                    className: 'success',
-                    gap: 5 }
+                        { position: 'bottom center',
+                            className: 'success',
+                            gap: 5 }
                     );
                 } else {
                     $.notify("Something went wrong, algorithm not saved",
-                    { position: 'bottom center',
-                    className: 'error',
-                    gap: 5 }
+                        { position: 'bottom center',
+                            className: 'error',
+                            gap: 5 }
                     );
                 }
             }
@@ -2260,15 +2268,15 @@ function saveGraph() {
                 console.log('[saveGraph] EDIT:', status === "success" ? "saved successfuly" : "not saved successfuly", "\ndata:", data);
                 if(data === "1"){
                     $.notify("Algorithm successfuly saved!",
-                    { position: 'bottom center',
-                    className: 'success',
-                    gap: 5 }
+                        { position: 'bottom center',
+                            className: 'success',
+                            gap: 5 }
                     );
                 } else {
                     $.notify("Something went wrong, algorithm not saved",
-                    { position: 'bottom center',
-                    className: 'error',
-                    gap: 5 }
+                        { position: 'bottom center',
+                            className: 'error',
+                            gap: 5 }
                     );
                 }
             }
@@ -2495,7 +2503,6 @@ function loadGraph(json, pacient=false, viewonly=false) {
 
 
 }
-
 
 
 

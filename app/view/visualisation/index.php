@@ -3,6 +3,8 @@
 
 
 
+
+
 require_once '../app/database/DBfunctions.php';
 include_once '../app/controllers/administrate.php';
 
@@ -74,7 +76,9 @@ $data = DBfunctions::getGraphs();
 
                 <li><a href="../../../DiaGenKri/public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
                     </span> Create algorithm</a></li>
-                <li><a href="../../../DiaGenKri/public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
+                    <?php if(isset($_SESSION["user-admin"]) == 1): ?>
+                        <li><a href="../../../DiaGenKri/public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
+                    <?php endif; ?>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <span class="glyphicon glyphicon-user"></span> 
@@ -217,11 +221,13 @@ $data = DBfunctions::getGraphs();
 
                     <th>View</th>
 
+
                     <?php if(isset($_SESSION["user"]) && (isset($_SESSION["user-edit"]) ||  isset($_SESSION["user-admin"])) && ($_SESSION["user-edit"] == 1 || $_SESSION["user-admin"] == 1)): ?>
                         <th>Edit</th>
                     <?php endif; ?>
                     <?php if(isset($_SESSION["user"]) && (isset($_SESSION["user-delete"]) ||  isset($_SESSION["user-admin"])) && ($_SESSION["user-delete"] == 1 || $_SESSION["user-admin"] == 1)): ?>
                         <th>Delete</th>
+
                     <?php endif; ?>
                 </tr>
                 </thead>
