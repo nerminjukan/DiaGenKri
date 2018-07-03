@@ -1490,7 +1490,7 @@ jQuery(function ($) {
 
 
     // **** not needed anymore, because editingGraph can be set to true in loadGraph() method,
-    // **** that works because loadGraph is caled from getData.js which executes it only when graph 
+    // **** that works because loadGraph is caled from getData.js which executes it only when graph
     // **** is being loaded
     // check wheter user is editing graph or its completly new graph
     graphId = extractParameters('id', window.location.href);
@@ -2484,7 +2484,8 @@ function loadGraph(json, pacient=false, viewonly=false) {
 
         // meantime change width of all text elements to correct size
         if(element.data("type") === "shape_text")
-           changeWidth(element);
+            changeWidth(element);
+
     });
 
     // recalculate subpaths
@@ -2512,7 +2513,6 @@ function loadGraph(json, pacient=false, viewonly=false) {
 
 
 }
-
 
 
 
