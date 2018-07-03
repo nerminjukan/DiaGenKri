@@ -202,8 +202,12 @@ function calculate (line, direct = false, text = null) {
 
     let length = alpha / 4;
 
-    let the_text = text !== null ? text : line.text
+    let the_text = text != null ? text : line.text[0] != null ? line.text : null
     // console.log("[calculate] the_text:", the_text);
+    // console.log("[calculate] text", text);
+    // console.log("[calculate] line", line.text);
+    if(the_text === null)
+        return;
 
     if(the_text.attr("text").length === 0){
         return 0;
@@ -1486,7 +1490,7 @@ jQuery(function ($) {
 
 
     // **** not needed anymore, because editingGraph can be set to true in loadGraph() method,
-    // **** that works because loadGraph is caled from getData.js which executes it only when graph 
+    // **** that works because loadGraph is caled from getData.js which executes it only when graph
     // **** is being loaded
     // check wheter user is editing graph or its completly new graph
     graphId = extractParameters('id', window.location.href);
@@ -1509,8 +1513,12 @@ function showModalSave(){
 function changeWidth(textShape) {
     console.log('changeWidth of', textShape);
     let parent = paper.getById(textShape.data('parent'));
-    if(parent.data("type") !== "rect")
+    try{
+        if(parent.data("type") !== "rect")
+            return;
+    } catch(err){
         return;
+    }
     if(textShape.getBBox().width > parent.attr('width') - 15){
         console.log('Too big!');
         parent.attr('width', textShape.getBBox().width + 20);
@@ -1782,6 +1790,7 @@ function shapeDraw(arg, ev) {
         });
 
         shape.data('rotate', false);
+        shape.data('type', 'rect');
 
         // adds the elements to a set
         set.push(shape);
@@ -2474,8 +2483,8 @@ function loadGraph(json, pacient=false, viewonly=false) {
         }
 
         // meantime change width of all text elements to correct size
-        //if(element.data("type") === "shape_text")
-        //    changeWidth(element);
+        if(element.data("type") === "shape_text")
+            changeWidth(element);
     });
 
     // recalculate subpaths
@@ -2492,7 +2501,7 @@ function loadGraph(json, pacient=false, viewonly=false) {
 
     }
 
-    // update connections
+    //update connections
     for (let i = connections.length; i--;) {
         paper.connection(connections[i]);
     }
@@ -2503,7 +2512,6 @@ function loadGraph(json, pacient=false, viewonly=false) {
 
 
 }
-
 
 
 

@@ -36,43 +36,43 @@ $data = DBfunctions::getUsersData();
                 <span class="icon-bar"></span>
             </button>
             <div class="logo-wrap">
-                    <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-                    <svg class="svg-link" version="1.1" height="35px" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                         viewBox="280 250 280 190" style="enable-background:new 0 0 841.9 595.3;" xml:space="preserve">
+                <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+                <svg class="svg-link" version="1.1" height="35px" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                     viewBox="280 250 280 190" style="enable-background:new 0 0 841.9 595.3;" xml:space="preserve">
                         <a href="../../../DiaGenKri/public/home">
-                        <g id="XMLID_1783_">
-                            <text id="XMLID_1_" transform="matrix(1.244 0 0 1 291.3076 436.5898)" class="st0 st1 st2">ViDis</text>
-                            <g id="XMLID_2190_">
-                                <line id="XMLID_2192_" class="st3" x1="487.9" y1="375.4" x2="487.9" y2="391.2"/>
-                                <line id="XMLID_2191_" class="st3" x1="477.3" y1="383.3" x2="498.6" y2="383.3"/>
+                            <g id="XMLID_1783_">
+                                <text id="XMLID_1_" transform="matrix(1.244 0 0 1 291.3076 436.5898)" class="st0 st1 st2">ViDis</text>
+                                <g id="XMLID_2190_">
+                                    <line id="XMLID_2192_" class="st3" x1="487.9" y1="375.4" x2="487.9" y2="391.2"/>
+                                    <line id="XMLID_2191_" class="st3" x1="477.3" y1="383.3" x2="498.6" y2="383.3"/>
+                                </g>
                             </g>
-                        </g>
-                        <path id="XMLID_12_" class="st0" d="M538.7,315.5c-116.8,116.9-247.4,0-247.4,0S421.9,198.7,538.7,315.5z"/>
-                        <ellipse id="XMLID_11_" class="st4" cx="418" cy="315.5" rx="53.2" ry="43.4"/>
-                        <ellipse id="XMLID_10_" class="st0" cx="418" cy="315.5" rx="30" ry="24.5"/>
-                        <g id="XMLID_14_">
-                            <rect id="XMLID_22_" x="416.5" y="302.6" class="st4" width="3" height="25.9"/>
-                            <rect id="XMLID_15_" x="405" y="314" class="st4" width="25.9" height="3"/>
-                        </g>
+                            <path id="XMLID_12_" class="st0" d="M538.7,315.5c-116.8,116.9-247.4,0-247.4,0S421.9,198.7,538.7,315.5z"/>
+                            <ellipse id="XMLID_11_" class="st4" cx="418" cy="315.5" rx="53.2" ry="43.4"/>
+                            <ellipse id="XMLID_10_" class="st0" cx="418" cy="315.5" rx="30" ry="24.5"/>
+                            <g id="XMLID_14_">
+                                <rect id="XMLID_22_" x="416.5" y="302.6" class="st4" width="3" height="25.9"/>
+                                <rect id="XMLID_15_" x="405" y="314" class="st4" width="25.9" height="3"/>
+                            </g>
                         </a>
                     </svg>
-                </div>
-
             </div>
-            <div class="collapse navbar-collapse" id="myNavbar">
-                <ul class="nav navbar-nav navbar-right">
-                    <?php if(isset($_SESSION["user"])): ?>
+
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav navbar-right">
+                <?php if(isset($_SESSION["user"])): ?>
                     <li><a href="../../../DiaGenKri/public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
                         </span> Create algorithm</a></li>
-                    <?php endif; ?>
-                    <li><a href="../../../DiaGenKri/public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
-                    <?php if(isset($_SESSION["user"])): ?> <!-- && $_SESSION[user_level] === 6, which is admin for example-->
+                <?php endif; ?>
+                <li><a href="../../../DiaGenKri/public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
+                <?php if(isset($_SESSION["user"])): ?> <!-- && $_SESSION[user_level] === 6, which is admin for example-->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <span class="glyphicon glyphicon-user"></span> 
+                            <span class="glyphicon glyphicon-user"></span>
                             <strong><?php
                                 echo $_SESSION["user-name"];
-                            ?>
+                                ?>
                             </strong>
                             <span class="glyphicon glyphicon-chevron-down"></span>
                         </a>
@@ -87,12 +87,12 @@ $data = DBfunctions::getUsersData();
                                         </div>
                                         <div class="col-lg-8">
                                             <p class="text-left"><strong><?php
-                                                echo $_SESSION["user-name"] . " " . $_SESSION["user-surname"];
-                                            ?>
-                                            </strong></p>
+                                                    echo $_SESSION["user-name"] . " " . $_SESSION["user-surname"];
+                                                    ?>
+                                                </strong></p>
                                             <p class="text-left small"><?php
                                                 echo $_SESSION["user"];
-                                            ?>
+                                                ?>
                                             </p>
                                             <p class="text-left">
                                                 <a href="../../../DiaGenKri/public/profile" class="btn btn-primary btn-block btn-sm">My profile</a>
@@ -115,19 +115,19 @@ $data = DBfunctions::getUsersData();
                             </li>
                         </ul>
                     </li>
-                    <?php else: ?>
+                <?php else: ?>
                     <li><a href="../../../DiaGenKri/public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
                     <li><a href="../../../DiaGenKri/public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
-                    <?php endif; ?>
-                </ul>
-            </div>
+                <?php endif; ?>
+            </ul>
+        </div>
     </div>
 </nav>
 
 <div class="container-fluid">
     <div class="row content">
         <div class="col-sm-12 text-left flex-wrap" style="margin-bottom: 0">
-            <button type="button" class="btn btn-info row-increased-bottom row-increased-top" data-toggle="modal" data-target="#editModal" style="width: 100%; max-width: 960px;">Edit privileges</button>
+            <button type="button" class="btn btn-primary row-increased-bottom row-increased-top" data-toggle="modal" data-target="#editModal" style="width: 100%; max-width: 960px;">Edit privileges</button>
         </div>
         <div class="col-sm-12 text-left flex-wrap">
             <table id="graphTable" class="table table-hover table-responsive table-bordered" style="margin-top: 0px;">
@@ -183,7 +183,7 @@ $data = DBfunctions::getUsersData();
                     $confirmString = $confirmString . "><label for='confirm"."$i'>confirm</label></input></div>";
 
 
-                    $privileges = $adminString . $readString . $editString . $deleteString . $addString . $confirmString; 
+                    $privileges = $adminString . $readString . $editString . $deleteString . $addString . $confirmString;
                     // output string, start
                     $output = "<tr class='tr-graphTable'>";
 
@@ -192,14 +192,14 @@ $data = DBfunctions::getUsersData();
                     $output = "$output" . "<td class='flex-cell'>" . $privileges . "</td>";
                     // end
                     $output = "$output" . "</tr>";
-                    
+
                     echo "$output";
 
-                    // 
+                    //
                     $i++;
                 }
                 ?>
-                
+
                 </tbody>
             </table>
         </div>
@@ -218,7 +218,7 @@ $data = DBfunctions::getUsersData();
             </div>
             <div class="modal-footer">
                 <a href="../../../DiaGenKri/public/administrate/change" class="btn btn-warning row-increased-bottom btn-block">Yes, continue</a>
-                <button class="btn btn-info row-increased-bottom btn-block" data-dismiss="modal">No, cancel</button>
+                <button class="btn btn-primary row-increased-bottom btn-block" data-dismiss="modal">No, cancel</button>
             </div>
         </div>
     </div>
