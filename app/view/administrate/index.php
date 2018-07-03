@@ -127,7 +127,7 @@ $data = DBfunctions::getUsersData();
 <div class="container-fluid">
     <div class="row content">
         <div class="col-sm-12 text-left flex-wrap" style="margin-bottom: 0">
-            <button type="button" class="btn btn-info row-increased-bottom row-increased-top" data-toggle="modal" data-target="#editModal" style="width: 100%; max-width: 960px;">Edit privileges</button>
+            <button type="button" class="btn btn-primary row-increased-bottom row-increased-top" data-toggle="modal" data-target="#editModal" style="width: 100%; max-width: 960px;">Edit privileges</button>
         </div>
         <div class="col-sm-12 text-left flex-wrap">
             <table id="graphTable" class="table table-hover table-responsive table-bordered" style="margin-top: 0px;">
@@ -218,7 +218,7 @@ $data = DBfunctions::getUsersData();
             </div>
             <div class="modal-footer">
                 <a href="../../../DiaGenKri/public/administrate/change" class="btn btn-warning row-increased-bottom btn-block">Yes, continue</a>
-                <button class="btn btn-info row-increased-bottom btn-block" data-dismiss="modal">No, cancel</button>
+                <button class="btn btn-primary row-increased-bottom btn-block" data-dismiss="modal">No, cancel</button>
             </div>
         </div>
     </div>
