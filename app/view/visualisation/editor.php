@@ -58,63 +58,85 @@ $description="";
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="../../../DiaGenKri/public/home">DiaGenKri</a>
+            <div class="logo-wrap">
+                    <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+                    <svg class="svg-link" version="1.1" height="35px" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                         viewBox="280 250 280 190" style="enable-background:new 0 0 841.9 595.3;" xml:space="preserve">
+                        <a href="../../../DiaGenKri/public/home">
+                        <g id="XMLID_1783_">
+                            <text id="XMLID_1_" transform="matrix(1.244 0 0 1 291.3076 436.5898)" class="st0 st1 st2">ViDis</text>
+                            <g id="XMLID_2190_">
+                                <line id="XMLID_2192_" class="st3" x1="487.9" y1="375.4" x2="487.9" y2="391.2"/>
+                                <line id="XMLID_2191_" class="st3" x1="477.3" y1="383.3" x2="498.6" y2="383.3"/>
+                            </g>
+                        </g>
+                        <path id="XMLID_12_" class="st0" d="M538.7,315.5c-116.8,116.9-247.4,0-247.4,0S421.9,198.7,538.7,315.5z"/>
+                        <ellipse id="XMLID_11_" class="st4" cx="418" cy="315.5" rx="53.2" ry="43.4"/>
+                        <ellipse id="XMLID_10_" class="st0" cx="418" cy="315.5" rx="30" ry="24.5"/>
+                        <g id="XMLID_14_">
+                            <rect id="XMLID_22_" x="416.5" y="302.6" class="st4" width="3" height="25.9"/>
+                            <rect id="XMLID_15_" x="405" y="314" class="st4" width="25.9" height="3"/>
+                        </g>
+                        </a>
+                    </svg>
+                </div>
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
-                <?php if(isset($_SESSION["user"])): ?>
-                    <li><a href="../../../DiaGenKri/public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <span class="glyphicon glyphicon-user"></span> 
-                            <strong><?php
-                                echo $_SESSION["user-name"];
-                                ?>
-                            </strong>
-                            <span class="glyphicon glyphicon-chevron-down"></span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <div class="navbar-login">
-                                    <div class="row">
-                                        <div class="col-lg-4" id="login-size">
-                                            <p class="text-center">
-                                                <span class="glyphicon glyphicon-user icon-size"></span>
-                                            </p>
-                                        </div>
-                                        <div class="col-lg-8" id="login-size">
-                                            <p class="text-left"><strong><?php
-                                                    echo $_SESSION["user-name"] . " " . $_SESSION["user-surname"];
-                                                    ?>
-                                                </strong></p>
-                                            <p class="text-left small"><?php
-                                                echo $_SESSION["user"];
-                                                ?>
-                                            </p>
-                                            <p class="text-left">
-                                                <a href="../../../DiaGenKri/public/profile" class="btn btn-primary btn-block btn-sm">My profile</a>
-                                            </p>
-                                        </div>
+                <li><a href="../../../DiaGenKri/public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
+                <?php if(isset($_SESSION["user"])): ?> <!-- && $_SESSION[user_level] === 6, which is admin for example-->
+                <li><a href="../../../DiaGenKri/public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <span class="glyphicon glyphicon-user"></span> 
+                        <strong><?php
+                            echo $_SESSION["user-name"];
+                        ?>
+                        </strong>
+                        <span class="glyphicon glyphicon-chevron-down"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <div class="navbar-login">
+                                <div class="row" id="login-row">
+                                    <div class="col-lg-4">
+                                        <p class="text-center">
+                                            <span class="glyphicon glyphicon-user icon-size"></span>
+                                        </p>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <p class="text-left"><strong><?php
+                                            echo $_SESSION["user-name"] . " " . $_SESSION["user-surname"];
+                                        ?>
+                                        </strong></p>
+                                        <p class="text-left small"><?php
+                                            echo $_SESSION["user"];
+                                        ?>
+                                        </p>
+                                        <p class="text-left">
+                                            <a href="../../../DiaGenKri/public/profile" class="btn btn-primary btn-block btn-sm">My profile</a>
+                                        </p>
                                     </div>
                                 </div>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <div class="navbar-login navbar-login-session">
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <p>
-                                                <a href="logIn/logOutUser/" class="btn btn-danger btn-block">Log out</a>
-                                            </p>
-                                        </div>
+                            </div>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <div class="navbar-login navbar-login-session">
+                                <div class="row" id="login-row">
+                                    <div class="col-lg-12">
+                                        <p>
+                                            <a href="../../../DiaGenKri/public/logIn/logOutUser/" class="btn btn-danger btn-block">Log out</a>
+                                        </p>
                                     </div>
                                 </div>
-                            </li>
-                        </ul>
-                    </li>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
                 <?php else: ?>
-                    <li><a href="../../../DiaGenKri/public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
-                    <li><a href="../../../DiaGenKri/public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
+                <li><a href="../../../DiaGenKri/public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
+                <li><a href="../../../DiaGenKri/public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
                 <?php endif; ?>
             </ul>
         </div>
@@ -124,7 +146,6 @@ $description="";
     <div class="row content">
         <div class="col-sm-2 sidenav">
             <h2>Toolbar</h2>
-            <button type="button" data-toggle="modal" data-target="#helpModal" id = "help_btn" class="btn btn-info">Help</button><br><br>
             <div class="well well-sm">
                 <a ondragstart="startDrag(event)" draggable="true"  id="aSquare" href="javascript:void(0);" style="overflow: hidden; width: 80px; height: 60px; padding: 1px; display: inline-block; cursor: move">
                     <svg class="draggable" id="svgtag"  style="width: 80px; height: 60px; display: block; position: relative; overflow: hidden; left: 2px; top: 2px">
@@ -165,10 +186,13 @@ $description="";
                 <button onclick="setDeleteShape()" id = "delete_shape_button" class="btn btn-block btn-warning">Delete vertex</button>
             </div>
 
-            <div class="well well-sm">
-                <button type="button" data-toggle="modal" data-target="#metaData" id = "edit_description" class="btn btn-block btn-info">Edit description</button>
+            <div class="well well-sm" id="test_patients">
+                <button type="button" onclick="setModal()" id = "test_modal" class="btn btn-block btn-info">TEST</button>
             </div>
 
+            <div class="well well-sm">
+                <button id="save" onclick="showModalSave()" type="button" class="btn btn-block btn-info">Save</button>
+            </div>
         </div>
         <div onclick="looseFocus(event)" ondrop="mainDraw(event)" class="col-sm-8" id="content">
         </div>
@@ -185,13 +209,9 @@ $description="";
                 <label class="myLabelForm" for="IDdesc">Text (long)</label></br>
                 <textarea class="myInputForm" rows="6" cols="20" disabled id="IDdesc" type="text"></textarea>
             </form>
-            <div class="well well-sm">
-                <button type="button" onclick="setModal()" id = "test_modal" class="btn btn-block btn-info">TEST</button>
-            </div>
 
-            <div class="well well-sm">
-                <button id="save" onclick="saveGraph()" type="button" class="btn btn-block btn-success">Save</button>
-                <button id="cancel" onclick="cancelGraph()" type="button" class="btn btn-block btn-danger">Cancel</button>
+            <div class="well well-sm" style="margin-top: 20px">
+                <button type="button" data-toggle="modal" data-target="#helpModal" id = "help_btn" class="btn btn-block btn-info">Help</button>
             </div>
         </div>
     </div>
@@ -252,13 +272,13 @@ $description="";
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label"
-                               for="graphType" >Graph type<label style="color: red">*</label></label>
+                               for="graphType" >Intendent for<label style="color: red">*</label></label>
                         <div class="col-sm-10">
                             <div>
-                                <label class="radio-inline" for="typeVisual"><input class="radio" id="typeVisual" type="radio" name="gType" value="visual">Visual</label>
+                                <label class="radio-inline" for="typeVisual"><input class="radio" id="typeVisual" type="radio" name="gType" value="visual">Doctors</label>
                             </div>
                             <div>
-                                <label class="radio-inline" for="typeDiagnostic"><input class="radio" type="radio" id="typeDiagnostic" name="gType" value="diagnostic">Diagnostic</label>
+                                <label class="radio-inline" for="typeDiagnostic"><input class="radio" type="radio" id="typeDiagnostic" name="gType" value="diagnostic">Patients</label>
                             </div>
                             <label style="color: red; font-size: 14px" id="typeLab"></label>
                         </div>
@@ -392,10 +412,6 @@ $description="";
 
         <!-- Modal content-->
         <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Disease diagnosing</h4>
-            </div>
             <div class="modal-body">
                 <h3 id="h3id"></h3>
                 <pre><p id="question"></p></pre>

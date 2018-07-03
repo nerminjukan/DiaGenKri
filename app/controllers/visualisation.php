@@ -38,6 +38,13 @@ class Visualisation extends Controller
         $this->view('visualisation/view', ['name' => $user->name]);
     }
 
+    public function delete() {
+        $result = 0;
+        if(isset($_SESSION["user"]) && isset($_POST["id"]))
+            $result = DBfunctions::deleteGraph($_SESSION["user"], $_POST['id']);
+        
+        echo $result;
+    }
 
     public function edit(){
         if(isset($_SESSION["user"]) && isset($_POST["data"]) && isset($_POST["name"]) && isset($_POST["description"]) && isset($_POST["gtype"]) && isset($_POST["atype"]) && isset($_POST["id"])){

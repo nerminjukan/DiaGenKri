@@ -94,6 +94,26 @@ class DBfunctions {
 
     }
 
+    public static function deleteGraph($email, $id){
+        $db = DBconnect::getInstance();
+
+        try {
+            $statement = $db->prepare("DELETE FROM `graph-edits` WHERE `graph-id` = :id;");
+            $statement->bindParam(":id", $id);
+            $result = $statement->execute();
+
+            $statement1 = $db->prepare("DELETE FROM `graph` WHERE `id` = :id;");
+            $statement1->bindParam(":id", $id);
+            $result1 = $statement1->execute();
+
+            $fin = $result && $result1;
+            echo $fin;
+        } catch(Exception $e){
+            echo 'Caught exception: ',  $e->getMessage(), "\n";
+        }
+    }
+
+
     public static function loadGraph($id){
         $db = DBconnect::getInstance();
 

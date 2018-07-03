@@ -25,5 +25,46 @@ $(function(){
 		console.log("id:", id_graph);
 		window.location.replace("../../../DiaGenKri/public/visualisation/viewonly?id=" + id_graph);
    });
+
+   // delete algorithm
+	$('.fa-times').click(function(){
+		var el = this;
+		var id_graph_delete = this.id;
+		console.log("[delete algorithm]", id_graph_delete);
+
+		let confirmation = confirm("Do you realy want to delete algorithm? This action cannot be reversed");
+		if(!confirmation)
+			return;
+
+		// confirmation = confirm("Please confirm your choice again");
+		// if(!confirmation)
+		// 	return;
+
+		$.post("../../../DiaGenKri/public/visualisation/delete",
+		{
+			id: id_graph_delete
+		},
+		function(data, status){
+			if(data === "1"){
+				$(el).closest('tr').css('background','tomato');
+				$(el).closest('tr').fadeOut(800, function(){ 
+					$(this).remove();
+				});
+
+				$.notify("Algorithm successfuly deleted",
+		            { position: 'bottom center',
+		            className: 'success',
+		            gap: 5 }
+	            );
+			} else {
+				$.notify("Something went wrong, try again",
+	                { position: 'bottom center',
+	                className: 'error',
+	                gap: 5 }
+	            );
+			}
+		}
+		);
+	});
 });
 
