@@ -145,17 +145,20 @@ $data = DBfunctions::getGraphs();
         </div>
         <div class="well well-sm form-group filter-settings">
             <label class="col-sm-6 control-label"
-                    >Intedent for:</label>
+                    >Intended for:</label>
             <div class="col-sm-6">
                 <div>
                     <label class="radio-inline" for="typeDAll"><input onchange="filterTable()" checked class="radio" type="radio" id="typeDAll" name="gType" value="all">All</label>
                 </div>
                 <div>
-                    <label class="radio-inline" for="typeVisual"><input onchange="filterTable()" class="radio" id="typeVisual" type="radio" name="gType" value="visual">Patients</label>
+                    <label class="radio-inline" for="typeVisual"><input onchange="filterTable()" class="radio" id="typeVisual" type="radio" name="gType" value="visual" <?php if(!isset($_SESSION["user"])): ?> checked="checked" <?php endif; ?> >Patients</label>
                 </div>
+                <?php if(isset($_SESSION["user"])): ?>
                 <div>
                     <label class="radio-inline" for="typeDiagnostic"><input onchange="filterTable()" class="radio" type="radio" id="typeDiagnostic" name="gType" value="diagnostic">Doctors</label>
                 </div>
+                <?php endif; ?>
+
                 <label style="color: red; font-size: 14px" id="typeLab"></label>
             </div>
         </div>

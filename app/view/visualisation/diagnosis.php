@@ -145,10 +145,21 @@ $data = DBfunctions::getGraphs();
                 </thead>
                 <tbody>
                     <?php foreach ($data as $key => $value){
-                    $id = $value["id"];
-                    $name = $value["name"];
-                    $button = "<button class='btn btn-block btn-primary dpacient-button' id='$id'>Diagnose</button>";
-                    echo "<tr class='tr-graphTable'><td>$name</td><td class='pacient-button'>$button</td></tr>";
+                        $id = $value["id"];
+                        $name = $value["name"];
+                        $visual = $value["visual"];
+
+                        if($visual === '0'){
+                            $visual = 'Patients';
+                        }
+                        else{
+                            $visual = 'Doctors';
+                        }
+
+                        if("$visual" === 'Patients'){
+                            $button = "<button class='btn btn-block btn-primary dpacient-button' id='$id'>Diagnose</button>";
+                            echo "<tr class='tr-graphTable'><td>$name</td><td class='pacient-button'>$button</td></tr>";
+                        }      
                     }
                     ?>
                 </tbody>
