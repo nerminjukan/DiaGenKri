@@ -984,7 +984,7 @@ function resetText(textShape, vertexShape, focus=false){
     inputText.value = textShape.attr("text");
     descriptionText.value = vertexShape.data("desc"); // active is currently active shape
     if(focus)
-        inputText.focus(); 
+        inputText.focus();
 }
 
 // completly resets anything related to inputs
@@ -1136,31 +1136,31 @@ function extractParameters( name, url ) {
 function getGraphData(id_graph_load) {
     let info = null
     $.post("../../../DiaGenKri/public/visualisation/load",
-    {
-        id: id_graph_load
-    },
-    function(data, status){
-        const myArray = $.parseJSON(data);
-        // const podatki = $.parseJSON(myArray["data"]);
-        // window["f_json"] = myArray["data"]
-        console.log("[david.js] myArray", myArray);
-        // console.log(podatki);
+        {
+            id: id_graph_load
+        },
+        function(data, status){
+            const myArray = $.parseJSON(data);
+            // const podatki = $.parseJSON(myArray["data"]);
+            // window["f_json"] = myArray["data"]
+            console.log("[david.js] myArray", myArray);
+            // console.log(podatki);
 
-        info = {
-            id: myArray["id"],
-            email: myArray["e-mail"],
-            name: myArray["name"],
-            description: myArray["description"],
+            info = {
+                id: myArray["id"],
+                email: myArray["e-mail"],
+                name: myArray["name"],
+                description: myArray["description"],
 
-            intended: myArray["visual"], // 1 are doctors
+                intended: myArray["visual"], // 1 are doctors
 
-            algorithm_type: myArray["algorithm_type"]
-        };
-        // console.log("info about graph, without data:", info);
-        populateForm("name", info);
-    }
+                algorithm_type: myArray["algorithm_type"]
+            };
+            // console.log("info about graph, without data:", info);
+            populateForm("name", info);
+        }
     );
-    
+
 }
 
 // populates form with name with data(object)
@@ -1490,7 +1490,7 @@ jQuery(function ($) {
 
 
     // **** not needed anymore, because editingGraph can be set to true in loadGraph() method,
-    // **** that works because loadGraph is caled from getData.js which executes it only when graph 
+    // **** that works because loadGraph is caled from getData.js which executes it only when graph
     // **** is being loaded
     // check wheter user is editing graph or its completly new graph
     graphId = extractParameters('id', window.location.href);
@@ -1498,7 +1498,7 @@ jQuery(function ($) {
     // get data about graph and populate form
     if(editingGraph)
         getGraphData(graphId);
-    
+
 
 
 });
@@ -2077,10 +2077,10 @@ function cancelGraph() {
 function saveGraph() {
     if(canvasSets.length === 0){
         $.notify("Create algorithm first",
-                    { position: 'bottom center',
-                    className: 'info',
-                    gap: 5 }
-                    );
+            { position: 'bottom center',
+                className: 'info',
+                gap: 5 }
+        );
         return false;
     }
     if(!validation()){
@@ -2230,15 +2230,15 @@ function saveGraph() {
                 console.log('[saveGraph] save', status === "success" ? "saved successfuly" : "not saved successfuly", "\ndata:", data);
                 if(data === "1"){
                     $.notify("Algorithm successfuly saved",
-                    { position: 'bottom center',
-                    className: 'success',
-                    gap: 5 }
+                        { position: 'bottom center',
+                            className: 'success',
+                            gap: 5 }
                     );
                 } else {
                     $.notify("Something went wrong, algorithm not saved",
-                    { position: 'bottom center',
-                    className: 'error',
-                    gap: 5 }
+                        { position: 'bottom center',
+                            className: 'error',
+                            gap: 5 }
                     );
                 }
             }
@@ -2277,15 +2277,15 @@ function saveGraph() {
                 console.log('[saveGraph] EDIT:', status === "success" ? "saved successfuly" : "not saved successfuly", "\ndata:", data);
                 if(data === "1"){
                     $.notify("Algorithm successfuly saved!",
-                    { position: 'bottom center',
-                    className: 'success',
-                    gap: 5 }
+                        { position: 'bottom center',
+                            className: 'success',
+                            gap: 5 }
                     );
                 } else {
                     $.notify("Something went wrong, algorithm not saved",
-                    { position: 'bottom center',
-                    className: 'error',
-                    gap: 5 }
+                        { position: 'bottom center',
+                            className: 'error',
+                            gap: 5 }
                     );
                 }
             }
@@ -2484,7 +2484,8 @@ function loadGraph(json, pacient=false, viewonly=false) {
 
         // meantime change width of all text elements to correct size
         if(element.data("type") === "shape_text")
-           changeWidth(element);
+            changeWidth(element);
+
     });
 
     // recalculate subpaths
@@ -2512,8 +2513,6 @@ function loadGraph(json, pacient=false, viewonly=false) {
 
 
 }
-
-
 
 
 
