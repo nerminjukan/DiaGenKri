@@ -25,9 +25,13 @@ $data = DBfunctions::getGraphs();
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/notify.min.js"></script>
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/raphael.pan-zoom.js"></script>
 
+    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/tree.js"></script> 
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/david.js"></script>
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/nermin/test.js"></script>
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/diagnose.js"></script> 
+
+
+
 
 </head>
 
@@ -187,6 +191,9 @@ $data = DBfunctions::getGraphs();
                 <pre><p id="question"></p></pre>
                 <div id="testdiv">
 
+                </div>
+                <div id="myProgress">
+                    <div id="myBar"></div>
                 </div>
             </div>
             <div class="modal-footer">

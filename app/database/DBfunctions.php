@@ -24,6 +24,10 @@ class DBfunctions {
             $statement->bindParam(":atype", $atype);
             $statement->bindParam(":data", $data);
 
+            // echo "<pre>";
+            // var_dump($data);
+            // exit();
+
             $result = $statement->execute();
 
             echo $result;
@@ -112,6 +116,18 @@ class DBfunctions {
         } catch(Exception $e){
             echo 'Caught exception: ',  $e->getMessage(), "\n";
         }
+    }
+
+    // return height of $vertex in tree, which is max($vertex.left, $vertex.right) + 1
+    private function heightOfTree($vertex){
+        if($vertex.left != null && $vertex.right != null)
+            return max(heightOfTree($vertex.left), heightOfTree($vertex.right)) + 1;
+        else if($vertex.left != null)
+            return heightOfTree($vertex.left) + 1;
+        else if($vertex.right != null)
+            return heightOfTree($vertex.right) + 1;
+        else
+            return 1; 
     }
 
 

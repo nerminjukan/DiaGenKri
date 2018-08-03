@@ -47,6 +47,8 @@ include_once '../app/controllers/visualisation.php';
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/david.js"></script> 
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/nermin/test.js"></script>
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/getdata.js"></script> 
+    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/tree.js"></script> 
+
 
 
     <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css">
