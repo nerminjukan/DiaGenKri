@@ -25,9 +25,13 @@ $data = DBfunctions::getGraphs();
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/notify.min.js"></script>
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/raphael.pan-zoom.js"></script>
 
+    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/tree.js"></script> 
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/david.js"></script>
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/nermin/test.js"></script>
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/diagnose.js"></script> 
+
+
+
 
 </head>
 
@@ -67,8 +71,7 @@ $data = DBfunctions::getGraphs();
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
-                <?php if(isset($_SESSION["user"])): ?>
-
+                <?php if(isset($_SESSION["user"]) && $_SESSION["user-admin"] == 1 || isset($_SESSION["user-add"]) && $_SESSION["user-add"] == 1): ?>
                 <li><a href="../../../DiaGenKri/public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
                     </span> Create algorithm</a></li>
                 <?php endif; ?>
@@ -188,6 +191,9 @@ $data = DBfunctions::getGraphs();
                 <pre><p id="question"></p></pre>
                 <div id="testdiv">
 
+                </div>
+                <div id="myProgress">
+                    <div id="myBar"></div>
                 </div>
             </div>
             <div class="modal-footer">

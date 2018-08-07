@@ -112,8 +112,8 @@ Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000") {
         line_path.data("id_connection", id_c);
 
 
-        console.log("[connection] path from:", obj1.id, "to:", obj2.id);
-        console.log("[connection] fromTo", line_path.data("fromTo"));
+        // console.log("[connection] path from:", obj1.id, "to:", obj2.id);
+        // console.log("[connection] fromTo", line_path.data("fromTo"));
 
         sub_path = paper.path(
             line_path.getSubpath(
@@ -162,6 +162,19 @@ Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000") {
         }
         sub_path.data('visible', true);
 
+        // add children,
+        // connection is from obj1 to obj2
+        // console.log("type of obj1.id", typeof obj1.id, obj1.id);
+        // console.log("type of obj1", typeof obj1, obj1);
+        // console.log("type of obj2.id", typeof obj2.id);
+        // console.log("type of obj2", typeof obj2);
+
+
+        tree_vertices[obj1.id].addChild(tree_vertices[obj2.id]);
+        tree_vertices[obj2.id].incomingConns = true;
+        tree_vertices[obj2.id].incomingConns_count += 1;
+
+
         return {
             line: line_path,
             subpath: sub_path,
@@ -186,7 +199,7 @@ function addDblclickHandlers(){
     let inputText = document.getElementById("IDtext");
     inputText.value = txt.attr("text");
     inputText.focus();
-    console.log("dbl click handler on path fired");
+    // console.log("dbl click handler on path fired");
     // return;
 }
 
@@ -429,6 +442,9 @@ let graphId = null;
 
 // if app should be in view only state
 let viewonly_graph = false;
+
+// array of vertices as Vertex objects, usecase: get height of every subtree
+let tree_vertices = null;
 
 // $(window).resize(function(){
 //     scale = getScale(paper);
@@ -1216,6 +1232,47 @@ function populateForm(name, data){
 
 }
 
+// iterate through shapes and connections and build tree
+// its useful for /bolniki tab where progress bar is needed
+function buildTree(){
+    console.log("BUILDING TREE BUILDING TREE BUILDING TREE BUILDING TREE");
+    tree_vertices = {};
+    for (let i = 0; i < shapes.length; i++) {
+        const shape = shapes[i];
+        tree_vertices[shape.id] = new Vertex(shape.id);
+    }
+    for (let i = 0; i < connections.length; i++) {
+        const conn = connections[i];
+        tree_vertices[conn.from.id].addChild(tree_vertices[conn.to.id]);
+        // mark incoming connection
+        tree_vertices[conn.to.id].incomingConns = true;
+        tree_vertices[conn.to.id].incomingConns_count += 1;
+
+    }
+    console.log("[buildTree] tree done!")
+    console.log(tree_vertices);
+}
+
+// returns height of tree, starting at first vertex
+// the first vertex(root node) is the one that has no incoming(to) connections,
+// there can be mutliple vertices without incoming connections so for every vertex that doesnt have
+// incoming connections treeHeight should be calculated
+function getHeights(){
+    console.log("GETING HEIGHTS GETING HEIGHT GETING HEIGHT");
+    for (const [id, vertex] of Object.entries(tree_vertices)) {
+        console.log("id:", id, "height:", vertex.height, "possible root(?):", !vertex.incomingConns);
+        // if there are no incoming connections, it is possible that this vertex is root so lets calculate tree height
+        if(!vertex.incomingConns){
+            Vertex.treeHeight(vertex);
+            console.log("calculating height for", vertex.vertex_id);
+        }
+    }
+
+    console.log("[getHeights] heights done!")
+    // Vertex.treeHeight("prvi vertex");
+    // napolni še za vse ostale vertexe, najdi boljši način kot da n krat kličeš treeHeight(shrajevanje v array)
+}
+
 // ************* end of some other functions
 // window.onload = function () {
 // set focus to div with paper
@@ -1409,7 +1466,7 @@ jQuery(function ($) {
     // change text on input
     $('#IDtext').on('input', function() {
         let currentText = $.trim($(this).val());
-        console.log("[IDtext onInput] changingText:", changingText.id);
+        // console.log("[IDtext onInput] changingText:", changingText.id);
         // check if input changed and its not empty, only then change the value of current text,
         // because we do not want data loss
         if(currentText !== changingText.attr("text")){
@@ -1425,7 +1482,7 @@ jQuery(function ($) {
 
     $('#IDdesc').on('input', function() {
         let currentText = $.trim($(this).val());
-        console.log("[IDdesc onInput] changingText:", changingText.id);
+        // console.log("[IDdesc onInput] changingText:", changingText.id);
         // check if input changed and its not empty, only then change the value of current text,
         // because we do not want data loss
         if(currentText !== active.data("desc"))
@@ -1453,7 +1510,7 @@ jQuery(function ($) {
     });
 
     $("#IDdesc").on("blur", function (){
-        console.log("[IDdesc blur]", this.value);
+        // console.log("[IDdesc blur]", this.value);
         let currentText = this.value;
         // check if input changed and its not empty, only then change the value of current text,
         // because we do not want data loss
@@ -1465,7 +1522,7 @@ jQuery(function ($) {
     });
 
     $("#modal-save-graph").click(function(){
-        console.log("[modal-save-graph] save, clicked");
+        // console.log("[modal-save-graph] save, clicked");
         if(saveGraph()){
             $("#metaData").modal('hide');
             resetModal();
@@ -1473,7 +1530,7 @@ jQuery(function ($) {
     });
 
     $("#modal-cancel-graph").click(function(){
-        console.log("[modal-save-graph] cancel, clicked");
+        // console.log("[modal-save-graph] cancel, clicked");
         resetModal();
     });
 
@@ -1511,7 +1568,7 @@ function showModalSave(){
 // ************************************** end of zoom
 
 function changeWidth(textShape) {
-    console.log('changeWidth of', textShape);
+    // console.log('changeWidth of', textShape);
     let parent = paper.getById(textShape.data('parent'));
     try{
         if(parent.data("type") !== "rect")
@@ -1520,13 +1577,13 @@ function changeWidth(textShape) {
         return;
     }
     if(textShape.getBBox().width > parent.attr('width') - 15){
-        console.log('Too big!');
+        // console.log('Too big!');
         parent.attr('width', textShape.getBBox().width + 20);
     }
     else{
-        console.log('Shorter');
+        // console.log('Shorter');
         if(parent.attr('width')- 4  > textShape.getBBox().width && parent.attr('width') - 4 > 100){
-            console.log('Parent width: ', parent.attr('width'));
+            // console.log('Parent width: ', parent.attr('width'));
             parent.attr('width', parent.attr('width') - 6);
         }
     }
@@ -1582,14 +1639,77 @@ function addToShapes(shape){
     //shape.dblclick(removeShape);
     if(!viewonly_graph)
         shape.click(onShapeClicked);
-    if(shapes.length === 0){
-        shape.data("root", true);
-    }
-    else{
-        shape.data("root", false);
-    }
+    // if(shapes.length === 0){
+    //     shape.data("root", true);
+    // }
+    // else{
+    //     shape.data("root", false);
+    // }
+    shape.data("root", false); // default
     shapes.push(shape)
+
+    if(tree_vertices === null)
+        tree_vertices = {};
+    // add to tree_vertices
+    // console.log(shapes[shapes.length - 1].id);
+    tree_vertices[shape.id] = new Vertex(shape.id);
+
     // console.log("[addToShapes] element added", shape);
+}
+
+// function sets data("root") for shape by determining whether it has incoming connecitons
+// possible roots are ones that does not have incoming connections, but actual root is the one
+// that has most outgoing connections
+function getPossibleRoots(){
+    let possible_roots = {};
+    // for (let i = 0; i < connections.length; i++) {
+    //     const conn = connections[i];
+    //     const shape_from = conn.from.id;
+    //     const shape_to = conn.to.id;
+        
+    // }
+
+    for (const [id, obj] of Object.entries(tree_vertices)) {
+        // if vertex has no incoming connections, set its root to true
+        console.log("id:",id,"vertex:",obj);
+
+        if(!obj.incomingConns){
+            possible_roots[obj.vertex_id] = obj;
+            possible_roots[obj.vertex_id].root = true;
+            // if(possible_roots[obj.vertex_id].count === null)
+            //     possible_roots[obj.vertex_id].count = 0;
+            // possible_roots[obj.vertex_id].count += 1;
+        }
+
+    }
+    console.log("possible_roots:", possible_roots);
+    return possible_roots;
+}
+// IZBOLJŠAVA ZGORNJE FUNKCIJE, NEPOTREBNA FOR ZANKA!!!!
+// getHeights() že ugotovi, katera vozlišča so possible root, že tam shrani v en array in je ta funkcija redundatna
+
+// determine the true root by setting .data("root") to True
+function getTreeRoot(possible_roots){
+    min = 1000;
+    min_vertex_id = null;
+    // filter out one that has moust outgoing connections, which means it's root
+    for (const [id, vertex] of Object.entries(possible_roots)) {
+        console.log("checking:", id, vertex);
+        if(vertex.incomingConns_count < min){
+            min_vertex_id = id;
+            min = vertex.incomingConns_count;
+            console.log("it fits");
+        }
+    }
+
+    for(let i = 0; i < shapes.length; i++){
+        // if(possible_roots[shapes[i].id] != null && possible_roots[shapes[i].id].root){
+        if(possible_roots[shapes[i].id] != null && min_vertex_id == shapes[i].id){
+            shapes[i].data("root", true);
+            console.log(shapes[i], "is the root!");
+            break;
+        }
+    }
 }
 
 ////////
@@ -1747,7 +1867,7 @@ function shapeDraw(arg, ev) {
 
 
         // CREATE + sign
-        console.log("[shapeDraw] ev.offset:", ev.offsetX, ev.offsetY)
+        // console.log("[shapeDraw] ev.offset:", ev.offsetX, ev.offsetY)
         let d = ["M", ev.offsetX+5, ev.offsetY+10, "l", 10, 0, "M", ev.offsetX+10, ev.offsetY+5, "l", 0, 10].join(",");
         let resizable = paper.path(d).attr({"stroke-width": 3, stroke: Colors.green});
         resizable.mouseover(hoverIn);
@@ -1765,7 +1885,7 @@ function shapeDraw(arg, ev) {
                 document.getElementById('descText').innerHTML = shape.data('desc');
                 document.getElementById('h4ID').innerHTML = 'Node description: ' +  shape.id;
                 $("#longText").modal();
-                console.log("[longText modal] showing");
+                // console.log("[longText modal] showing");
             }
         });
 
@@ -1839,7 +1959,7 @@ function shapeDraw(arg, ev) {
         }
 
         canvasSets.push(set);
-        console.log('ADDED SHAPE - DRAW');
+        // console.log('ADDED SHAPE - DRAW');
         id++;
     }
     // draws a link (for testing purposes)
@@ -1945,7 +2065,7 @@ function getText(id) {
 
     var t = set.pop();
     var txt1 = t.attr('text');
-    console.log("TEKST OUT: ", txt);
+    // console.log("TEKST OUT: ", txt);
     set.push(t);
 
     var text2 = set[0].data('desc');
@@ -1957,7 +2077,7 @@ function setText() {
     var id = IDinput.value;
     if(paper.getById(id).type !== 'path'){
         var set = canvasSets[getSet(id)];
-        console.log("[setText] set:", set);
+        // console.log("[setText] set:", set);
         var t = set.pop();
         t.attr({text: IDtext.value});
 
@@ -1989,7 +2109,7 @@ function validation() {
 
     if (document.forms["gForm"]["gName"].value === "") {
         document.getElementById("nameLab").innerHTML = "Please provide a graph name.";
-        console.log('No graph name provided.');
+        // console.log('No graph name provided.');
         success = false;
     }
     else{
@@ -1997,7 +2117,7 @@ function validation() {
     }
     if((document.forms["gForm"]["gType"][0].checked === false) && (document.forms["gForm"]["gType"][1].checked === false)){
         document.getElementById("typeLab").innerHTML = "Please select a graph type.";
-        console.log('No graph type selected');
+        // console.log('No graph type selected');
         success =  false;
     }
     else{
@@ -2083,15 +2203,21 @@ function saveGraph() {
         );
         return false;
     }
+
     if(!validation()){
         return false;
     }
+
+    // build the tree of algorithm
+    // buildTree();
+    // calculate height(s) of (sub)tree(s)
+    // getHeights();
 
     let graphDescription = getGraphDescriptionData();
 
     //console.log (graphDescription);
 
-    console.log("[saveGraph] TYPE:", !editingGraph ? "save new graph" : "edit existing graph")
+    // console.log("[saveGraph] TYPE:", !editingGraph ? "save new graph" : "edit existing graph")
 
     disableInputs(true);
 
@@ -2108,7 +2234,7 @@ function saveGraph() {
         let dx, dy;
 
         data.id = el.id;
-        console.log('[saveGraph] NODE ID: ',el.id);
+        // console.log('[saveGraph] NODE ID: ',el.id);
         data.setName = el.setName;
         //console.log('data setName PRE: ' + data.setName);
         //console.log('element x and y PRE: ', el.attr('x'), el.attr('y'));
@@ -2128,19 +2254,19 @@ function saveGraph() {
         // }
 
 
-        console.log("[saveGraph] type is", el.type);
+        // console.log("[saveGraph] type is", el.type);
 
         // if element is text
         if(el.type === 'text') {
             data.type = el.data("type");
-            console.log("DATA.PARENT print print print", data.type, el.data("type"));
+            // console.log("DATA.PARENT print print print", data.type, el.data("type"));
 
             if(data.type == "connection_text"){
-                console.log("DATA.PARENT connection_text")
+                // console.log("DATA.PARENT connection_text")
                 data.id_connection = el.data("id_connection");
             }
             else if(data.type == "shape_text"){
-                console.log("DATA.PARENT shape_text")
+                // console.log("DATA.PARENT shape_text")
                 data.parent = el.data("parent");
             }
 
@@ -2172,8 +2298,10 @@ function saveGraph() {
                 data.desc = el.data("desc");
                 data.type = "rect";
             }
+            // also save the height of subtree starting at current node, useful for tracking progress on patients site
+            // data.subtree_height = tree_vertices[data.id].height;
         }
-        console.log(data.type);
+        // console.log(data.type);
 
 
         // if dx and dy were not set
@@ -2181,7 +2309,7 @@ function saveGraph() {
             dx = el.matrix.e;
             dy = el.matrix.f;
         }
-        console.log("[saveGraph] dx, dy:",dx, dy);
+        // console.log("[saveGraph] dx, dy:",dx, dy);
 
         el.attr('x', el.attr('x') + dx);
         el.attr('y', el.attr('y') + dy);
@@ -2227,7 +2355,7 @@ function saveGraph() {
                 atype: graphDescription['atype']
             },
             success: function(data, status){
-                console.log('[saveGraph] save', status === "success" ? "saved successfuly" : "not saved successfuly", "\ndata:", data);
+                // console.log('[saveGraph] save', status === "success" ? "saved successfuly" : "not saved successfuly", "\ndata:", data);
                 if(data === "1"){
                     $.notify("Algorithm successfuly saved",
                         { position: 'bottom center',
@@ -2235,11 +2363,13 @@ function saveGraph() {
                             gap: 5 }
                     );
                 } else {
+                    console.log("ERROR:", data);
                     $.notify("Something went wrong, algorithm not saved",
                         { position: 'bottom center',
                             className: 'error',
                             gap: 5 }
                     );
+                    return false;
                 }
             }
         });
@@ -2274,7 +2404,7 @@ function saveGraph() {
                 atype: graphDescription['atype']
             },
             success: function(data, status){
-                console.log('[saveGraph] EDIT:', status === "success" ? "saved successfuly" : "not saved successfuly", "\ndata:", data);
+                // console.log('[saveGraph] EDIT:', status === "success" ? "saved successfuly" : "not saved successfuly", "\ndata:", data);
                 if(data === "1"){
                     $.notify("Algorithm successfuly saved!",
                         { position: 'bottom center',
@@ -2282,11 +2412,13 @@ function saveGraph() {
                             gap: 5 }
                     );
                 } else {
+                    console.log("ERROR:", data);
                     $.notify("Something went wrong, algorithm not saved",
                         { position: 'bottom center',
                             className: 'error',
                             gap: 5 }
                     );
+                    return false;
                 }
             }
         });
@@ -2319,15 +2451,15 @@ function loadGraph(json, pacient=false, viewonly=false) {
 
     if(pacient){
 
-        console.log("CLEAR WINDOW CLEAR WINDOW CLEAR WINDOW CLEAR WINDOW")
+        // console.log("CLEAR WINDOW CLEAR WINDOW CLEAR WINDOW CLEAR WINDOW")
         paper.fromJSON(json, function(el, data) {
-            console.log(data.setName);
-            console.log("before:", window[data.setName]);
+            // console.log(data.setName);
+            // console.log("before:", window[data.setName]);
             window[data.setName] = null;
-            console.log("after:", window[data.setName]);
+            // console.log("after:", window[data.setName]);
 
         });
-        console.log("CLEAR WINDOW CLEAR WINDOW CLEAR WINDOW CLEAR WINDOW")
+        // console.log("CLEAR WINDOW CLEAR WINDOW CLEAR WINDOW CLEAR WINDOW")
     }
 
 
@@ -2335,7 +2467,7 @@ function loadGraph(json, pacient=false, viewonly=false) {
     if(!viewonly_graph)
         disableInputs(true);
 
-    console.log('[loadGraph] LOADING started');
+    // console.log('[loadGraph] LOADING started');
     // paper = Raphael('content');
 
     // console.log("[loadGraph] paper:", paper);
@@ -2346,12 +2478,12 @@ function loadGraph(json, pacient=false, viewonly=false) {
 
     paper.fromJSON(json, function(el, data) {
         el.id = data.id;
-        console.log('START START START START START');
+        // console.log('START START START START START');
 
-        console.log('[loadGraph] element id:',el.id, data.type);
+        // console.log('[loadGraph] element id:',el.id, data.type);
 
         if(data.type !== 'connection' && data.type !== 'sub_path' && data.type !== 'connection_text'){
-            console.log("NI KONEKŠN FOCK FOCK FOCK")
+            // console.log("NI KONEKŠN FOCK FOCK FOCK")
             // Recreate the set using the identifier
             if( !window[data.setName] ){
                 window[data.setName] = paper.set();
@@ -2360,9 +2492,9 @@ function loadGraph(json, pacient=false, viewonly=false) {
 
                 canvasSets.push(window[data.setName]);
 
-                console.log("[loadGraph] data.setName:", data.setName, canvasSets);
+                // console.log("[loadGraph] data.setName:", data.setName, canvasSets);
             } else {
-                console.log("[loadGraph] SET EXISTS EXISTS:", data.setName, window[data.setName])
+                // console.log("[loadGraph] SET EXISTS EXISTS:", data.setName, window[data.setName])
             }
 
             // Place each element back into the set
@@ -2377,7 +2509,7 @@ function loadGraph(json, pacient=false, viewonly=false) {
 
         // console.log('window :' +window[data.setName]);
 
-        console.log("[loadGraph] type of element:", el.type);
+        // console.log("[loadGraph] type of element:", el.type);
 
 
         if(el.type === 'path'){
@@ -2385,7 +2517,7 @@ function loadGraph(json, pacient=false, viewonly=false) {
                 let correct_set = getSet(el.id, 1);
                 // console.log(el.id, correct_set);
                 if(correct_set === null){
-                    console.log("ERROR ERROR ERROR ERROR ERROR");
+                    // console.log("ERROR ERROR ERROR ERROR ERROR");
                     return;
                 }
                 let px = canvasSets[correct_set][0].getBBox().x;
@@ -2402,9 +2534,9 @@ function loadGraph(json, pacient=false, viewonly=false) {
                 window[data.setName].push(el);
 
                 rainingEvents(el, "hide");
-                console.log("[loadGraph] loaded HIDE path");
+                // console.log("[loadGraph] loaded HIDE path");
             } else if(data.type === 'connection') {
-                console.log("[loadGraph] path fromTo:", el.data("fromTo"));
+                // console.log("[loadGraph] path fromTo:", el.data("fromTo"));
                 let idSplit = data.fromTo.split(" ");
                 el.remove();
                 connections.push(paper.connection(paper.getById(idSplit[0]), paper.getById(idSplit[1]), "#000", data.id_connection));
@@ -2417,15 +2549,15 @@ function loadGraph(json, pacient=false, viewonly=false) {
 
                 rainingEvents(el, "connection");
 
-                console.log("[loadGraph] loaded CONNECTION path");
+                // console.log("[loadGraph] loaded CONNECTION path");
             } else { //subpath, just remove because subpath is created when path(connection) is created
                 el.remove();
                 rainingEvents(el, "subpath")
-                console.log("[loadGraph] loaded SUBPATH path");
+                // console.log("[loadGraph] loaded SUBPATH path");
             }
         }
         else if(el.type === 'text'){ // trick is to remove connection_text, because connection_text is created when path(connection) is created
-            console.log("[loadGraph] loaded", data.type, "text");
+            // console.log("[loadGraph] loaded", data.type, "text");
             rainingEvents(el, data.type);
             if(data.type === "connection_text")
                 el.data("id_connection", data.id_connection);
@@ -2438,7 +2570,8 @@ function loadGraph(json, pacient=false, viewonly=false) {
             rainingEvents(el, data.type);
             if(data.type === "rect")
                 el.data("desc", data.desc);
-            console.log("[loadGraph] loaded", data.type, "rect");
+            // console.log("[loadGraph] loaded", data.type, "rect");
+            // el.data("subtree_height", data.subtree_height);
         }
         // // console.log('[loadGraph] setName');
         el.setName = data.setName;
@@ -2449,7 +2582,7 @@ function loadGraph(json, pacient=false, viewonly=false) {
 
 
         // return el;
-        console.log('END END END END END');
+        // console.log('END END END END END');
 
     });
 
@@ -2507,6 +2640,13 @@ function loadGraph(json, pacient=false, viewonly=false) {
         paper.connection(connections[i]);
     }
 
+    // build the tree of algorithm
+    buildTree();
+    // calculate height(s) of (sub)tree(s)
+    getHeights();
+
+    // get root of the tree
+    getTreeRoot(getPossibleRoots());
 
 
     console.log('[loadGraph] LOADING finished');
