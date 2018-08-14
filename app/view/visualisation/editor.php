@@ -255,11 +255,6 @@ $description="";
         <div class="col-sm-2 sidenav">
 
             <h2>Settings</h2>
-            <div>
-                <canvas style="display: none" id="canvas" width="2000px" height="2000px"></canvas>
-                <div id="png-container"></div>
-                <a id="dl" href="#">Download Image</a>
-            </div>
             <form>
                 <label class="myLabelForm" for="IDinput">Element ID</label></br>
                 <input class="myInputForm" id="IDinput" disabled type="text" name="fname"><br>
@@ -268,8 +263,11 @@ $description="";
                 <label class="myLabelForm" for="IDdesc">Text (long)</label></br>
                 <textarea class="myInputForm" rows="6" cols="20" disabled id="IDdesc" type="text"></textarea>
             </form>
-
-
+            <div class="well well-sm">
+                <a class="btn btn-primary btn-block" id="dl">Download PNG</a>
+                <canvas style="display: none" id="canvas" width="2000px" height="2000px"></canvas>
+                <div id="png-container"></div>
+            </div>
             <div class="well well-sm" style="margin-top: 20px">
                 <button type="button" data-toggle="modal" data-target="#helpModal" id = "help_btn" class="btn btn-block btn-info">Help</button>
 

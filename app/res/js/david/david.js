@@ -13,6 +13,7 @@ Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000") {
             {x: bb1.x + bb1.width / 2, y: bb1.y + bb1.height + 1},
             {x: bb1.x - 1, y: bb1.y + bb1.height / 2},
             {x: bb1.x + bb1.width + 1, y: bb1.y + bb1.height / 2},
+
             {x: bb2.x + bb2.width / 2, y: bb2.y - 1},
             {x: bb2.x + bb2.width / 2, y: bb2.y + bb2.height + 1},
             {x: bb2.x - 1, y: bb2.y + bb2.height / 2},
@@ -414,7 +415,7 @@ var IDtext;
 let IDdesc;
 
 // the currently handled shape -> makes it globally accessible (idea)
-var active;
+var active = null;
 
 // counter and ID number for sets inserted into 'canvasSets'
 var id = 0;
@@ -612,12 +613,25 @@ function getConnectionIndex(id){
 // ############## START OF CONNECTING TWO SHAPES ##############
 let line_first_shape_id = null,
     line_second_shape_id = null; // when thoose are both something but null, connect two shapes
+
+function setActive(node = null) {
+    if(active !== null){
+        active.attr({'stroke': 'black'});
+    }
+    if(node !== null){
+        active = node;
+        active.attr({'stroke': 'red'});
+    }
+    else{
+        active.attr({'stroke': 'black'});
+        active = null;
+    }
+}
 function onShapeClicked(){
     // enable inputs, because maybe user missclicked and wants to edit text
     disableInputs(true);
-
-    // saves the current shape to a global spoce
-    active = this;
+    // saves the current shape to a global scope
+    setActive(this);
     changingText = this.data('type') === 'decision' ? canvasSets[getSet(this.id)][1] : canvasSets[getSet(this.id)][2]
     resetText(changingText, this);
     IDinput.setAttribute('value', this.id);
@@ -963,7 +977,8 @@ function textClicked(){
         return;
     }
     console.log("CORRECT INDEX:", indexCorrectSet);
-    active = canvasSets[indexCorrectSet][0];
+    //active = canvasSets[indexCorrectSet][0];
+    setActive(canvasSets[indexCorrectSet][0]);
     IDinput.setAttribute('value', active.id);
 
 
@@ -1005,7 +1020,7 @@ function resetText(textShape, vertexShape, focus=false){
 
 // completly resets anything related to inputs
 function completeResetInputs(){
-    active = null;
+    setActive();
     changingText = null;
     IDinput.setAttribute('value', "");
     document.getElementById("IDtext").value = "";
@@ -1409,6 +1424,8 @@ jQuery(function ($) {
 
     paper = Raphael(document.getElementById('content'), 3000, 3000);
 
+    paper.canvas.id='canvID';
+
     document.getElementById('dl').addEventListener('click', imageDL, false);
 
 
@@ -1474,6 +1491,13 @@ jQuery(function ($) {
         e.preventDefault();
     });
 
+    $(document).keyup(function(e) {
+        console.log(e);
+        if (e.keyCode === 27) { // escape key maps to keycode `27`
+            looseFocus(e, 1);
+        }
+    });
+
     // loose focus if enter is pressed
     $("#IDtext").keyup(function(e){
         //console.log("key code:", e.keyCode);
@@ -1502,9 +1526,16 @@ jQuery(function ($) {
         // check if input changed and its not empty, only then change the value of current text,
         // because we do not want data loss
         if(currentText !== changingText.attr("text")){
+            let textDiff = currentText.length - changingText.attr("text").length;
             changingText.attr({text: currentText});
             if (changingText.data("type") === "shape_text")
-                changeWidth(changingText);
+                console.log('text stat: ', textDiff);
+                if(textDiff > 0){
+                    changeWidth(changingText, 1);
+                }
+                else{
+                    changeWidth(changingText, -1);
+                }
             if(changingText.data("id_connection") !== undefined && changingText.data("type") === "connection_text"){
                 // console.log(changingText.data("id_connection"));
                 calculateSubPath(changingText.data("id_connection"));
@@ -1599,7 +1630,7 @@ function showModalSave(){
 
 // ************************************** end of zoom
 
-function changeWidth(textShape) {
+function changeWidth(textShape, stat) {
     // console.log('changeWidth of', textShape);
     let parent = paper.getById(textShape.data('parent'));
     try{
@@ -1608,18 +1639,33 @@ function changeWidth(textShape) {
     } catch(err){
         return;
     }
-    if(textShape.getBBox().width > parent.attr('width') - 15){
-        // console.log('Too big!');
+    let counter = 0;
+    console.log('diff_BEFORE: ', parent.attr('width') - textShape.getBBox().width);
+    console.log('stat: ', stat);
+    if(stat === 0){
         parent.attr('width', textShape.getBBox().width + 20);
     }
-    else{
-        // console.log('Shorter');
-        if(parent.attr('width')- 4  > textShape.getBBox().width && parent.attr('width') - 4 > 100){
-            // console.log('Parent width: ', parent.attr('width'));
-            parent.attr('width', parent.attr('width') - 6);
+    else if(stat === -1){
+        if(parent.attr('width') - textShape.getBBox().width > 20) {
+            while (parent.attr('width') - textShape.getBBox().width > 20 && parent.attr('width') - 1 >= 100) {
+                counter++;
+                parent.attr('width', parent.attr('width') - 1);
+                console.log('counter: ', counter);
+
+            }
         }
     }
-
+    else{
+        if(parent.attr('width') - textShape.getBBox().width < 20){
+            while(parent.attr('width') - textShape.getBBox().width < 20){
+                counter++;
+                parent.attr('width', parent.attr('width') + 1);
+                console.log('counter: ', counter);
+            }
+        }
+    }
+    console.log('diff_AFTER: ', parent.attr('width') - textShape.getBBox().width);
+    counter = 0;
     // update connections
     for (let i = connections.length; i--;) {
         paper.connection(connections[i]);
@@ -2017,7 +2063,7 @@ function shapeDraw(arg, ev) {
     addToShapes(shape);
 
     // saves the current shape to a global scope
-    active = shape;
+    //active = shape;
 
     // sets the values in IDinput and IDtext to the currently active shape's values
     IDinput.setAttribute('value', shape.id);
@@ -2124,11 +2170,21 @@ function setText() {
 }
 
 // de-selects any selected element and hides handles
-function looseFocus(ev){
-    if(ev.target.childElementCount > 0){
-        // for(var i = 0; i < canvasHandles.length; i++){
-        //     // canvasHandles[i].hideHandles();
-        // }
+function looseFocus(ev, triger = 0){
+    if(triger === 1 || ev.srcElement.id === 'canvID'){
+        if(active !== null){
+            setActive();
+            IDinput.disabled = true;
+            IDinput.value = "";
+            IDtext.disabled = true;
+            IDtext.value = "";
+            IDdesc.disabled = true;
+            IDdesc.value = "";
+            $(".modal").modal('hide');
+        }
+        else{
+            $(".modal").modal('hide');
+        }
     }
 
 }
@@ -2281,6 +2337,7 @@ function saveGraph() {
     shapes = [];
     canvasSets = [];
     json = null;
+    setActive();
     id = 0; // id for shapes, connections, probably obsolete right now
 
 
@@ -2677,7 +2734,7 @@ function loadGraph(json, pacient=false, viewonly=false) {
 
         // meantime change width of all text elements to correct size
         if(element.data("type") === "shape_text")
-            changeWidth(element);
+            changeWidth(element, 0);
 
     });
 
