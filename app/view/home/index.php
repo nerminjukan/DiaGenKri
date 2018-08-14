@@ -8,6 +8,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css">
+    <script src="../../../DiaGenKri/app/res/js/curations.js"></script>
+
 
 </head>
 
@@ -56,6 +58,12 @@
                     </span> Create algorithm</a></li>
                 <?php endif; ?>
 
+
+                    <?php if(isset($_SESSION["user"]) && $_SESSION["user-confirm"] == 1): ?>
+                        <li><a href="../../../DiaGenKri/public/visualisation/curations">
+                                <span class="label label-pill label-danger count"></span> <span class="glyphicon glyphicon-bell" ></span> Curation requests</a></li>
+                    <?php endif; ?>
+
                             <li><a href="../../../DiaGenKri/public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
 
                     <?php if(isset($_SESSION["user"])): ?>
@@ -79,9 +87,38 @@
 
                                     <div class="row" id="login-row">
 
-                                        <div class="col-lg-4">
+                                        <div class="col-lg-4 image">
                                             <p class="text-center">
-                                                <span class="glyphicon glyphicon-user icon-size"></span>
+                                                <?php
+                                                $userMail = $_SESSION["user"];
+                                                if(file_exists("../app/res/photos/profilePhotos/" . $userMail . ".jpg")){
+                                                    $picture = "../app/res/photos/profilePhotos/" . $userMail . ".jpg";
+                                                    echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                                }
+                                                elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".JPG")){
+                                                    $picture = "../app/res/photos/profilePhotos/" . $userMail . ".JPG";
+                                                    echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                                }
+                                                elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".png")){
+                                                    $picture = "../app/res/photos/profilePhotos/" . $userMail . ".png";
+                                                    echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                                }
+                                                elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".PNG")){
+                                                    $picture = "../app/res/photos/profilePhotos/" . $userMail . ".PNG";
+                                                    echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                                }
+                                                elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".jpeg")){
+                                                    $picture = "../app/res/photos/profilePhotos/" . $userMail . ".jpeg";
+                                                    echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                                }
+                                                elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".JPEG")){
+                                                    $picture = "../app/res/photos/profilePhotos/" . $userMail . ".JPEG";
+                                                    echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                                }
+                                                else{
+                                                    echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=\"../../../DiaGenKri/app/res/photos/avatar.jpg\" style=\"max-width: 50%\">";
+                                                }
+                                                ?>
                                             </p>
                                         </div>
                                         <div class="col-lg-8">
@@ -132,22 +169,31 @@
             <div class="col-sm-2 sidenav">
                 <h3>LINKS</h3>
                 <p><a href="http://www.limfom-levkemija.org/domov.html">L&L</a></p>
+                <p><a href="http://lrss.fri.uni-lj.si/bio/">Computational Biology Group</a></p>
             </div>
             <div class="col-sm-8 text-left">
                 <h1>Welcome</h1>
                 <p>This website is dedicated to visualising algorithms for genetic disease diagnosis.</p>
                 <hr>
                 <h3>What would you like to do?</h3>
+                <?php if(isset($_SESSION["user"])):?>
                 <div class="container col-sm-4 row-increased-top">
                     <a href="../../../DiaGenKri/public/visualisation/editor" title=""><img src="../../../DiaGenKri/app/res/photos/graph-example.jpg" class="image img-responsive img-thumbnail"></a>
                     <div class="middle">
-                        <div class="text"><a class="a-tag" href="../../../DiaGenKri/public/visualisation/editor" title="">Create graph</a></div>
+                        <div class="text"><a class="a-tag" href="../../../DiaGenKri/public/visualisation/editor" title="">Create algorithm</a></div>
                     </div>
                 </div>
+                <?php endif;?>
                 <div class="container col-sm-4 row-increased-top">
                     <a href="../../../DiaGenKri/public/visualisation/diagnosis" title=""><img src="../../../DiaGenKri/app/res/photos/disease-modal.jpg" class="image img-responsive img-thumbnail"></a>
                     <div class="middle">
                         <div class="text"><a class="a-tag" href="../../../DiaGenKri/public/visualisation/diagnosis" title="">Diagnose yourself</a></div>
+                    </div>
+                </div>
+                <div class="container col-sm-4 row-increased-top">
+                    <a href="../../../DiaGenKri/public/home/about" title=""><img src="../../../DiaGenKri/app/res/photos/list.JPG" class="image img-responsive img-thumbnail"></a>
+                    <div class="middle">
+                        <div class="text"><a class="a-tag" href="../../../DiaGenKri/public/visualisation" title="">List of algorithms</a></div>
                     </div>
                 </div>
                 <div class="container col-sm-4 row-increased-top">
@@ -156,7 +202,6 @@
                         <div class="text"><a class="a-tag" href="../../../DiaGenKri/public/home/about" title="">About ViDis</a></div>
                     </div>
                 </div>
-                
             </div>
             <div class="col-sm-2 sidenav">
                 <div class="well">

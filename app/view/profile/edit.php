@@ -25,6 +25,9 @@ $data = DBfunctions::getUserProfile($userMail);
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css">
+    <script src="../../../DiaGenKri/app/res/js/curations.js"></script>
+    <script src="../../../DiaGenKri/app/res/js/upload-image.js"></script>
+
 
 </head>
 <nav class="navbar navbar-inverse">
@@ -64,6 +67,9 @@ $data = DBfunctions::getUserProfile($userMail);
                 <li><a href="../../../DiaGenKri/public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
                     </span> Create algorithm</a></li>
                 <?php endif; ?>
+                <?php if(isset($_SESSION["user"]) && $_SESSION["user-confirm"] == 1): ?>
+                    <li><a href="../../../DiaGenKri/public/visualisation/curations"><span class="label label-pill label-danger count"></span> <span class="glyphicon glyphicon-bell" ></span> Curation requests</a></li>
+                <?php endif; ?>
                 <li><a href="../../../DiaGenKri/public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
                 <?php if(isset($_SESSION["user"])): ?> <!-- && $_SESSION[user_level] === 6, which is admin for example-->
                     <?php if(isset($_SESSION["user-admin"]) && $_SESSION["user-admin"] == 1): ?>
@@ -81,9 +87,38 @@ $data = DBfunctions::getUserProfile($userMail);
                         <li>
                             <div class="navbar-login">
                                 <div class="row" id="login-row">
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-4 image">
                                         <p class="text-center">
-                                            <span class="glyphicon glyphicon-user icon-size"></span>
+                                            <?php
+                                            $userMail = $_SESSION["user"];
+                                            if(file_exists("../app/res/photos/profilePhotos/" . $userMail . ".jpg")){
+                                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".jpg";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".JPG")){
+                                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".JPG";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".png")){
+                                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".png";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".PNG")){
+                                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".PNG";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".jpeg")){
+                                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".jpeg";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".JPEG")){
+                                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".JPEG";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            else{
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=\"../../../DiaGenKri/app/res/photos/avatar.jpg\" style=\"max-width: 50%\">";
+                                            }
+                                            ?>
                                         </p>
                                     </div>
                                     <div class="col-lg-8">
@@ -275,7 +310,3 @@ $data = DBfunctions::getUserProfile($userMail);
 <footer class="container-fluid text-center">
     <p>©DiaGenKri</p>
 </footer>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquerymin.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-<script src="../../../DiaGenKri/app/res/js/upload-image.js"></script>

@@ -66,7 +66,7 @@
                 <article>
                     <div align = "center">
                         <div style = "width:300px; margin-top: 0.8em" align = "left">
-                            <form action = "<?= "logIn/loginUser/" ?>" method = "post" content="">
+                            <form class="well" action = "<?= "logIn/loginUser/" ?>" method = "post" content="">
                                 <div class="form-group">
                                 <label for="login-email">E-pošta</label>
                                 <input type="email" name = "email" class="form-control" id="login-email" aria-describedby="emailHelp" placeholder="e-poštni naslov" value="<?php if(isset($_COOKIE["email"])){echo $_COOKIE["email"];} ?>">
@@ -88,10 +88,16 @@
         </div>
         <div class="col-sm-2 sidenav">
             <div class="well">
-                <p>ADS</p>
+                <img src="../../../DiaGenKri/app/res/photos/UL.png" class="img-responsive">
             </div>
             <div class="well">
-                <p>ADS</p>
+                <img src="../../../DiaGenKri/app/res/photos/SVN.png" class="img-responsive">
+            </div>
+            <div class="well">
+                <img src="../../../DiaGenKri/app/res/photos/MIZS_AN.png" class="img-responsive">
+            </div>
+            <div class="well">
+                <img src="../../../DiaGenKri/app/res/photos/esc_an.jpg" class="img-responsive">
             </div>
         </div>
     </div>

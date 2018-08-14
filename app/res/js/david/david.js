@@ -1166,6 +1166,7 @@ function getGraphData(id_graph_load) {
                 id: myArray["id"],
                 email: myArray["e-mail"],
                 name: myArray["name"],
+                access: myArray["private"],
                 description: myArray["description"],
 
                 intended: myArray["visual"], // 1 are doctors
@@ -1181,11 +1182,19 @@ function getGraphData(id_graph_load) {
 
 // populates form with name with data(object)
 function populateForm(name, data){
+    console.log('DATA:', data);
 
     try{
         document.getElementById("graphName").value = data.name;
         document.getElementById("graphDescritption").value = data.description;
         console.log("data intended", data.intended);
+
+        if(data.access == 0){
+            document.getElementById("public").checked = true;
+        } else if(data.access == 1){
+            document.getElementById("private").checked = true;
+
+        }
 
         if(data.intended == 0){
             console.log("in 0 if");
@@ -1358,6 +1367,27 @@ function getHeights(){
 // connections.push(paper.connection(shapes[1], shapes[3], "#000", "#fff"));
 // };
 
+function imageDL() {
+    let svgString = new XMLSerializer().serializeToString(paper.canvas);
+
+    let canvas = document.getElementById("canvas");
+    let ctx = canvas.getContext("2d");
+    let DOMURL = self.URL || self.webkitURL || self;
+    let img = new Image();
+    let svg = new Blob([svgString], {type: "image/svg+xml;charset=utf-8"});
+    let url = DOMURL.createObjectURL(svg);
+    img.onload = function() {
+        ctx.drawImage(img, 0, 0);
+        let png = canvas.toDataURL("image/png");
+        document.querySelector('#png-container').innerHTML = '<img style="display: none" id="dlimg" src="'+png+'"/>';
+        DOMURL.revokeObjectURL(png);
+        document.getElementById('dl').href = document.getElementById('dlimg').src;
+        document.getElementById('dl').download="image.png";
+    };
+    img.src = url;
+
+}
+
 
 
 
@@ -1378,6 +1408,8 @@ jQuery(function ($) {
         width = positionInfo.width;
 
     paper = Raphael(document.getElementById('content'), 3000, 3000);
+
+    document.getElementById('dl').addEventListener('click', imageDL, false);
 
 
     // // paper.print(100, 100, "Test string", paper.getFont("Times", 800), 30);
@@ -2108,7 +2140,7 @@ function validation() {
     let success = true;
 
     if (document.forms["gForm"]["gName"].value === "") {
-        document.getElementById("nameLab").innerHTML = "Please provide a graph name.";
+        document.getElementById("nameLab").innerHTML = "Please provide an algorithm name.";
         // console.log('No graph name provided.');
         success = false;
     }
@@ -2116,14 +2148,21 @@ function validation() {
         document.getElementById("nameLab").innerHTML = "";
     }
     if((document.forms["gForm"]["gType"][0].checked === false) && (document.forms["gForm"]["gType"][1].checked === false)){
-        document.getElementById("typeLab").innerHTML = "Please select a graph type.";
+        document.getElementById("typeLab").innerHTML = "Please select an algorithm type.";
         // console.log('No graph type selected');
         success =  false;
     }
     else{
         document.getElementById("typeLab").innerHTML = "";
     }
-
+    if((document.forms["gForm"]["access"][0].checked === false) && (document.forms["gForm"]["access"][1].checked === false)){
+        document.getElementById("accessLab").innerHTML = "Please select algorithm accessibility.";
+        // console.log('No graph type selected');
+        success =  false;
+    }
+    else{
+        document.getElementById("typeLab").innerHTML = "";
+    }
     if(!success){
         $("#metaData").modal('show');
     }
@@ -2136,6 +2175,13 @@ function getGraphDescriptionData(){
     data['name'] = document.forms["gForm"]["gName"].value;
 
     data['description'] = document.getElementById('graphDescritption').value;
+
+    if(document.forms["gForm"]["access"][0].checked === true){
+        data['access'] = 1;
+    }
+    else{
+        data['access'] = 0;
+    }
 
     if(document.forms["gForm"]["gType"][0].checked === true){
         data['gtype'] = 1;
@@ -2172,6 +2218,13 @@ function getGraphDescriptionData(){
 
     data['atype'] = atype;
 
+    if(document.forms["gForm"]["curation"].checked === true){
+        data['curation'] = 1;
+    }
+    else{
+        data['curation'] = 0;
+    }
+
     return data;
 }
 
@@ -2180,6 +2233,9 @@ function resetModal() {
     document.getElementById('graphDescritption').value = "";
     document.getElementById('typeDiagnostic').checked = false;
     document.getElementById('typeVisual').checked = false;
+    document.getElementById('private').checked = false;
+    document.getElementById('public').checked = false;
+    document.getElementById('curation').checked = false;
 
     var elements = document.getElementById("sel1").options;
 
@@ -2351,19 +2407,22 @@ function saveGraph() {
                 data: json,
                 name: graphDescription['name'],
                 description: graphDescription['description'],
+                access: graphDescription['access'],
                 gtype: graphDescription['gtype'],
-                atype: graphDescription['atype']
+                atype: graphDescription['atype'],
+                curation: graphDescription['curation']
             },
             success: function(data, status){
                 // console.log('[saveGraph] save', status === "success" ? "saved successfuly" : "not saved successfuly", "\ndata:", data);
-                if(data === "1"){
+                if(data){
+                    console.log(data);
                     $.notify("Algorithm successfuly saved",
                         { position: 'bottom center',
                             className: 'success',
                             gap: 5 }
                     );
                 } else {
-                    console.log("ERROR:", data);
+                    console.log("ERROR:", data, status);
                     $.notify("Something went wrong, algorithm not saved",
                         { position: 'bottom center',
                             className: 'error',
@@ -2399,6 +2458,7 @@ function saveGraph() {
                 data: json,
                 id: graphId,
                 name: graphDescription['name'],
+                access: graphDescription['access'],
                 description: graphDescription['description'],
                 gtype: graphDescription['gtype'],
                 atype: graphDescription['atype']

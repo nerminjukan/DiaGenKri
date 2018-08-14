@@ -65,7 +65,7 @@
         </div>
         <div class="col-sm-8 text-left">
             <div class="container-fluid row-increased-top">
-                <form action = "<?= "register/add/" ?>" method = "post" content="">
+                <form class="well" action = "<?= "register/add/" ?>" method = "post" content="">
                     <div class="form-group">
                         <label for="name">Name:</label>
                         <input type ="text" class="form-control" id="name" name ="name"/>
@@ -92,10 +92,16 @@
         </div>
         <div class="col-sm-2 sidenav">
             <div class="well">
-                <p>ADS</p>
+                <img src="../../../DiaGenKri/app/res/photos/UL.png" class="img-responsive">
             </div>
             <div class="well">
-                <p>ADS</p>
+                <img src="../../../DiaGenKri/app/res/photos/SVN.png" class="img-responsive">
+            </div>
+            <div class="well">
+                <img src="../../../DiaGenKri/app/res/photos/MIZS_AN.png" class="img-responsive">
+            </div>
+            <div class="well">
+                <img src="../../../DiaGenKri/app/res/photos/esc_an.jpg" class="img-responsive">
             </div>
         </div>
     </div>

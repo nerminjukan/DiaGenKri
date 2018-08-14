@@ -44,10 +44,13 @@ include_once '../app/controllers/visualisation.php';
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/notify.min.js"></script>
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/raphael.pan-zoom.js"></script>
     <!-- <script type="text/javascript" src="../../../DiaGenKri/app/res/js/nermin/nermin.js"></script> -->
+    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/raphael/raphael.export.js"></script>
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/david.js"></script> 
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/nermin/test.js"></script>
     <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/getdata.js"></script> 
-    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/tree.js"></script> 
+    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/tree.js"></script>
+    <script src="../../../DiaGenKri/app/res/js/curations.js"></script>
+
 
 
 
@@ -97,6 +100,9 @@ $description="";
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
+                <?php if(isset($_SESSION["user"]) && $_SESSION["user-confirm"] == 1): ?>
+                    <li><a href="../../../DiaGenKri/public/visualisation/curations"><span class="label label-pill label-danger count"></span> <span class="glyphicon glyphicon-bell" ></span> Curation requests</a></li>
+                <?php endif; ?>
                 <li><a href="../../../DiaGenKri/public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
                 <?php if(isset($_SESSION["user"])): ?> <!-- && $_SESSION[user_level] === 6, which is admin for example-->
                     <?php if(isset($_SESSION["user-admin"]) && $_SESSION["user-admin"] == 1): ?>
@@ -114,9 +120,38 @@ $description="";
                         <li>
                             <div class="navbar-login">
                                 <div class="row" id="login-row">
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-4 image">
                                         <p class="text-center">
-                                            <span class="glyphicon glyphicon-user icon-size"></span>
+                                            <?php
+                                            $userMail = $_SESSION["user"];
+                                            if(file_exists("../app/res/photos/profilePhotos/" . $userMail . ".jpg")){
+                                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".jpg";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".JPG")){
+                                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".JPG";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".png")){
+                                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".png";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".PNG")){
+                                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".PNG";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".jpeg")){
+                                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".jpeg";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".JPEG")){
+                                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".JPEG";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            else{
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=\"../../../DiaGenKri/app/res/photos/avatar.jpg\" style=\"max-width: 50%\">";
+                                            }
+                                            ?>
                                         </p>
                                     </div>
                                     <div class="col-lg-8">
@@ -220,6 +255,11 @@ $description="";
         <div class="col-sm-2 sidenav">
 
             <h2>Settings</h2>
+            <div>
+                <canvas style="display: none" id="canvas" width="2000px" height="2000px"></canvas>
+                <div id="png-container"></div>
+                <a id="dl" href="#">Download Image</a>
+            </div>
             <form>
                 <label class="myLabelForm" for="IDinput">Element ID</label></br>
                 <input class="myInputForm" id="IDinput" disabled type="text" name="fname"><br>
@@ -276,7 +316,7 @@ $description="";
                 <form name="gForm" class="form-horizontal" role="form">
                     <div class="form-group">
                         <label  class="col-sm-2 control-label"
-                                for="graphName">Graph name<label style="color: red">*</label></label>
+                                for="graphName">Algorithm name<label style="color: red">*</label></label>
                         <div class="col-sm-10">
                             <input name="gName" type="text" class="form-control"
                                    id="graphName" placeholder="Graph name"/>
@@ -285,7 +325,23 @@ $description="";
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label"
-                               for="graphDescritption" >Graph description</label>
+
+                               for="private" >Access<label style="color: red">*</label></label>
+                        <div class="col-sm-10">
+                            <div>
+                                <label class="radio-inline" for="private"><input class="radio" id="private" type="radio" name="access" value="1">Private</label>
+                            </div>
+                            <div>
+                                <label class="radio-inline" for="public"><input class="radio" type="radio" id="public" name="access" value="0">Public</label>
+
+                            </div>
+                            <label style="color: red; font-size: 14px" id="accessLab"></label>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="graphDescritption" >Algorithm description</label>
                         <div class="col-sm-10">
                             <pre><textarea class="form-control"
                                    id="graphDescritption" placeholder="Graph description" rows="6" cols="20" id="graphDescritption" type="text"></textarea></pre>
@@ -294,7 +350,7 @@ $description="";
                     <div class="form-group">
                         <label class="col-sm-2 control-label"
 
-                               for="graphType" >Intendent for<label style="color: red">*</label></label>
+                               for="graphType" >Intended for<label style="color: red">*</label></label>
                         <div class="col-sm-10">
                             <div>
                                 <label class="radio-inline" for="typeVisual"><input class="radio" id="typeVisual" type="radio" name="gType" value="visual">Doctors</label>
@@ -303,7 +359,6 @@ $description="";
                                 <label class="radio-inline" for="typeDiagnostic"><input class="radio" type="radio" id="typeDiagnostic" name="gType" value="diagnostic">Patients</label>
 
                             </div>
-                            <label style="color: red; font-size: 14px" id="typeLab"></label>
                         </div>
 
                     </div>
@@ -315,6 +370,17 @@ $description="";
                                 <option value="treatment" id="opt2">Treatment</option>
                                 <option value="other" id="opt3">Other</option>
                             </select>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Request curation</label>
+                        <div class="col-sm-10">
+                            <div class="form-group form-inline">
+                                <label class="radio-inline" for="curation"><input style="margin-right: 5px" class="radio" type="checkbox" id="curation" name="curation" value="1">Yes, request curation of algorithm</label>
+                            </div>
+
+                            <label style="color: red; font-size: 14px" id="typeLab"></label>
                         </div>
 
                     </div>

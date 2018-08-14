@@ -49,10 +49,10 @@ class Visualisation extends Controller
 
 
     public function edit(){
-        if(isset($_SESSION["user"]) && isset($_POST["data"]) && isset($_POST["name"]) && isset($_POST["description"]) && isset($_POST["gtype"]) && isset($_POST["atype"]) && isset($_POST["id"])){
+        if(isset($_SESSION["user"]) && isset($_POST["data"]) && isset($_POST["name"]) && isset($_POST["description"]) && isset($_POST["access"]) && isset($_POST["gtype"]) && isset($_POST["atype"]) && isset($_POST["id"])){
 
 
-            DBfunctions::editGraph($_SESSION["user"], $_POST["data"], $_POST["name"], $_POST["description"], $_POST["gtype"], $_POST["atype"],
+            DBfunctions::editGraph($_SESSION["user"], $_POST["data"], $_POST["name"], $_POST["description"], $_POST["access"], $_POST["gtype"], $_POST["atype"],
                 $_POST["id"]);
 
             // ViewHelper::redirect('../../public/visualisation/gallery');
@@ -72,11 +72,16 @@ class Visualisation extends Controller
 
         //var_dump($_POST);
 
-        if(isset($_SESSION["user"]) && isset($_POST["data"]) && isset($_POST["name"]) && isset($_POST["description"]) && isset($_POST["gtype"]) && isset($_POST["atype"])){
+        if(isset($_SESSION["user"]) && isset($_POST["data"]) && isset($_POST["name"]) && isset($_POST["description"]) && isset($_POST["access"]) && isset($_POST["gtype"]) && isset($_POST["atype"]) && isset($_POST["curation"])){
 
 
-            DBfunctions::saveGraph($_SESSION["user"], $_POST["data"], $_POST["name"], $_POST["description"], $_POST["gtype"], $_POST["atype"]);
+            $graphId = DBfunctions::saveGraph($_SESSION["user"], $_POST["data"], $_POST["name"], $_POST["description"], $_POST["access"], $_POST["gtype"], $_POST["atype"]);
 
+            if($_POST["curation"] === "1"){
+
+                $res = DBfunctions::createCurationRequest($graphId, $_SESSION["user"]);
+                echo json_encode($res);
+            }
             // ViewHelper::redirect('../../public/visualisation/gallery');
         }
         else{
@@ -96,6 +101,16 @@ class Visualisation extends Controller
         $user->name = $name;
 
         $this->view('visualisation/gallery', ['name' => $user->name]);
+    }
+
+    public function curationsUpdate(){
+        $count = DBfunctions::curationsCount();
+
+        echo json_encode($count);
+    }
+
+    public function curations(){
+        $this->view('visualisation/curations');
     }
 
 }

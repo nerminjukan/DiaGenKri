@@ -35,6 +35,8 @@ $data = DBfunctions::getGraphs();
 
     <script src="../../../DiaGenKri/app/res/js/david/edit.js"></script>
     <script src="../../../DiaGenKri/app/res/js/filter.js"></script>
+    <script src="../../../DiaGenKri/app/res/js/curations.js"></script>
+
 
 </head>
 
@@ -76,7 +78,9 @@ $data = DBfunctions::getGraphs();
                 <li><a href="../../../DiaGenKri/public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
                     </span> Create algorithm</a></li>
                 <?php endif; ?>
-
+                <?php if(isset($_SESSION["user"]) && $_SESSION["user-confirm"] == 1): ?>
+                    <li><a href="../../../DiaGenKri/public/visualisation/curations"><span class="label label-pill label-danger count"></span> <span class="glyphicon glyphicon-bell" ></span> Curation requests</a></li>
+                <?php endif; ?>
                     <?php if(isset($_SESSION["user-admin"]) && $_SESSION["user-admin"] == 1): ?>
                         <li><a href="../../../DiaGenKri/public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
                     <?php endif; ?>
@@ -94,9 +98,38 @@ $data = DBfunctions::getGraphs();
                         <li>
                             <div class="navbar-login">
                                 <div class="row" id="login-row">
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-4 image">
                                         <p class="text-center">
-                                            <span class="glyphicon glyphicon-user icon-size"></span>
+                                            <?php
+                                            $userMail = $_SESSION["user"];
+                                            if(file_exists("../app/res/photos/profilePhotos/" . $userMail . ".jpg")){
+                                                $picture = "../app/res/photos/profilePhotos/" . $userMail . ".jpg";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".JPG")){
+                                                $picture = "../app/res/photos/profilePhotos/" . $userMail . ".JPG";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".png")){
+                                                $picture = "../app/res/photos/profilePhotos/" . $userMail . ".png";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".PNG")){
+                                                $picture = "../app/res/photos/profilePhotos/" . $userMail . ".PNG";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".jpeg")){
+                                                $picture = "../app/res/photos/profilePhotos/" . $userMail . ".jpeg";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".JPEG")){
+                                                $picture = "../app/res/photos/profilePhotos/" . $userMail . ".JPEG";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            else{
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=\"../../../DiaGenKri/app/res/photos/avatar.jpg\" style=\"max-width: 50%\">";
+                                            }
+                                            ?>
                                         </p>
                                     </div>
                                     <div class="col-lg-8">
@@ -146,29 +179,31 @@ $data = DBfunctions::getGraphs();
         <div class="well well-sm form-group filter-settings">
             <div class="form-group full-width">
                 <label for="gName">Search:</label>
-                <input onkeyup="filterTable()" type="email" class="form-control full-width" id="gName" placeholder="enter graph name" 
+                <input onkeyup="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" type="email" class="form-control full-width" id="gName" placeholder="Enter algorithm name"
                 style="width:100%;">
+                <div>
+                    <br><label for="gName">Curated:</label>
+                    <label class="radio-inline" for="curated"><input onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" class="radio" type="checkbox" id="curated" name="curated" value="0">Curated only</label>
+                </div>
             </div>
             <!-- <div>
                 <button type="button" onclick="resetFilters()" class="btn btn-sm btn-default full-width clear-filters">Clear filters</button>
             </div> -->
         </div>
         <div class="well well-sm form-group filter-settings">
-            <label class="col-sm-6 control-label"
-
-                    >Intended for:</label>
+            <label class="col-sm-6 control-label">Intended for:</label>
 
             <div class="col-sm-6">
                 <div>
-                    <label class="radio-inline" for="typeDAll"><input onchange="filterTable()" checked class="radio" type="radio" id="typeDAll" name="gType" value="all">All</label>
+                    <label class="radio-inline" for="typeDAll"><input onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" checked class="radio" type="radio" id="typeDAll" name="gType" value="all">All</label>
                 </div>
                 <div>
 
-                    <label class="radio-inline" for="typeVisual"><input onchange="filterTable()" class="radio" id="typeVisual" type="radio" name="gType" value="visual" <?php if(!isset($_SESSION["user"])): ?> checked="checked" <?php endif; ?> >Patients</label>
+                    <label class="radio-inline" for="typeVisual"><input onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" class="radio" id="typeVisual" type="radio" name="gType" value="visual" <?php if(!isset($_SESSION["user"])): ?> checked="checked" <?php endif; ?> >Patients</label>
                 </div>
                 <?php if(isset($_SESSION["user"])): ?>
                 <div>
-                    <label class="radio-inline" for="typeDiagnostic"><input onchange="filterTable()" class="radio" type="radio" id="typeDiagnostic" name="gType" value="diagnostic">Doctors</label>
+                    <label class="radio-inline" for="typeDiagnostic"><input onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" class="radio" type="radio" id="typeDiagnostic" name="gType" value="diagnostic">Doctors</label>
                 </div>
                 <?php endif; ?>
 
@@ -177,23 +212,23 @@ $data = DBfunctions::getGraphs();
             </div>
         </div>
         <div class="well well-sm form-group filter-settings">
-            <label class="col-sm-6 control-label"
-                    >Algorithm type:</label>
+            <label class="col-sm-6 control-label">Algorithm type:</label>
             <div class="col-sm-6">
                 <div>
 
-                    <label class="radio-inline" for="typeADiagnostic"><input checked onchange="filterTable()" class="radio" type="checkbox" id="typeADiagnostic" name="aType" value="1">Diagnostic</label>
+                    <label class="radio-inline" for="typeADiagnostic"><input checked onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" class="radio" type="checkbox" id="typeADiagnostic" name="aType" value="1">Diagnostic</label>
                 </div>
                 <div>
-                    <label class="radio-inline" for="typeATreatment"><input checked onchange="filterTable()" class="radio" id="typeATreatment" type="checkbox" name="aType" value="2">Treatment</label>
+                    <label class="radio-inline" for="typeATreatment"><input checked onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" class="radio" id="typeATreatment" type="checkbox" name="aType" value="2">Treatment</label>
                 </div>
                 <div>
-                    <label class="radio-inline" for="typeAOther"><input checked onchange="filterTable()" class="radio" type="checkbox" id="typeAOther" name="aType" value="4">Other</label>
+                    <label class="radio-inline" for="typeAOther"><input checked onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" class="radio" type="checkbox" id="typeAOther" name="aType" value="4">Other</label>
 
                 </div>
                 <label style="color: red; font-size: 14px" id="typeLab"></label>
             </div>
         </div>
+
     </form>
 
 
@@ -212,8 +247,8 @@ $data = DBfunctions::getGraphs();
                 <tr>
                     <th>ID</th>
                     <th>Author</th>
-                    <th>Graph name</th>
-
+                    <th>Algorithm name</th>
+                    <th>Curated</th>
                     <th style="width: 100px;">Intended for</th>
                     <th>Algorithm type</th>
 
@@ -238,7 +273,16 @@ $data = DBfunctions::getGraphs();
                     $id = $value["id"];
                     $email = $value["e-mail"];
                     $name = $value["name"];
+                    $private = $value["private"];
+                    $curated = $value["curated"];
                     $visual = $value["visual"];
+
+                    if($curated === '0'){
+                        $curated = 'No';
+                    }
+                    else{
+                        $curated = 'Yes';
+                    }
 
                     if($visual === '0'){
                         $visual = 'Patients';
@@ -285,14 +329,19 @@ $data = DBfunctions::getGraphs();
 
                     $output = "";
 
-                    // doctors algorithms shouldnt be visible do public
+                    // doctors algorithms shouldnt be visible to public
                     if("$visual" === 'Patients' || isset($_SESSION["user"])){
                         // output string, start
-                        $output = "<tr class='tr-graphTable'>";
+                        $styleClass = " class='tr-graphTable'>";
+                        if(isset($_SESSION["user"]) && $private === '1' && $_SESSION["user"] === $email){
+                            $styleClass = "id='tr-private'>";
+                        }
+                        $output = "<tr " . $styleClass;
 
                         $output = "$output" . "<td>" . "$id" . "</td>";
                         $output = "$output" . "<td>" . "$email" . "</td>";
                         $output = "$output" . "<td>" . "$name" . "</td>";
+                        $output = "$output" . "<td>" . "$curated" . "</td>";
 
                         // if("$visual" === 'Doctors')
                         //     if(isset($_SESSION["user"]))
@@ -323,12 +372,17 @@ $data = DBfunctions::getGraphs();
                         }
 
                         // end
-                        $output = "$output" . "</tr>";
+
+                        $output = "$output" . "<td hidden>$private</td>" . "</tr>";
+
+
                     }
 
 
                     // echo "<tr class='tr-sc'><td style=\"white-space: nowrap; width: 6%\">$id</td><td style=\"white-space: nowrap; width: 12%\">$email</td><td style=\"white-space: nowrap; width: 19%\">$name</td><td style=\"white-space: nowrap; width: 16%\">$visual</td><td style=\"white-space: nowrap; width: 21%\">$algorithmType</td><td style=\"white-space: nowrap; width: 12.5%\">$created</td><td style=\"white-space: nowrap; width: 10.2%\">$button_edit</td></tr>";
-                    echo "$output";
+                    if((isset($_SESSION["user"]) && $private === '1' && $_SESSION["user"] === $email) || $private === '0'){
+                        echo "$output";
+                    }
                 }
                 ?>
                 
