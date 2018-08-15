@@ -526,7 +526,7 @@ function filterTableCurations() {
     textInput = document.getElementById("gName");
     textFilter = textInput.value.toUpperCase();
 
-    table = document.getElementById("graphTable");
+    table = document.getElementById("curationTable");
     tr = table.getElementsByTagName("tr");
 
     for (i = 1; i < tr.length; i++) {

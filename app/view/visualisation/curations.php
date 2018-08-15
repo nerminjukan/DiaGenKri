@@ -134,7 +134,7 @@ $data = DBfunctions::getCurations();
                                                     echo $_SESSION["user-name"] . " " . $_SESSION["user-surname"];
                                                     ?>
                                                 </strong></p>
-                                            <p class="text-left small"><?php
+                                            <p id="user-mail-id" class="text-left small"><?php
                                                 echo $_SESSION["user"];
                                                 ?>
                                             </p>
@@ -199,7 +199,7 @@ $data = DBfunctions::getCurations();
 <div class="container-fluid">
     <div class="row content">
         <div class="col-sm-12 text-left flex-wrap">
-            <table id="graphTable" class="table table-hover table-responsive table-bordered">
+            <table id="curationTable" class="table table-hover table-responsive table-bordered">
                 <thead>
                 <tr>
                     <th>ID</th>
@@ -222,15 +222,18 @@ $data = DBfunctions::getCurations();
                     $requestedBySurname = $value["surname"];
                     $requestedByWholeName = $requestedByName . " " . $requestedBySurname;
                     $requestedByMail = $value["requested-by"];
-                    $requestDate = $value["request-date"];
+                    $requestDate = $value["formated-date"];
                     $status = $value["status"];
                     $curatedBy = $value["curated-by"];
 
                     if($status === '0'){
                         $status = 'Open';
                     }
+                    else if($status === '1'){
+                        $status = 'Closed - OK';
+                    }
                     else{
-                        $status = 'Closed';
+                        $status = 'Closed - NOK';
                     }
 
                     if($curatedBy === null){
@@ -239,31 +242,34 @@ $data = DBfunctions::getCurations();
 
                     $disabled = " ";
 
-                    if($status === 'Closed'){
+                    if($status === 'Closed - OK' || $status === 'Closed - NOK'){
                         $disabled = ' disabled title="Already curated" ';
                     }
 
-                    $button_view = "<button class='btn btn-block btn-primary edit-graph-button' id='$id'>View</button>";
+                    $button_view = "<button class='btn btn-block btn-primary view-graph-button' id='$id'>View</button>";
 
-                    $button_curate = "<button" . $disabled .  "class='btn btn-block btn-primary view-graph-button' id='$id'>Curate</button>";
+                    $button_modal = "<button $disabled onclick='fillModal(event, this)' name='curate-$id' type=\"button\" class=\"btn btn-block btn-primary\" id='$id'>Curate</button>";
 
                     $style = "";
                     if($status === 'Open'){
-                        $style = "style=\"background-color: #ffb3b3\"";
-                    } else{
-                        $style = "style=\"background-color: #bfff80\"";
+                        $style = "style=\"background-color: #ffff66\"";
+                    } else if($status === 'Closed - OK'){
+                        $style = "style=\"background-color: #66ff66\"";
+                    }
+                    else{
+                        $style = "style=\"background-color: #ff6666\"";
                     }
 
-                    $output = "<tr " . $style . ">";
+                    $output = "<tr>";
 
                     $output = "$output" . "<td>" . "$id" . "</td>";
                     $output = "$output" . "<td>" . "$algorithmName" . "</td>";
                     $output = "$output" . "<td>" . "$requestedByWholeName" . ": " . "$requestedByMail" . "</td>";
-                    $output = "$output" . "<td>" . "$requestDate" . "</td>";
-                    $output = "$output" . "<td>" . "$status" . "</td>";
+                    $output = "$output" . "<td title=\"dd. mm. yyyy\">" . "$requestDate" . "</td>";
+                    $output = "$output" . "<td title=\"Request status\" $style>" . "$status" . "</td>";
                     $output = "$output" . "<td>" . "$curatedBy" . "</td>";
                     $output = "$output" . "<td>" . "$button_view" . "</td>";
-                    $output = "$output" . "<td>" . "$button_curate" . "</td>";
+                    $output = "$output" . "<td>" . "$button_modal" . "</td>";
 
                     echo "$output";
 
@@ -275,6 +281,12 @@ $data = DBfunctions::getCurations();
         </div>
     </div>
 </div>
+
+<!-- Modal CURATE -->
+<div id="makeModal">
+</div>
+
+<p hidden id="user-full-name"><?php echo $_SESSION["user-name"] . ' ' . $_SESSION["user-surname"]; ?></p>
 
 <!-- <footer class="container-fluid text-center">
     <p>©DiaGenKri</p>

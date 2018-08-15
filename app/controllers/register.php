@@ -119,7 +119,9 @@ http://localhost/DiaGenKri/public/register/confirm?email=' . $receiver . '&hash=
 If this registration was not done by you, please ignore the message.
 Your personal information will be discarded automatically after 24 hours.
 
-ViDis team
+Please do not respond to this email address.
+
+Your ViDis team
  
 ';
 

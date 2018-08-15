@@ -396,12 +396,12 @@ class DBfunctions {
         $db = DBconnect::getInstance();
 
         $statement = $db->prepare("
-          SELECT diagenkri.user.name, diagenkri.user.surname, g.name AS 'graph-name', gc.*
+          SELECT diagenkri.user.name, diagenkri.user.surname, g.name AS 'graph-name', DATE_FORMAT(gc.`request-date`, '%d. %m. %Y') AS 'formated-date', gc.status, gc.id, gc.`graph-id`, gc.`curated-by`, gc.`requested-by`
           FROM diagenkri.`user`
               RIGHT JOIN diagenkri.graph g ON
                   diagenkri.`user`.`e-mail`=g.`e-mail`
               RIGHT JOIN diagenkri.`graph-curation` gc ON
-                  g.`id`=gc.`graph-id` ORDER BY gc.status ASC;");
+                  g.`id`=gc.`graph-id` ORDER BY gc.`request-date` DESC;");
 
         $statement->execute();
 
@@ -423,6 +423,45 @@ class DBfunctions {
         $statement->execute();
 
         $result = $statement->fetch(PDO::FETCH_NUM);
+
+        return $result;
+    }
+
+    public static function updateCuration($id, $status, $curator){
+        $db = DBconnect::getInstance();
+
+        $statement = $db->prepare("UPDATE diagenkri.`graph-curation` SET status = :status, `curated-by` = :curatedby
+                                             WHERE id = :id");
+        $statement->bindParam(":status", $status);
+        $statement->bindParam(":curatedby", $curator);
+        $statement->bindParam(":id", $id);
+
+        $result = $statement->execute();
+
+        if($status === '1' || $status === 1){
+
+            $gidstm = $db->prepare("SELECT `graph-id` FROM diagenkri.`graph-curation`
+                                              WHERE id = :id");
+
+            $gidstm->bindParam(":id", $id);
+
+            $gidstm->execute();
+
+            $resultId = $gidstm->fetch(PDO::FETCH_NUM);
+
+            $statement1 = $db->prepare("UPDATE diagenkri.graph SET curated = :curated
+                                             WHERE id = :id");
+            $statement1->bindParam(":curated", $curated);
+            $statement1->bindParam(":id", $gid);
+
+            $curated = 1;
+
+            $gid = $resultId;
+
+            $result1 = $statement1->execute();
+
+            return $result1;
+        }
 
         return $result;
     }
