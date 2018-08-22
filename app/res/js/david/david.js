@@ -13,6 +13,7 @@ Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000") {
             {x: bb1.x + bb1.width / 2, y: bb1.y + bb1.height + 1},
             {x: bb1.x - 1, y: bb1.y + bb1.height / 2},
             {x: bb1.x + bb1.width + 1, y: bb1.y + bb1.height / 2},
+
             {x: bb2.x + bb2.width / 2, y: bb2.y - 1},
             {x: bb2.x + bb2.width / 2, y: bb2.y + bb2.height + 1},
             {x: bb2.x - 1, y: bb2.y + bb2.height / 2},
@@ -414,7 +415,7 @@ var IDtext;
 let IDdesc;
 
 // the currently handled shape -> makes it globally accessible (idea)
-var active;
+var active = null;
 
 // counter and ID number for sets inserted into 'canvasSets'
 var id = 0;
@@ -612,12 +613,25 @@ function getConnectionIndex(id){
 // ############## START OF CONNECTING TWO SHAPES ##############
 let line_first_shape_id = null,
     line_second_shape_id = null; // when thoose are both something but null, connect two shapes
+
+function setActive(node = null) {
+    if(active !== null){
+        active.attr({'stroke': 'black'});
+    }
+    if(node !== null){
+        active = node;
+        active.attr({'stroke': 'red'});
+    }
+    else{
+        active.attr({'stroke': 'black'});
+        active = null;
+    }
+}
 function onShapeClicked(){
     // enable inputs, because maybe user missclicked and wants to edit text
     disableInputs(true);
-
-    // saves the current shape to a global spoce
-    active = this;
+    // saves the current shape to a global scope
+    setActive(this);
     changingText = this.data('type') === 'decision' ? canvasSets[getSet(this.id)][1] : canvasSets[getSet(this.id)][2]
     resetText(changingText, this);
     IDinput.setAttribute('value', this.id);
@@ -963,7 +977,8 @@ function textClicked(){
         return;
     }
     console.log("CORRECT INDEX:", indexCorrectSet);
-    active = canvasSets[indexCorrectSet][0];
+    //active = canvasSets[indexCorrectSet][0];
+    setActive(canvasSets[indexCorrectSet][0]);
     IDinput.setAttribute('value', active.id);
 
 
@@ -1005,7 +1020,7 @@ function resetText(textShape, vertexShape, focus=false){
 
 // completly resets anything related to inputs
 function completeResetInputs(){
-    active = null;
+    setActive();
     changingText = null;
     IDinput.setAttribute('value', "");
     document.getElementById("IDtext").value = "";
@@ -1151,7 +1166,7 @@ function extractParameters( name, url ) {
 // get data about graph with certain id
 function getGraphData(id_graph_load) {
     let info = null
-    $.post("../../../DiaGenKri/public/visualisation/load",
+    $.post("../../public/visualisation/load",
         {
             id: id_graph_load
         },
@@ -1166,6 +1181,7 @@ function getGraphData(id_graph_load) {
                 id: myArray["id"],
                 email: myArray["e-mail"],
                 name: myArray["name"],
+                access: myArray["private"],
                 description: myArray["description"],
 
                 intended: myArray["visual"], // 1 are doctors
@@ -1181,11 +1197,19 @@ function getGraphData(id_graph_load) {
 
 // populates form with name with data(object)
 function populateForm(name, data){
+    console.log('DATA:', data);
 
     try{
         document.getElementById("graphName").value = data.name;
         document.getElementById("graphDescritption").value = data.description;
         console.log("data intended", data.intended);
+
+        if(data.access == 0){
+            document.getElementById("public").checked = true;
+        } else if(data.access == 1){
+            document.getElementById("private").checked = true;
+
+        }
 
         if(data.intended == 0){
             console.log("in 0 if");
@@ -1358,6 +1382,27 @@ function getHeights(){
 // connections.push(paper.connection(shapes[1], shapes[3], "#000", "#fff"));
 // };
 
+function imageDL() {
+    let svgString = new XMLSerializer().serializeToString(paper.canvas);
+
+    let canvas = document.getElementById("canvas");
+    let ctx = canvas.getContext("2d");
+    let DOMURL = self.URL || self.webkitURL || self;
+    let img = new Image();
+    let svg = new Blob([svgString], {type: "image/svg+xml;charset=utf-8"});
+    let url = DOMURL.createObjectURL(svg);
+    img.onload = function() {
+        ctx.drawImage(img, 0, 0);
+        let png = canvas.toDataURL("image/png");
+        document.querySelector('#png-container').innerHTML = '<img style="display: none" id="dlimg" src="'+png+'"/>';
+        DOMURL.revokeObjectURL(png);
+        document.getElementById('dl').href = document.getElementById('dlimg').src;
+        document.getElementById('dl').download="image.png";
+    };
+    img.src = url;
+
+}
+
 
 
 
@@ -1378,6 +1423,10 @@ jQuery(function ($) {
         width = positionInfo.width;
 
     paper = Raphael(document.getElementById('content'), 3000, 3000);
+
+    paper.canvas.id='canvID';
+
+    document.getElementById('dl').addEventListener('click', imageDL, false);
 
 
     // // paper.print(100, 100, "Test string", paper.getFont("Times", 800), 30);
@@ -1442,6 +1491,13 @@ jQuery(function ($) {
         e.preventDefault();
     });
 
+    $(document).keyup(function(e) {
+        console.log(e);
+        if (e.keyCode === 27) { // escape key maps to keycode `27`
+            looseFocus(e, 1);
+        }
+    });
+
     // loose focus if enter is pressed
     $("#IDtext").keyup(function(e){
         //console.log("key code:", e.keyCode);
@@ -1470,9 +1526,16 @@ jQuery(function ($) {
         // check if input changed and its not empty, only then change the value of current text,
         // because we do not want data loss
         if(currentText !== changingText.attr("text")){
+            let textDiff = currentText.length - changingText.attr("text").length;
             changingText.attr({text: currentText});
             if (changingText.data("type") === "shape_text")
-                changeWidth(changingText);
+                console.log('text stat: ', textDiff);
+                if(textDiff > 0){
+                    changeWidth(changingText, 1);
+                }
+                else{
+                    changeWidth(changingText, -1);
+                }
             if(changingText.data("id_connection") !== undefined && changingText.data("type") === "connection_text"){
                 // console.log(changingText.data("id_connection"));
                 calculateSubPath(changingText.data("id_connection"));
@@ -1567,7 +1630,7 @@ function showModalSave(){
 
 // ************************************** end of zoom
 
-function changeWidth(textShape) {
+function changeWidth(textShape, stat) {
     // console.log('changeWidth of', textShape);
     let parent = paper.getById(textShape.data('parent'));
     try{
@@ -1576,18 +1639,33 @@ function changeWidth(textShape) {
     } catch(err){
         return;
     }
-    if(textShape.getBBox().width > parent.attr('width') - 15){
-        // console.log('Too big!');
+    let counter = 0;
+    console.log('diff_BEFORE: ', parent.attr('width') - textShape.getBBox().width);
+    console.log('stat: ', stat);
+    if(stat === 0){
         parent.attr('width', textShape.getBBox().width + 20);
     }
-    else{
-        // console.log('Shorter');
-        if(parent.attr('width')- 4  > textShape.getBBox().width && parent.attr('width') - 4 > 100){
-            // console.log('Parent width: ', parent.attr('width'));
-            parent.attr('width', parent.attr('width') - 6);
+    else if(stat === -1){
+        if(parent.attr('width') - textShape.getBBox().width > 20) {
+            while (parent.attr('width') - textShape.getBBox().width > 20 && parent.attr('width') - 1 >= 100) {
+                counter++;
+                parent.attr('width', parent.attr('width') - 1);
+                console.log('counter: ', counter);
+
+            }
         }
     }
-
+    else{
+        if(parent.attr('width') - textShape.getBBox().width < 20){
+            while(parent.attr('width') - textShape.getBBox().width < 20){
+                counter++;
+                parent.attr('width', parent.attr('width') + 1);
+                console.log('counter: ', counter);
+            }
+        }
+    }
+    console.log('diff_AFTER: ', parent.attr('width') - textShape.getBBox().width);
+    counter = 0;
     // update connections
     for (let i = connections.length; i--;) {
         paper.connection(connections[i]);
@@ -1985,7 +2063,7 @@ function shapeDraw(arg, ev) {
     addToShapes(shape);
 
     // saves the current shape to a global scope
-    active = shape;
+    //active = shape;
 
     // sets the values in IDinput and IDtext to the currently active shape's values
     IDinput.setAttribute('value', shape.id);
@@ -2092,11 +2170,21 @@ function setText() {
 }
 
 // de-selects any selected element and hides handles
-function looseFocus(ev){
-    if(ev.target.childElementCount > 0){
-        // for(var i = 0; i < canvasHandles.length; i++){
-        //     // canvasHandles[i].hideHandles();
-        // }
+function looseFocus(ev, triger = 0){
+    if(triger === 1 || ev.srcElement.id === 'canvID'){
+        if(active !== null){
+            setActive();
+            IDinput.disabled = true;
+            IDinput.value = "";
+            IDtext.disabled = true;
+            IDtext.value = "";
+            IDdesc.disabled = true;
+            IDdesc.value = "";
+            $(".modal").modal('hide');
+        }
+        else{
+            $(".modal").modal('hide');
+        }
     }
 
 }
@@ -2108,7 +2196,7 @@ function validation() {
     let success = true;
 
     if (document.forms["gForm"]["gName"].value === "") {
-        document.getElementById("nameLab").innerHTML = "Please provide a graph name.";
+        document.getElementById("nameLab").innerHTML = "Please provide an algorithm name.";
         // console.log('No graph name provided.');
         success = false;
     }
@@ -2116,14 +2204,21 @@ function validation() {
         document.getElementById("nameLab").innerHTML = "";
     }
     if((document.forms["gForm"]["gType"][0].checked === false) && (document.forms["gForm"]["gType"][1].checked === false)){
-        document.getElementById("typeLab").innerHTML = "Please select a graph type.";
+        document.getElementById("typeLab").innerHTML = "Please select an algorithm type.";
         // console.log('No graph type selected');
         success =  false;
     }
     else{
         document.getElementById("typeLab").innerHTML = "";
     }
-
+    if((document.forms["gForm"]["access"][0].checked === false) && (document.forms["gForm"]["access"][1].checked === false)){
+        document.getElementById("accessLab").innerHTML = "Please select algorithm accessibility.";
+        // console.log('No graph type selected');
+        success =  false;
+    }
+    else{
+        document.getElementById("typeLab").innerHTML = "";
+    }
     if(!success){
         $("#metaData").modal('show');
     }
@@ -2136,6 +2231,13 @@ function getGraphDescriptionData(){
     data['name'] = document.forms["gForm"]["gName"].value;
 
     data['description'] = document.getElementById('graphDescritption').value;
+
+    if(document.forms["gForm"]["access"][0].checked === true){
+        data['access'] = 1;
+    }
+    else{
+        data['access'] = 0;
+    }
 
     if(document.forms["gForm"]["gType"][0].checked === true){
         data['gtype'] = 1;
@@ -2172,6 +2274,13 @@ function getGraphDescriptionData(){
 
     data['atype'] = atype;
 
+    if(document.forms["gForm"]["curation"].checked === true){
+        data['curation'] = 1;
+    }
+    else{
+        data['curation'] = 0;
+    }
+
     return data;
 }
 
@@ -2180,6 +2289,9 @@ function resetModal() {
     document.getElementById('graphDescritption').value = "";
     document.getElementById('typeDiagnostic').checked = false;
     document.getElementById('typeVisual').checked = false;
+    document.getElementById('private').checked = false;
+    document.getElementById('public').checked = false;
+    document.getElementById('curation').checked = false;
 
     var elements = document.getElementById("sel1").options;
 
@@ -2190,7 +2302,7 @@ function resetModal() {
 
 function cancelGraph() {
     if(confirm("You are about to leave the page, all your work will be lost. Do you want to proceed?")){
-        window.location.replace("../../../DiaGenKri/public/home");
+        window.location.replace("../../public/home");
     }
 }
 
@@ -2225,6 +2337,7 @@ function saveGraph() {
     shapes = [];
     canvasSets = [];
     json = null;
+    setActive();
     id = 0; // id for shapes, connections, probably obsolete right now
 
 
@@ -2331,7 +2444,7 @@ function saveGraph() {
 
 
     if(!editingGraph){
-        // $.post("../../../DiaGenKri/public/visualisation/save",
+        // $.post("../../public/visualisation/save",
         //     {
         //         data: json,
         //         name: graphDescription['name'],
@@ -2346,24 +2459,27 @@ function saveGraph() {
         //     });
         $.ajax({
             type: "POST",
-            url: "../../../DiaGenKri/public/visualisation/save",
+            url: "../../public/visualisation/save",
             data: {
                 data: json,
                 name: graphDescription['name'],
                 description: graphDescription['description'],
+                access: graphDescription['access'],
                 gtype: graphDescription['gtype'],
-                atype: graphDescription['atype']
+                atype: graphDescription['atype'],
+                curation: graphDescription['curation']
             },
             success: function(data, status){
                 // console.log('[saveGraph] save', status === "success" ? "saved successfuly" : "not saved successfuly", "\ndata:", data);
-                if(data === "1"){
+                if(data){
+                    console.log(data);
                     $.notify("Algorithm successfuly saved",
                         { position: 'bottom center',
                             className: 'success',
                             gap: 5 }
                     );
                 } else {
-                    console.log("ERROR:", data);
+                    console.log("ERROR:", data, status);
                     $.notify("Something went wrong, algorithm not saved",
                         { position: 'bottom center',
                             className: 'error',
@@ -2374,7 +2490,7 @@ function saveGraph() {
             }
         });
     } else {
-        // $.post("../../../DiaGenKri/public/visualisation/edit",
+        // $.post("../../public/visualisation/edit",
         //     {
         //         data: json,
         //         id: graphId,
@@ -2394,11 +2510,12 @@ function saveGraph() {
 
         $.ajax({
             type: "POST",
-            url: "../../../DiaGenKri/public/visualisation/edit",
+            url: "../../public/visualisation/edit",
             data: {
                 data: json,
                 id: graphId,
                 name: graphDescription['name'],
+                access: graphDescription['access'],
                 description: graphDescription['description'],
                 gtype: graphDescription['gtype'],
                 atype: graphDescription['atype']
@@ -2617,7 +2734,7 @@ function loadGraph(json, pacient=false, viewonly=false) {
 
         // meantime change width of all text elements to correct size
         if(element.data("type") === "shape_text")
-            changeWidth(element);
+            changeWidth(element, 0);
 
     });
 

@@ -10,16 +10,17 @@ require_once "DBconnect.php";
 
 class DBfunctions {
 
-    public static function saveGraph($email, $data, $name, $description, $gtype, $atype){
+    public static function saveGraph($email, $data, $name, $description, $access, $gtype, $atype){
 
         $db = DBconnect::getInstance();
 
         try {
-            $statement = $db->prepare("INSERT INTO diagenkri.graph (`e-mail`, `name`, `description`, `visual`, `algorithm_type`, `data`)
-                                                 VALUES (:email, :name, :description, :gtype, :atype, :data)");
+            $statement = $db->prepare("INSERT INTO diagenkri.graph (`e-mail`, `name`, `description`, `private`, `visual`, `algorithm_type`, `data`)
+                                                 VALUES (:email, :name, :description, :private, :gtype, :atype, :data)");
             $statement->bindParam(":email", $email);
             $statement->bindParam(":name", $name);
             $statement->bindParam(":description", $description);
+            $statement->bindParam(":private", $access);
             $statement->bindParam(":gtype", $gtype);
             $statement->bindParam(":atype", $atype);
             $statement->bindParam(":data", $data);
@@ -36,20 +37,40 @@ class DBfunctions {
         }
 
         // var_dump($result);
+        $id = $db->lastInsertId();
 
-        return $result;
+        return $id;
 
     }
 
-    public static function editGraph($email, $data, $name, $description, $gtype, $atype, $id){
+    public static function createCurationRequest($graphId, $email){
+        $db = DBconnect::getInstance();
+
+        try {
+            $statement = $db->prepare("INSERT INTO diagenkri.`graph-curation` (`graph-id`, `request-date`, `requested-by`)
+                                                 VALUES (:graphId, :date, :email)");
+            $statement->bindParam(":graphId", $graphId);
+            $statement->bindParam(":email", $email);
+            $statement->bindParam(":date", date("Y-m-d H:i:s"));
+
+            $result = $statement->execute();
+
+            return $result;
+        } catch (Exception $e) {
+            return ('Caught exception: ' .  $e->getMessage() . "\n");
+        }
+    }
+
+    public static function editGraph($email, $data, $name, $description, $access, $gtype, $atype, $id){
 
         $db = DBconnect::getInstance();
 
         try {
-            $statement = $db->prepare("UPDATE diagenkri.graph SET `name`=:name,`description`=:description,`visual`=:gtype,
+            $statement = $db->prepare("UPDATE diagenkri.graph SET `name`=:name,`description`=:description, `private`=:private, `visual`=:gtype,
             `algorithm_type`=:atype,`data`=:data WHERE `id`=:id ");
             $statement->bindParam(":name", $name);
             $statement->bindParam(":description", $description);
+            $statement->bindParam(":private", $access);
             $statement->bindParam(":gtype", $gtype);
             $statement->bindParam(":atype", $atype);
             $statement->bindParam(":data", $data);
@@ -203,6 +224,76 @@ class DBfunctions {
             $statement->bindParam(":password", $hashed_pass);
             $statement->execute();
             self::makeProfile($email);
+            $key = self::activationCode($email);
+            return $key;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public static function activationCode($email){
+        $db = DBconnect::getInstance();
+
+        $check = $db->prepare("SELECT COUNT(id) AS id FROM diagenkri.user_confirm WHERE `mail` = :email");
+        $check->bindParam(":email", $email);
+        $check->execute();
+        $anwser = $check->fetch(PDO::FETCH_NUM);
+        if($anwser[0] === '0'){
+            $key = $email . date("Y-m-d H:i:s") . random_int(1, 10000);
+            $key = md5($key);
+
+            $statement = $db->prepare("INSERT INTO diagenkri.user_confirm (`mail`, code)
+            VALUES (:email, :code)");
+            $statement->bindParam(":email", $email);
+            $statement->bindParam(":code", $key);
+            $success = $statement->execute();
+            if($success){
+                return $key;
+            }else{
+                return 0;
+            }
+
+        }
+        else{
+            $key = $email . date("Y-m-d H:i:s") . random_int(1, 10000);
+            $key = md5($key);
+            $update = $db->prepare("UPDATE diagenkri.user_confirm SET code=:code WHERE `mail`=:email ");
+            $update->bindParam(":email", $email);
+            $update->bindParam(":code", $key);
+            $success = $update->execute();
+            if($success){
+                return $key;
+            }else{
+                return 0;
+            }
+        }
+    }
+
+    public static function confirmActivation($email, $key){
+        $db = DBconnect::getInstance();
+
+        $statement = $db->prepare("SELECT diagenkri.user_confirm.code AS code
+                                              FROM diagenkri.user_confirm WHERE diagenkri.user_confirm.mail= :email");
+        $statement->bindParam(":email", $email);
+        $statement->execute();
+
+        $result = $statement->fetch(PDO::FETCH_NUM);
+
+
+        if($result[0] === $key){
+            $updateActive = $db->prepare("UPDATE diagenkri.user SET active = :active WHERE `e-mail` = :email");
+            $updateActive->bindParam(":active", $active);
+            $updateActive->bindParam(":email", $email);
+
+            $active = 1;
+
+            $updateActive->execute();
+
+            $delete = $db->prepare("DELETE FROM diagenkri.user_confirm WHERE mail = :email;");
+            $delete->bindParam(":email", $email);
+            $result = $delete->execute();
+
             return true;
         }
         else{
@@ -218,12 +309,12 @@ class DBfunctions {
         $statement->execute();
         $anwser = $statement->fetch(PDO::FETCH_NUM);
         if($anwser[0] == 1){
-            $checkPass = $db->prepare("SELECT password FROM diagenkri.user WHERE `e-mail` = :email");
+            $checkPass = $db->prepare("SELECT password, active FROM diagenkri.user WHERE `e-mail` = :email");
             $checkPass->bindParam(":email", $eposta);
             $checkPass->execute();
             $result = $checkPass->fetch(PDO::FETCH_NUM);
             $preveri = password_verify($geslo, $result[0]);
-            if($preveri){
+            if($preveri && $result[1] === '1'){
                 $updateAccess = $db->prepare("UPDATE diagenkri.user_profile SET `lastaccess` = :time WHERE `e-mail` = :email");
                 $updateAccess->bindParam(":time", date("Y-m-d H:i:s"));
                 $updateAccess->bindParam(":email", $eposta);
@@ -298,6 +389,81 @@ class DBfunctions {
         // var_dump($result1);
         // exit();
         return $result1;
+    }
+
+    public static function getCurations(){
+
+        $db = DBconnect::getInstance();
+
+        $statement = $db->prepare("
+          SELECT diagenkri.user.name, diagenkri.user.surname, g.name AS 'graph-name', DATE_FORMAT(gc.`request-date`, '%d. %m. %Y') AS 'formated-date', gc.status, gc.id, gc.`graph-id`, gc.`curated-by`, gc.`requested-by`
+          FROM diagenkri.`user`
+              RIGHT JOIN diagenkri.graph g ON
+                  diagenkri.`user`.`e-mail`=g.`e-mail`
+              RIGHT JOIN diagenkri.`graph-curation` gc ON
+                  g.`id`=gc.`graph-id` ORDER BY gc.`request-date` DESC;");
+
+        $statement->execute();
+
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        return $result;
+    }
+
+    public static function curationsCount(){
+
+        $db = DBconnect::getInstance();
+
+        $statement = $db->prepare("SELECT COUNT(id) AS id FROM diagenkri.`graph-curation` WHERE diagenkri.`graph-curation`.status=:status;");
+
+        $statement->bindParam(":status", $status);
+
+        $status = 0;
+
+        $statement->execute();
+
+        $result = $statement->fetch(PDO::FETCH_NUM);
+
+        return $result;
+    }
+
+    public static function updateCuration($id, $status, $curator){
+        $db = DBconnect::getInstance();
+
+        $statement = $db->prepare("UPDATE diagenkri.`graph-curation` SET status = :status, `curated-by` = :curatedby
+                                             WHERE id = :id");
+        $statement->bindParam(":status", $status);
+        $statement->bindParam(":curatedby", $curator);
+        $statement->bindParam(":id", $id);
+
+        $result = $statement->execute();
+
+        if($status === '1' || $status === 1){
+
+            $gidstm = $db->prepare("SELECT `graph-id` FROM diagenkri.`graph-curation`
+                                              WHERE id = :id");
+
+            $gidstm->bindParam(":id", $id);
+
+            $gidstm->execute();
+
+            $resultId = $gidstm->fetch(PDO::FETCH_NUM);
+
+            $statement1 = $db->prepare("UPDATE diagenkri.graph SET curated = :curated
+                                             WHERE id = :id");
+            $statement1->bindParam(":curated", $curated);
+            $statement1->bindParam(":id", $gid);
+
+            $curated = 1;
+
+            $gid = $resultId;
+
+            $result1 = $statement1->execute();
+
+            return $result1;
+        }
+
+        return $result;
     }
 
 }

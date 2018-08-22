@@ -30,7 +30,7 @@ $(function(){
 	//       //json = data;
 	//   });
 
-	$.post("../../../DiaGenKri/public/visualisation/load",
+	$.post("../../public/visualisation/load",
 	{
 		id: id_graph_load
 	},
@@ -69,7 +69,7 @@ $(function(){
 		const id_graph = $(this).attr('id');
 
 	// load the graph on invisible canvas
-		$.post("../../../DiaGenKri/public/visualisation/load",
+		$.post("../../public/visualisation/load",
 		{
 			id: id_graph
 		},

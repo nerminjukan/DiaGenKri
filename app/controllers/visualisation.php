@@ -49,10 +49,10 @@ class Visualisation extends Controller
 
 
     public function edit(){
-        if(isset($_SESSION["user"]) && isset($_POST["data"]) && isset($_POST["name"]) && isset($_POST["description"]) && isset($_POST["gtype"]) && isset($_POST["atype"]) && isset($_POST["id"])){
+        if(isset($_SESSION["user"]) && isset($_POST["data"]) && isset($_POST["name"]) && isset($_POST["description"]) && isset($_POST["access"]) && isset($_POST["gtype"]) && isset($_POST["atype"]) && isset($_POST["id"])){
 
 
-            DBfunctions::editGraph($_SESSION["user"], $_POST["data"], $_POST["name"], $_POST["description"], $_POST["gtype"], $_POST["atype"],
+            DBfunctions::editGraph($_SESSION["user"], $_POST["data"], $_POST["name"], $_POST["description"], $_POST["access"], $_POST["gtype"], $_POST["atype"],
                 $_POST["id"]);
 
             // ViewHelper::redirect('../../public/visualisation/gallery');
@@ -72,11 +72,16 @@ class Visualisation extends Controller
 
         //var_dump($_POST);
 
-        if(isset($_SESSION["user"]) && isset($_POST["data"]) && isset($_POST["name"]) && isset($_POST["description"]) && isset($_POST["gtype"]) && isset($_POST["atype"])){
+        if(isset($_SESSION["user"]) && isset($_POST["data"]) && isset($_POST["name"]) && isset($_POST["description"]) && isset($_POST["access"]) && isset($_POST["gtype"]) && isset($_POST["atype"]) && isset($_POST["curation"])){
 
 
-            DBfunctions::saveGraph($_SESSION["user"], $_POST["data"], $_POST["name"], $_POST["description"], $_POST["gtype"], $_POST["atype"]);
+            $graphId = DBfunctions::saveGraph($_SESSION["user"], $_POST["data"], $_POST["name"], $_POST["description"], $_POST["access"], $_POST["gtype"], $_POST["atype"]);
 
+            if($_POST["curation"] === "1"){
+
+                $res = DBfunctions::createCurationRequest($graphId, $_SESSION["user"]);
+                echo json_encode($res);
+            }
             // ViewHelper::redirect('../../public/visualisation/gallery');
         }
         else{
@@ -96,6 +101,74 @@ class Visualisation extends Controller
         $user->name = $name;
 
         $this->view('visualisation/gallery', ['name' => $user->name]);
+    }
+
+    public function curationsUpdate(){
+        $count = DBfunctions::curationsCount();
+
+        echo json_encode($count);
+    }
+
+    public function curations(){
+        $this->view('visualisation/curations');
+    }
+
+    public function curate(){
+        if(isset($_SESSION["user"]) && isset($_POST["id"]) && isset($_POST["algName"]) && isset($_POST["result"]) && isset($_POST["explanation"]) && isset($_POST["author"]) && isset($_POST["curatorMail"]) && isset($_POST["curatorFullName"])){
+            $result = DBfunctions::updateCuration($_POST["id"], $_POST["result"], $_POST["curatorMail"]);
+
+            if($result){
+                $result = $this->sendMail($_POST["author"], $_POST["id"], $_POST["explanation"], $_POST["result"], $_POST["curatorMail"], $_POST["curatorFullName"], $_POST["algName"]);
+                echo json_encode($result);
+            }
+            echo json_encode($result);
+        }
+        echo json_encode('Not all data received!');
+    }
+
+    public function sendMail($receiver, $id, $explanation, $decision, $curatorMail, $curatorFullName, $algName){
+        $stat = "";
+        $receiver = 'petra.mikla@gmail.com';
+        if($decision === 1 || $decision === '1'){
+            $decision = 'We gladly inform you that the request was successfully approved!';
+            $stat = 'approved';
+        }else{
+            $decision = 'Unfortunately, we must inform you that the request was rejected.';
+            $stat = 'rejected';
+        }
+
+        $to      = $receiver; // Send email to our user
+        $subject = 'Algorithm curation response for: ' . $algName; // Give the email a subject
+        $message = '
+ 
+Thank you for submitting this curation request!
+
+Your curation request has now been processed. ' . $decision . '
+
+-----------------------------
+CURATION DETAILS
+
+Request ID: ' . $id . '
+Status: ' . $stat . '
+Curator: ' . $curatorFullName . '
+Curator\'s contact address: ' . $curatorMail . '
+Explanation provided by the curator:
+
+' . $explanation . '
+
+-----------------------------
+
+If this action was not done by you, please ignore and delete this message.
+
+Please do not respond to this email address.
+
+Your ViDis team
+ 
+';
+
+        $headers = 'From:support@vidis.fri.uni-lj.si' . "\r\n"; // Set from headers
+        $response = mail($to, $subject, $message, $headers); // Send our email
+        return $response;
     }
 
 }

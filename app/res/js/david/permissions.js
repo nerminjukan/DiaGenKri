@@ -14,7 +14,7 @@ $(function(){
 		console.log("[update user permissions]", email, name, admin_c,read_c,edit_c,delete_c,add_c,confirm_c);
 
 
-		$.post("../../../DiaGenKri/public/administrate/savePR",
+		$.post("../../public/administrate/savePR",
 		{
 			userChange: email,
 			option1: admin_c ? "on" : "off",
