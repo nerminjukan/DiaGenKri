@@ -3,7 +3,7 @@ $(document).ready(function(){
     function load_unseen_notification()
     {
         $.ajax({
-            url:"../../../DiaGenKri/public/visualisation/curationsUpdate",
+            url:"../../public/visualisation/curationsUpdate",
             method:"POST",
             dataType:"json",
             success:function(data)
@@ -238,7 +238,7 @@ function saveCuration(id, curatorFullName, curatorMail){
 
     $.ajax({
         type: "POST",
-        url: "../../../DiaGenKri/public/visualisation/curate",
+        url: "../../public/visualisation/curate",
         data: {
             id: id,
             result: dataGet['result'],
@@ -330,7 +330,7 @@ function updateStatus(id, status, curatorMail) {
 }
 
 function validateCuration(id) {
-    if(! document.forms["cForm-"+id]["status"][0].checked === true || ! document.forms["cForm-"+id]["status"][1].checked === true){
+    if(! document.forms["cForm-"+id]["status"][0].checked === true){
         if(! document.forms["cForm-"+id]["status"][1].checked === true){
             return false;
         }

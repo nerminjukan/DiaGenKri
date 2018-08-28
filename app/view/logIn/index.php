@@ -1,6 +1,6 @@
 <?php
     if(isset($_SESSION["user"])){
-        header("Location: ../../../DiaGenKri/public/home");
+        header("Location: ../../public/home");
     }
 ?>
 <!DOCTYPE html>
@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css">
+    <link rel="stylesheet" href="../../app/res/css/main.css">
 
 </head>
 <nav class="navbar navbar-inverse">
@@ -27,7 +27,7 @@
                     <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
                     <svg class="svg-link" version="1.1" height="35px" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                          viewBox="280 250 280 190" style="enable-background:new 0 0 841.9 595.3;" xml:space="preserve">
-                        <a href="../../../DiaGenKri/public/home">
+                        <a href="../../public/home">
                         <g id="XMLID_1783_">
                             <text id="XMLID_1_" transform="matrix(1.244 0 0 1 291.3076 436.5898)" class="st0 st1 st2">ViDis</text>
                             <g id="XMLID_2190_">
@@ -48,8 +48,8 @@
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="../../../DiaGenKri/public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
-                <li><a href="../../../DiaGenKri/public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
+                <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
+                <li><a href="../../public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
             </ul>
         </div>
     </div>
@@ -59,7 +59,8 @@
     <div class="row content">
         <div class="col-sm-2 sidenav">
             <h3>LINKS</h3>
-            <p><a href="http://www.limfom-levkemija.org/domov.html">L&L</a></p>
+            <p><a href="http://www.limfom-levkemija.org/domov.html" target="_blank">L&L</a></p>
+            <p><a href="http://lrss.fri.uni-lj.si/bio/" target="_blank">Computational Biology Group</a></p>
         </div>
         <div class="col-sm-8 text-left">
             <div>
@@ -88,21 +89,21 @@
         </div>
         <div class="col-sm-2 sidenav">
             <div class="well">
-                <img src="../../../DiaGenKri/app/res/photos/UL.png" class="img-responsive">
+                <img src="../../app/res/photos/UL.png" class="img-responsive">
             </div>
             <div class="well">
-                <img src="../../../DiaGenKri/app/res/photos/SVN.png" class="img-responsive">
+                <img src="../../app/res/photos/SVN.png" class="img-responsive">
             </div>
             <div class="well">
-                <img src="../../../DiaGenKri/app/res/photos/MIZS_AN.png" class="img-responsive">
+                <img src="../../app/res/photos/MIZS_AN.png" class="img-responsive">
             </div>
             <div class="well">
-                <img src="../../../DiaGenKri/app/res/photos/esc_an.jpg" class="img-responsive">
+                <img src="../../app/res/photos/esc_an.jpg" class="img-responsive">
             </div>
         </div>
     </div>
 </div>
 
-<footer class="container-fluid text-center">
+<!-- <footer class="container-fluid text-center">
     <p>©DiaGenKri</p>
-</footer>
+</footer> -->

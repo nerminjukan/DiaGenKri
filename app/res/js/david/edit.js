@@ -16,14 +16,14 @@ $(function(){
 	//   });
 
 	// similar behavior as an HTTP redirect
-		window.location.replace("../../../DiaGenKri/public/visualisation/editor?id=" + id_graph);
+		window.location.replace("../../public/visualisation/editor?id=" + id_graph);
    });
 
    // do something hen user clicks view button
    $('button.view-graph-button').click(function(){
 		const id_graph = $(this).attr('id');
 		console.log("id:", id_graph);
-		window.location.replace("../../../DiaGenKri/public/visualisation/viewonly?id=" + id_graph);
+		window.location.replace("../../public/visualisation/viewonly?id=" + id_graph);
    });
 
 
@@ -41,7 +41,7 @@ $(function(){
 		// if(!confirmation)
 		// 	return;
 
-		$.post("../../../DiaGenKri/public/visualisation/delete",
+		$.post("../../public/visualisation/delete",
 		{
 			id: id_graph_delete
 		},

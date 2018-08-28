@@ -5,12 +5,12 @@
 
 if(isset($_GET["id"])){
     if(((!isset($_SESSION["user"])) || (!isset($_SESSION["user-edit"]) || $_SESSION["user-edit"] != 1)) && (!isset($_SESSION["user-admin"]) || $_SESSION["user-admin"] != 1)){
-        header("Location: ../../../DiaGenKri/public/visualisation");
+        header("Location: ../../public/visualisation");
     }
 }
 else{
     if(((!isset($_SESSION["user"])) || (!isset($_SESSION["user-add"]) || $_SESSION["user-add"] != 1)) && (!isset($_SESSION["user-admin"]) || $_SESSION["user-admin"] != 1)){
-        header("Location: ../../../DiaGenKri/public/home");
+        header("Location: ../../public/home");
     }
 
 }
@@ -38,23 +38,23 @@ include_once '../app/controllers/visualisation.php';
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
 
-    <script src="../../../DiaGenKri/app/res/js/raphael/raphael.min.js"></script>
-    <script src="../../../DiaGenKri/app/res/js/raphael/raphael.json.js"></script>
+    <script src="../../app/res/js/raphael/raphael.min.js"></script>
+    <script src="../../app/res/js/raphael/raphael.json.js"></script>
 
-    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/notify.min.js"></script>
-    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/raphael.pan-zoom.js"></script>
-    <!-- <script type="text/javascript" src="../../../DiaGenKri/app/res/js/nermin/nermin.js"></script> -->
-    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/raphael/raphael.export.js"></script>
-    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/david.js"></script> 
-    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/nermin/test.js"></script>
-    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/getdata.js"></script> 
-    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/tree.js"></script>
-    <script src="../../../DiaGenKri/app/res/js/curations.js"></script>
-
-
+    <script type="text/javascript" src="../../app/res/js/david/notify.min.js"></script>
+    <script type="text/javascript" src="../../app/res/js/david/raphael.pan-zoom.js"></script>
+    <!-- <script type="text/javascript" src="../../app/res/js/nermin/nermin.js"></script> -->
+    <script type="text/javascript" src="../../app/res/js/raphael/raphael.export.js"></script>
+    <script type="text/javascript" src="../../app/res/js/david/david.js"></script> 
+    <script type="text/javascript" src="../../app/res/js/nermin/test.js"></script>
+    <script type="text/javascript" src="../../app/res/js/david/getdata.js"></script> 
+    <script type="text/javascript" src="../../app/res/js/david/tree.js"></script>
+    <script src="../../app/res/js/curations.js"></script>
 
 
-    <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css">
+
+
+    <link rel="stylesheet" href="../../app/res/css/main.css">
 
 </head>
 
@@ -79,7 +79,7 @@ $description="";
                     <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
                     <svg class="svg-link" version="1.1" height="35px" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                          viewBox="280 250 280 190" style="enable-background:new 0 0 841.9 595.3;" xml:space="preserve">
-                        <a href="../../../DiaGenKri/public/home">
+                        <a href="../../public/home">
                         <g id="XMLID_1783_">
                             <text id="XMLID_1_" transform="matrix(1.244 0 0 1 291.3076 436.5898)" class="st0 st1 st2">ViDis</text>
                             <g id="XMLID_2190_">
@@ -101,12 +101,12 @@ $description="";
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
                 <?php if(isset($_SESSION["user"]) && $_SESSION["user-confirm"] == 1): ?>
-                    <li><a href="../../../DiaGenKri/public/visualisation/curations"><span class="label label-pill label-danger count"></span> <span class="glyphicon glyphicon-bell" ></span> Curation requests</a></li>
+                    <li><a href="../../public/visualisation/curations"><span class="label label-pill label-danger count"></span> <span class="glyphicon glyphicon-bell" ></span> Curation requests</a></li>
                 <?php endif; ?>
-                <li><a href="../../../DiaGenKri/public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
+                <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
                 <?php if(isset($_SESSION["user"])): ?> <!-- && $_SESSION[user_level] === 6, which is admin for example-->
                     <?php if(isset($_SESSION["user-admin"]) && $_SESSION["user-admin"] == 1): ?>
-                        <li><a href="../../../DiaGenKri/public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
+                        <li><a href="../../public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
                     <?php endif; ?>                <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <span class="glyphicon glyphicon-user"></span> 
@@ -149,7 +149,7 @@ $description="";
                                                 echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
                                             }
                                             else{
-                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=\"../../../DiaGenKri/app/res/photos/avatar.jpg\" style=\"max-width: 50%\">";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=\"../../app/res/photos/avatar.jpg\" style=\"max-width: 50%\">";
                                             }
                                             ?>
                                         </p>
@@ -164,7 +164,7 @@ $description="";
                                         ?>
                                         </p>
                                         <p class="text-left">
-                                            <a href="../../../DiaGenKri/public/profile" class="btn btn-primary btn-block btn-sm">My profile</a>
+                                            <a href="../../public/profile" class="btn btn-primary btn-block btn-sm">My profile</a>
                                         </p>
                                     </div>
                                 </div>
@@ -176,7 +176,7 @@ $description="";
                                 <div class="row" id="login-row">
                                     <div class="col-lg-12">
                                         <p>
-                                            <a href="../../../DiaGenKri/public/logIn/logOutUser/" class="btn btn-danger btn-block">Log out</a>
+                                            <a href="../../public/logIn/logOutUser/" class="btn btn-danger btn-block">Log out</a>
                                         </p>
                                     </div>
                                 </div>
@@ -185,8 +185,8 @@ $description="";
                     </ul>
                 </li>
                 <?php else: ?>
-                <li><a href="../../../DiaGenKri/public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
-                <li><a href="../../../DiaGenKri/public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
+                <li><a href="../../public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
+                <li><a href="../../public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
 
                 <?php endif; ?>
             </ul>

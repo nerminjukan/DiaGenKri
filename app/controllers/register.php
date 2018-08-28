@@ -112,7 +112,7 @@ Your account has been created, you can login with your credentials after you hav
 ------------------------
  
 Please click this link to activate your account:
-http://localhost/DiaGenKri/public/register/confirm?email=' . $receiver . '&hash=' . $key . '
+http://localhost/public/register/confirm?email=' . $receiver . '&hash=' . $key . '
 
 ------------------------
 

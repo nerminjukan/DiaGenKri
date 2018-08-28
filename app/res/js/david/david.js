@@ -267,7 +267,7 @@ function calculate (line, direct = false, text = null) {
 
 // variable that is set to true when some shape is dragged
 // it is useful because it prevents modal to be shown when user drags some shape(actually set)
-let dragging_set = false
+let dragging_set = false;
 
 // dragging shapes
 Raphael.st.draggable = function() {
@@ -277,8 +277,11 @@ Raphael.st.draggable = function() {
         ox = 0,
         oy = 0,
         moveFnc = function(dx, dy) {
+
+
+
             // disableInputs(true);
-            dragging_set = true
+            dragging_set = true;
             // console.log('[draggable] start of drag', "scale:", panZoom.getCurrentScale());
 
             lx = dx * panZoom.getCurrentScale().x + ox;
@@ -295,6 +298,8 @@ Raphael.st.draggable = function() {
                 paper.connection(connections[i]);
             }
             //console.log('DX AND DY: ', dx, dy);
+
+
 
         },
         startFnc = function() {},
@@ -320,9 +325,12 @@ Raphael.st.draggable = function() {
              console.log('E MATRIX: ', e.matrix);
 
              });*/
-            dragging_set = false
+            dragging_set = false;
+            console.log('drag: ', dragging_set);
+
             // console.log('[draggable] end of drag');
         };
+
 
     this.drag(moveFnc, startFnc, endFnc);
 };
@@ -623,13 +631,13 @@ function setActive(node = null) {
         active.attr({'stroke': 'red'});
     }
     else{
-        active.attr({'stroke': 'black'});
-        active = null;
+        //active.attr({'stroke': 'black'});
+        //active = null;
     }
 }
 function onShapeClicked(){
     // enable inputs, because maybe user missclicked and wants to edit text
-    disableInputs(true);
+    disableInputs(false);
     // saves the current shape to a global scope
     setActive(this);
     changingText = this.data('type') === 'decision' ? canvasSets[getSet(this.id)][1] : canvasSets[getSet(this.id)][2]
@@ -1492,7 +1500,7 @@ jQuery(function ($) {
     });
 
     $(document).keyup(function(e) {
-        console.log(e);
+        //console.log(e);
         if (e.keyCode === 27) { // escape key maps to keycode `27`
             looseFocus(e, 1);
         }
@@ -1530,12 +1538,12 @@ jQuery(function ($) {
             changingText.attr({text: currentText});
             if (changingText.data("type") === "shape_text")
                 console.log('text stat: ', textDiff);
-                if(textDiff > 0){
-                    changeWidth(changingText, 1);
-                }
-                else{
-                    changeWidth(changingText, -1);
-                }
+            if(textDiff > 0){
+                changeWidth(changingText, 1);
+            }
+            else{
+                changeWidth(changingText, -1);
+            }
             if(changingText.data("id_connection") !== undefined && changingText.data("type") === "connection_text"){
                 // console.log(changingText.data("id_connection"));
                 calculateSubPath(changingText.data("id_connection"));
@@ -1744,7 +1752,7 @@ function getPossibleRoots(){
     //     const conn = connections[i];
     //     const shape_from = conn.from.id;
     //     const shape_to = conn.to.id;
-        
+
     // }
 
     for (const [id, obj] of Object.entries(tree_vertices)) {
@@ -1958,12 +1966,13 @@ function shapeDraw(arg, ev) {
         resizable.data('parentID', shape.id);
 
         shape.mouseup(function () {
+            console.log('mouseUP: ', dragging_set);
             // display only if shape was not dragged
             if(!dragging_set && !line_first_shape_id && !line_second_shape_id && !delete_shape){
                 document.getElementById('descText').innerHTML = shape.data('desc');
                 document.getElementById('h4ID').innerHTML = 'Node description: ' +  shape.id;
                 $("#longText").modal();
-                // console.log("[longText modal] showing");
+                console.log("[longText modal] showing");
             }
         });
 
@@ -2186,7 +2195,6 @@ function looseFocus(ev, triger = 0){
             $(".modal").modal('hide');
         }
     }
-
 }
 
 // TODO fix dragging of decision node, check all event-handlers after re-load

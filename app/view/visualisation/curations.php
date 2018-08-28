@@ -1,7 +1,7 @@
 <?php
 
 if(((!isset($_SESSION["user"])) || (!isset($_SESSION["user-confirm"]) || $_SESSION["user-confirm"] != 1))){
-    header("Location: ../../../DiaGenKri/public/visualisation");
+    header("Location: ../../public/visualisation");
 }
 
 require_once '../app/database/DBfunctions.php';
@@ -29,12 +29,12 @@ $data = DBfunctions::getCurations();
 
 
     <!-- additional javascript and stylesheets -->
-    <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css">
-    <script src="../../../DiaGenKri/app/res/js/david/notify.min.js"></script>
+    <link rel="stylesheet" href="../../app/res/css/main.css">
+    <script src="../../app/res/js/david/notify.min.js"></script>
 
-    <script src="../../../DiaGenKri/app/res/js/david/edit.js"></script>
-    <script src="../../../DiaGenKri/app/res/js/filter.js"></script>
-    <script src="../../../DiaGenKri/app/res/js/curations.js"></script>
+    <script src="../../app/res/js/david/edit.js"></script>
+    <script src="../../app/res/js/filter.js"></script>
+    <script src="../../app/res/js/curations.js"></script>
 
 
 </head>
@@ -52,7 +52,7 @@ $data = DBfunctions::getCurations();
                 <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
                 <svg class="svg-link" version="1.1" height="35px" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                      viewBox="280 250 280 190" style="enable-background:new 0 0 841.9 595.3;" xml:space="preserve">
-                        <a href="../../../DiaGenKri/public/home">
+                        <a href="../../public/home">
                             <g id="XMLID_1783_">
                                 <text id="XMLID_1_" transform="matrix(1.244 0 0 1 291.3076 436.5898)" class="st0 st1 st2">ViDis</text>
                                 <g id="XMLID_2190_">
@@ -74,12 +74,12 @@ $data = DBfunctions::getCurations();
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
                 <?php if(isset($_SESSION["user"]) && $_SESSION["user-admin"] == 1 || isset($_SESSION["user-add"]) && $_SESSION["user-add"] == 1): ?>
-                    <li><a href="../../../DiaGenKri/public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
+                    <li><a href="../../public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
                     </span> Create algorithm</a></li>
                 <?php endif; ?>
 
                 <?php if(isset($_SESSION["user-admin"]) && $_SESSION["user-admin"] == 1): ?>
-                    <li><a href="../../../DiaGenKri/public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
+                    <li><a href="../../public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
                 <?php endif; ?>
                 <?php if(isset($_SESSION["user"])): ?>
                     <li class="dropdown">
@@ -124,7 +124,7 @@ $data = DBfunctions::getCurations();
                                                     echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
                                                 }
                                                 else{
-                                                    echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=\"../../../DiaGenKri/app/res/photos/avatar.jpg\" style=\"max-width: 50%\">";
+                                                    echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=\"../../app/res/photos/avatar.jpg\" style=\"max-width: 50%\">";
                                                 }
                                                 ?>
                                             </p>
@@ -139,7 +139,7 @@ $data = DBfunctions::getCurations();
                                                 ?>
                                             </p>
                                             <p class="text-left">
-                                                <a href="../../../DiaGenKri/public/profile" class="btn btn-primary btn-block btn-sm">My profile</a>
+                                                <a href="../../public/profile" class="btn btn-primary btn-block btn-sm">My profile</a>
                                             </p>
 
                                         </div>
@@ -152,7 +152,7 @@ $data = DBfunctions::getCurations();
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <p>
-                                                <a href="../../../DiaGenKri/public/logIn/logOutUser/" class="btn btn-danger btn-block">Log out</a>
+                                                <a href="../../public/logIn/logOutUser/" class="btn btn-danger btn-block">Log out</a>
                                             </p>
                                         </div>
                                     </div>
@@ -162,8 +162,8 @@ $data = DBfunctions::getCurations();
                         </ul>
                     </li>
                 <?php else: ?>
-                    <li><a href="../../../DiaGenKri/public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
-                    <li><a href="../../../DiaGenKri/public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
+                    <li><a href="../../public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
+                    <li><a href="../../public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
 
                 <?php endif; ?>
             </ul>
@@ -190,7 +190,7 @@ $data = DBfunctions::getCurations();
 
 
     <!-- <div>
-        <a class="btn btn-success" href="../../../DiaGenKri/public/visualisation/editor">New graph</a>
+        <a class="btn btn-success" href="../../public/visualisation/editor">New graph</a>
     </div> -->
 
 </div>
@@ -246,7 +246,7 @@ $data = DBfunctions::getCurations();
                         $disabled = ' disabled title="Already curated" ';
                     }
 
-                    $button_view = "<button class='btn btn-block btn-primary view-graph-button' id='$id'>View</button>";
+                    $button_view = "<button class='btn btn-block btn-primary view-graph-button' id='$algorithmID'>View</button>";
 
                     $button_modal = "<button $disabled onclick='fillModal(event, this)' name='curate-$id' type=\"button\" class=\"btn btn-block btn-primary\" id='$id'>Curate</button>";
 
