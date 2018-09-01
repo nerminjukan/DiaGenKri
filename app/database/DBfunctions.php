@@ -40,9 +40,8 @@ class DBfunctions {
         $id = $db->lastInsertId();
 
         return $id;
-
     }
-
+  
     public static function createCurationRequest($graphId, $email){
         $db = DBconnect::getInstance();
 
@@ -165,6 +164,10 @@ class DBfunctions {
         $statement->execute();
 
         $result = $statement->fetch(PDO::FETCH_ASSOC);
+        // var_dump("res iz dbf:loadGraph", $result);
+        // echo $result;
+        // var_dump($statement);
+        // exit();
 
         return $result;
     }
@@ -232,7 +235,9 @@ class DBfunctions {
             $statement->bindParam(":email", $email);
             $statement->bindParam(":password", $hashed_pass);
             $statement->execute();
+
             self::makeProfile($email, $fow);
+
             $key = self::activationCode($email);
             return $key;
         }

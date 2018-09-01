@@ -267,7 +267,6 @@ $data = DBfunctions::getCurations();
                         $output = "<tr style='display: none'>";
                     }
 
-
                     $output = "$output" . "<td>" . "$id" . "</td>";
                     $output = "$output" . "<td>" . "$algorithmName" . "</td>";
                     $output = "$output" . "<td>" . "$requestedByWholeName" . ": " . "$requestedByMail" . "</td>";

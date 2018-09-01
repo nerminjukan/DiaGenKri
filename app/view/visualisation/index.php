@@ -295,6 +295,13 @@ $data = DBfunctions::getGraphs();
                         $curated = 'Yes';
                     }
 
+                    if($curated === '0'){
+                        $curated = 'No';
+                    }
+                    else{
+                        $curated = 'Yes';
+                    }
+
                     if($visual === '0'){
                         $visual = 'Patients';
                     }

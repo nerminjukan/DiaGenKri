@@ -67,8 +67,9 @@ class Visualisation extends Controller
         // echo "hello world";
         $result = DBfunctions::loadGraph($_POST['id']);
         // echo "<pre>";
-        // var_dump($result);
+        // var_dump("result:", $result);
         // exit();
+
         echo json_encode($result);
     }
 
