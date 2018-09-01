@@ -73,7 +73,7 @@ $data = DBfunctions::getCurations();
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
-                <?php if(isset($_SESSION["user"]) && $_SESSION["user-admin"] == 1 || isset($_SESSION["user-add"]) && $_SESSION["user-add"] == 1): ?>
+                <?php if(isset($_SESSION["user"]) &&  isset($_SESSION["user-add"]) && $_SESSION["user-add"] == 1): ?>
                     <li><a href="../../public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
                     </span> Create algorithm</a></li>
                 <?php endif; ?>
@@ -202,7 +202,7 @@ $data = DBfunctions::getCurations();
             <table id="curationTable" class="table table-hover table-responsive table-bordered">
                 <thead>
                 <tr>
-                    <th>#</th>
+                    <th>ID</th>
                     <th>Algorithm name</th>
                     <th>Requested by</th>
                     <th>Request date</th>
@@ -215,7 +215,8 @@ $data = DBfunctions::getCurations();
                 </thead>
                 <tbody>
                 <?php foreach ($data as $key => $value){
-                    // curation ID
+
+                    // curation request ID
                     $id = $value["id"];
 
                     // algorithm id
@@ -274,7 +275,7 @@ $data = DBfunctions::getCurations();
                     }
 
 
-                    $output = "$output" . "<td>" . "$ctr" . "</td>";
+                    $output = "$output" . "<td>" . "$id" . "</td>";
 
                     $output = "$output" . "<td>" . "$algorithmName" . "</td>";
                     $output = "$output" . "<td>" . "$requestedByWholeName" . ": " . "$requestedByMail" . "</td>";
@@ -286,7 +287,6 @@ $data = DBfunctions::getCurations();
 
                     echo "$output";
 
-                    $ctr++;
 
                 }
                 ?>

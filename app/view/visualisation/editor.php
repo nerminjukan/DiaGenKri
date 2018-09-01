@@ -4,12 +4,12 @@
 
 
 if(isset($_GET["id"])){
-    if(((!isset($_SESSION["user"])) || (!isset($_SESSION["user-edit"]) || $_SESSION["user-edit"] != 1)) && (!isset($_SESSION["user-admin"]) || $_SESSION["user-admin"] != 1)){
+    if(((!isset($_SESSION["user"])) || (!isset($_SESSION["user-edit"]) || $_SESSION["user-edit"] != 1))){
         header("Location: ../../public/visualisation");
     }
 }
 else{
-    if(((!isset($_SESSION["user"])) || (!isset($_SESSION["user-add"]) || $_SESSION["user-add"] != 1)) && (!isset($_SESSION["user-admin"]) || $_SESSION["user-admin"] != 1)){
+    if(((!isset($_SESSION["user"])) || (!isset($_SESSION["user-add"]) || $_SESSION["user-add"] != 1))){
         header("Location: ../../public/home");
     }
 

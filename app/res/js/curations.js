@@ -218,7 +218,7 @@ function getRowData(id){
     for (let i = 1; i < tr.length; i++) {
         td0 = tr[i].getElementsByTagName("td")[0];
         console.log('id: ', id, '| data: ', td0.innerHTML);
-        if(td0.innerHTML === id){
+        if(td0.innerHTML == id){
             return tr[i];
         }
     }
