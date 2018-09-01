@@ -32,7 +32,7 @@ $(function(){
 	//       //json = data;
 	//   });
 
-	$.post("../../../DiaGenKri/public/visualisation/load",
+	$.post("../../public/visualisation/load",
 	{
 		id: id_graph_load
 	},

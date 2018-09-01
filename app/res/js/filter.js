@@ -4,11 +4,14 @@
 
 function filterTable() {
 
-    let radioInput, radioFilter, textInput, textFilter, cb1, cb2, cb3, table, tr, td2, td3, td4, i;
+    let radioInput, radioFilter, textInput, textFilter, cb1, cb2, cb3, table, tr, td2, td3, td4, tdc, i;
 
     let cbs = checkboxValue();
 
     radioInput = radioValue();
+
+    let curated = curatedValue();
+    console.log('CURATED:', curated);
 
     radioFilter = radioInput.toUpperCase();
 
@@ -20,9 +23,10 @@ function filterTable() {
 
     // Loop through all table rows, and hide those who don't match the search query
     for (i = 0; i < tr.length; i++) {
-        td3 = tr[i].getElementsByTagName("td")[3];
+        td3 = tr[i].getElementsByTagName("td")[4];
         td2 = tr[i].getElementsByTagName("td")[2];
-        td4 = tr[i].getElementsByTagName("td")[4];
+        td4 = tr[i].getElementsByTagName("td")[5];
+        tdc = tr[i].getElementsByTagName("td")[3];
         if (td2 && td3 && td4) {
             console.log("Got all table cells");
             if(radioInput === 'all'){
@@ -32,7 +36,12 @@ function filterTable() {
                     if(cbs.cb1 && cbs.cb2 && cbs.cb3){
                         console.log("all CB checked");
                         if (td2.innerHTML.toUpperCase().indexOf(textFilter) > -1 && (td4.innerHTML.toUpperCase().includes('DIAGNOSTIC') || td4.innerHTML.toUpperCase().includes('TREATMENT') || td4.innerHTML.toUpperCase().includes('OTHER'))) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -40,15 +49,24 @@ function filterTable() {
                     else if(cbs.cb1 && cbs.cb2){
                         console.log("CB1 CB2");
                         if (td2.innerHTML.toUpperCase().indexOf(textFilter) > -1 && (td4.innerHTML.toUpperCase().includes('TREATMENT') || td4.innerHTML.toUpperCase().includes('DIAGNOSTIC'))) {
-                            tr[i].style.display = "";
-                        } else {
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }                        } else {
                             tr[i].style.display = "none";
                         }
                     }
                     else if(cbs.cb1 && cbs.cb3){
                         console.log("CB1 CB3");
                         if (td2.innerHTML.toUpperCase().indexOf(textFilter) > -1 && (td4.innerHTML.toUpperCase().includes('OTHER') || td4.innerHTML.toUpperCase().includes('DIAGNOSTIC'))) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -56,7 +74,12 @@ function filterTable() {
                     else if(cbs.cb2 && cbs.cb3){
                         console.log("CB2 CB3");
                         if (td2.innerHTML.toUpperCase().indexOf(textFilter) > -1 && (td4.innerHTML.toUpperCase().includes('TREATMENT') || td4.innerHTML.toUpperCase().includes('OTHER'))) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -69,7 +92,12 @@ function filterTable() {
                     else if(cbs.cb1){
                         console.log("CB1");
                         if (td2.innerHTML.toUpperCase().indexOf(textFilter) > -1 && td4.innerHTML.toUpperCase().includes('DIAGNOSTIC')) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -77,7 +105,12 @@ function filterTable() {
                     else if(cbs.cb2){
                         console.log("CB2");
                         if (td2.innerHTML.toUpperCase().indexOf(textFilter) > -1 && td4.innerHTML.toUpperCase().includes('TREATMENT')) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -85,7 +118,12 @@ function filterTable() {
                     else if(cbs.cb3){
                         console.log("CB3 checked");
                         if (td2.innerHTML.toUpperCase().indexOf(textFilter) > -1 && td4.innerHTML.toUpperCase().includes('OTHER')) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -96,7 +134,12 @@ function filterTable() {
                     if(cbs.cb1 && cbs.cb2 && cbs.cb3){
                         console.log("all CB checked");
                         if (td4.innerHTML.toUpperCase().includes('DIAGNOSTIC') || td4.innerHTML.toUpperCase().includes('TREATMENT') || td4.innerHTML.toUpperCase().includes('OTHER')) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -104,7 +147,12 @@ function filterTable() {
                     else if(cbs.cb1 && cbs.cb2){
                         console.log("CB1 CB2 checked");
                         if (td4.innerHTML.toUpperCase().includes('TREATMENT') || td4.innerHTML.toUpperCase().includes('DIAGNOSTIC')) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -112,7 +160,12 @@ function filterTable() {
                     else if(cbs.cb1 && cbs.cb3){
                         console.log("CB1 CB3 checked");
                         if (td4.innerHTML.toUpperCase().includes('OTHER') || td4.innerHTML.toUpperCase().includes('DIAGNOSTIC')) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -120,7 +173,12 @@ function filterTable() {
                     else if(cbs.cb2 && cbs.cb3){
                         console.log("CB2 CB3 checked");
                         if (td4.innerHTML.toUpperCase().includes('TREATMENT') || td4.innerHTML.toUpperCase().includes('OTHER')) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -133,7 +191,12 @@ function filterTable() {
                     else if(cbs.cb1){
                         console.log("CB1 checked");
                         if (td4.innerHTML.toUpperCase().includes('DIAGNOSTIC')) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -141,7 +204,12 @@ function filterTable() {
                     else if(cbs.cb2){
                         console.log("CB2 checked");
                         if (td4.innerHTML.toUpperCase().includes('TREATMENT')) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -149,7 +217,12 @@ function filterTable() {
                     else if(cbs.cb3){
                         console.log("CB3 checked");
                         if (td4.innerHTML.toUpperCase().includes('OTHER')) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -166,7 +239,12 @@ function filterTable() {
                     if(cbs.cb1 && cbs.cb2 && cbs.cb3){
                         console.log("all CB checked");
                         if (td2.innerHTML.toUpperCase().indexOf(textFilter) > -1 && td3.innerHTML.toUpperCase().indexOf(radioFilter) > -1 && (td4.innerHTML.toUpperCase().includes('DIAGNOSTIC') || td4.innerHTML.toUpperCase().includes('TREATMENT') || td4.innerHTML.toUpperCase().includes('OTHER'))) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -174,7 +252,12 @@ function filterTable() {
                     else if(cbs.cb1 && cbs.cb2){
                         console.log("CB1 CB2 checked");
                         if (td2.innerHTML.toUpperCase().indexOf(textFilter) > -1 && td3.innerHTML.toUpperCase().indexOf(radioFilter) > -1 && (td4.innerHTML.toUpperCase().includes('TREATMENT') || td4.innerHTML.toUpperCase().includes('DIAGNOSTIC'))) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -182,7 +265,12 @@ function filterTable() {
                     else if(cbs.cb1 && cbs.cb3){
                         console.log("CB1 CB3 checked");
                         if (td2.innerHTML.toUpperCase().indexOf(textFilter) > -1 && td3.innerHTML.toUpperCase().indexOf(radioFilter) > -1 && (td4.innerHTML.toUpperCase().includes('OTHER') || td4.innerHTML.toUpperCase().includes('DIAGNOSTIC'))) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -190,7 +278,12 @@ function filterTable() {
                     else if(cbs.cb2 && cbs.cb3){
                         console.log("CB2 CB3 checked");
                         if (td2.innerHTML.toUpperCase().indexOf(textFilter) > -1 && td3.innerHTML.toUpperCase().indexOf(radioFilter) > -1 && (td4.innerHTML.toUpperCase().includes('TREATMENT') || td4.innerHTML.toUpperCase().includes('OTHER'))) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -198,7 +291,12 @@ function filterTable() {
                     else if((!cbs.cb1 && !cbs.cb2 && !cbs.cb3)){
                         console.log("no CB checked");
                         if (td2.innerHTML.toUpperCase().indexOf(textFilter) > -1 && td3.innerHTML.toUpperCase().indexOf(radioFilter) > -1) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -206,7 +304,12 @@ function filterTable() {
                     else if(cbs.cb1){
                         console.log("CB1 checked");
                         if (td2.innerHTML.toUpperCase().indexOf(textFilter) > -1 && td3.innerHTML.toUpperCase().indexOf(radioFilter) > -1 && td4.innerHTML.toUpperCase().includes('DIAGNOSTIC')) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -214,7 +317,12 @@ function filterTable() {
                     else if(cbs.cb2){
                         console.log("CB2 checked");
                         if (td2.innerHTML.toUpperCase().indexOf(textFilter) > -1 && td3.innerHTML.toUpperCase().indexOf(radioFilter) > -1 && td4.innerHTML.toUpperCase().includes('TREATMENT')) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -222,7 +330,12 @@ function filterTable() {
                     else if(cbs.cb3){
                         console.log("CB3 checked");
                         if (td2.innerHTML.toUpperCase().indexOf(textFilter) > -1 && td3.innerHTML.toUpperCase().indexOf(radioFilter) > -1 && td4.innerHTML.toUpperCase().includes('OTHER')) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -237,7 +350,12 @@ function filterTable() {
                     if(cbs.cb1 && cbs.cb2 && cbs.cb3){
                         console.log("all CB checked");
                         if (td3.innerHTML.toUpperCase().indexOf(radioFilter) > -1 && (td4.innerHTML.toUpperCase().includes('DIAGNOSTIC') || td4.innerHTML.toUpperCase().includes('TREATMENT') || td4.innerHTML.toUpperCase().includes('OTHER'))) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -245,7 +363,12 @@ function filterTable() {
                     else if(cbs.cb1 && cbs.cb2){
                         console.log("CB1 CB2 checked");
                         if (td3.innerHTML.toUpperCase().indexOf(radioFilter) > -1 && (td4.innerHTML.toUpperCase().includes('TREATMENT') || td4.innerHTML.toUpperCase().includes('DIAGNOSTIC'))) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -253,7 +376,12 @@ function filterTable() {
                     else if(cbs.cb1 && cbs.cb3){
                         console.log("CB1 CB3 checked");
                         if (td3.innerHTML.toUpperCase().indexOf(radioFilter) > -1 && (td4.innerHTML.toUpperCase().includes('OTHER') || td4.innerHTML.toUpperCase().includes('DIAGNOSTIC'))) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -261,7 +389,12 @@ function filterTable() {
                     else if(cbs.cb2 && cbs.cb3){
                         console.log("CB2 CB3 checked");
                         if (td3.innerHTML.toUpperCase().indexOf(radioFilter) > -1 && (td4.innerHTML.toUpperCase().includes('TREATMENT') || td4.innerHTML.toUpperCase().includes('OTHER'))) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -269,7 +402,12 @@ function filterTable() {
                     else if((!cbs.cb1 && !cbs.cb2 && !cbs.cb3)){
                         console.log("no CB checked");
                         if (td3.innerHTML.toUpperCase().indexOf(radioFilter) > -1) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -277,7 +415,12 @@ function filterTable() {
                     else if(cbs.cb1){
                         console.log("CB1 checked");
                         if (td3.innerHTML.toUpperCase().indexOf(radioFilter) > -1 && td4.innerHTML.toUpperCase().includes('DIAGNOSTIC')) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -285,7 +428,12 @@ function filterTable() {
                     else if(cbs.cb2){
                         console.log("CB2 checked");
                         if (td3.innerHTML.toUpperCase().indexOf(radioFilter) > -1 && td4.innerHTML.toUpperCase().includes('TREATMENT')) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -293,7 +441,12 @@ function filterTable() {
                     else if(cbs.cb3){
                         console.log("CB3 checked");
                         if (td3.innerHTML.toUpperCase().indexOf(radioFilter) > -1 && td4.innerHTML.toUpperCase().includes('OTHER')) {
-                            tr[i].style.display = "";
+                            if((curated === 'Yes' && tdc.innerHTML === 'Yes') || curated === 'No'){
+                                tr[i].style.display = "";
+                            }
+                            else{
+                                tr[i].style.display = "none";
+                            }
                         } else {
                             tr[i].style.display = "none";
                         }
@@ -314,6 +467,15 @@ function radioValue() {
     }
     else{
         return 'Doctors';
+    }
+}
+
+function curatedValue() {
+    if(document.forms["gForm"]["curated"].checked === true){
+        return 'Yes';
+    }
+    else{
+        return 'No';
     }
 }
 
@@ -345,5 +507,41 @@ function resetFilters() {
     // Loop through all table rows, and hide those who don't match the search query
     for (i = 0; i < tr.length; i++) {
         tr[i].style.display = "";
+    }
+}
+
+function filterTableCurations() {
+
+    let table, tr, textInput, textFilter, i, td1, td4;
+
+
+    let curated = curatedValue();
+    if(curated === 'Yes'){
+        curated = 'Open';
+    }
+    else{
+        curated = 'Closed';
+    }
+
+    textInput = document.getElementById("gName");
+    textFilter = textInput.value.toUpperCase();
+
+    table = document.getElementById("curationTable");
+    tr = table.getElementsByTagName("tr");
+
+    for (i = 1; i < tr.length; i++) {
+        td4 = tr[i].getElementsByTagName("td")[4];
+        td1 = tr[i].getElementsByTagName("td")[1];
+        if (td1.innerHTML.toUpperCase().indexOf(textFilter) > -1) {
+            if((curated === 'Open' && td4.innerHTML === 'Open') || curated === 'Closed'){
+                tr[i].style.display = "";
+            }
+            else{
+                tr[i].style.display = "none";
+            }
+        }
+        else {
+            tr[i].style.display = "none";
+        }
     }
 }

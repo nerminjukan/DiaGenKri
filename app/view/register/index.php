@@ -1,6 +1,6 @@
 <?php
     if(isset($_SESSION["user"])){
-        header("Location: ../../../DiaGenKri/public/home");
+        header("Location: ../../public/home");
     }
 ?>
 
@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css">
+    <link rel="stylesheet" href="../../app/res/css/main.css">
 </head>
 
 <nav class="navbar navbar-inverse">
@@ -28,7 +28,7 @@
                 <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
                 <svg class="svg-link" version="1.1" height="35px" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                      viewBox="280 250 280 190" style="enable-background:new 0 0 841.9 595.3;" xml:space="preserve">
-                    <a href="../../../DiaGenKri/public/home">
+                    <a href="../../public/home">
                     <g id="XMLID_1783_">
                         <text id="XMLID_1_" transform="matrix(1.244 0 0 1 291.3076 436.5898)" class="st0 st1 st2">ViDis</text>
                         <g id="XMLID_2190_">
@@ -49,8 +49,8 @@
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="../../../DiaGenKri/public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
-                <li><a href="../../../DiaGenKri/public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
+                <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
+                <li><a href="../../public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
             </ul>
         </div>
     </div>
@@ -61,30 +61,57 @@
     <div class="row content">
         <div class="col-sm-2 sidenav">
             <h3>LINKS</h3>
-            <p><a href="http://www.limfom-levkemija.org/domov.html">L&L</a></p>
+            <p><a href="http://www.limfom-levkemija.org/domov.html" target="_blank"><img class="image img-responsive img-thumbnail" src="../../app/res/photos/logo_LL.png"></a></p>
+            <p><a href="http://lrss.fri.uni-lj.si/bio/" target="_blank"><img class="image img-responsive img-thumbnail" src="../../app/res/photos/BG-logo.PNG"></a></p>
         </div>
         <div class="col-sm-8 text-left">
             <div class="container-fluid row-increased-top">
-                <form action = "<?= "register/add/" ?>" method = "post" content="">
+                <?php
+                try{
+                    if(isset($_SESSION["errors"])){
+                        foreach ($_SESSION["errors"] as $key => $value){
+
+                            echo "<span style=\"color: red\" id=\"errors\">$value</span><br>";
+                        }
+                        $_SESSION["errors"] = null;
+                    }
+                } catch (Exception $e){
+
+                }
+                ?>
+                <form class="well" action = "<?= "register/add/" ?>" method = "post" content="">
                     <div class="form-group">
                         <label for="name">Name:</label>
-                        <input type ="text" class="form-control" id="name" name ="name"/>
+                        <input placeholder="Enter your name" <?php if(isset($_SESSION["uname"])){echo "value=\"" . $_SESSION["uname"] . "\"";} ?> type ="text" class="form-control" id="name" name ="name"/>
                     </div>
                     <div class="form-group">
                         <label for="surname">Surname:</label>
-                        <input type ="text" class="form-control" id="surname" name ="surname"/>
+                        <input placeholder="Enter your surname" <?php if(isset($_SESSION["usurname"])){echo "value=\"" . $_SESSION["usurname"] . "\"";} ?> type ="text" class="form-control" id="surname" name ="surname"/>
                     </div>
                     <div class="form-group">
                         <label for="email">E-mail:</label>
-                        <input type = "email" class="form-control" id="email" name = "email"/>
+                        <input placeholder="Enter your E-mail address" <?php if(isset($_SESSION["usemail"])){echo "value=\"" . $_SESSION["usemail"] . "\"";} ?> type = "email" class="form-control" id="email" name = "email"/>
                     </div>
                     <div class="form-group">
                         <label for="password1">Password:</label>
-                        <input type="password" class="form-control" id="password1" name="password1"/>
+                        <input placeholder="Enter your password" type="password" class="form-control" id="password1" name="password1"/>
                     </div>
                     <div class="form-group">
                         <label for="password2">Password (repeat):</label>
-                        <input type="password" class="form-control" id="password2" name="password2"/>
+                        <input placeholder="Repeat your password" type="password" class="form-control" id="password2" name="password2"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="sel1">Field of work</label>
+                        <div>
+                            <select required class="form-control" id="sel1" name="sel1">
+                                <option disabled selected hidden>Choose your field of work</option>
+                                <option value="Doctor" id="opt1">Doctor</option>
+                                <option value="Scientist" id="opt2">Scientist</option>
+                                <option value="Researcher" id="opt3">Researcher</option>
+                                <option value="Other" id="opt4">Other</option>
+                            </select>
+                        </div>
+
                     </div>
                     <button class="btn btn-default row-increased-bottom" type="submit" value ="Oddaj">Submit</button>
                 </form>
@@ -92,15 +119,21 @@
         </div>
         <div class="col-sm-2 sidenav">
             <div class="well">
-                <p>ADS</p>
+                <img src="../../app/res/photos/UL.png" class="img-responsive">
             </div>
             <div class="well">
-                <p>ADS</p>
+                <img src="../../app/res/photos/SVN.png" class="img-responsive">
+            </div>
+            <div class="well">
+                <img src="../../app/res/photos/MIZS_AN.png" class="img-responsive">
+            </div>
+            <div class="well">
+                <img src="../../app/res/photos/esc_an.jpg" class="img-responsive">
             </div>
         </div>
     </div>
 </div>
 
-<footer class="container-fluid text-center">
+<!-- <footer class="container-fluid text-center">
     <p>©DiaGenKri</p>
-</footer>
+</footer> -->

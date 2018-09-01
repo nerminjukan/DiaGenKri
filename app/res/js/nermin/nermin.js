@@ -1148,7 +1148,7 @@ function extractParameters( name, url ) {
 // get data about graph with certain id
 function getGraphData(id_graph_load) {
     let info = null
-    $.post("../../../DiaGenKri/public/visualisation/load",
+    $.post("../../public/visualisation/load",
         {
             id: id_graph_load
         },
@@ -2022,7 +2022,7 @@ function resetModal() {
 
 function cancelGraph() {
     if(confirm("You are about to leave the page, all your work will be lost. Do you want to proceed?")){
-        window.location.replace("../../../DiaGenKri/public/home");
+        window.location.replace("../../public/home");
     }
 }
 
@@ -2156,7 +2156,7 @@ function saveGraph() {
 
 
     if(!editingGraph){
-        // $.post("../../../DiaGenKri/public/visualisation/save",
+        // $.post("../../public/visualisation/save",
         //     {
         //         data: json,
         //         name: graphDescription['name'],
@@ -2171,7 +2171,7 @@ function saveGraph() {
         //     });
         $.ajax({
             type: "POST",
-            url: "../../../DiaGenKri/public/visualisation/save",
+            url: "../../public/visualisation/save",
             data: {
                 data: json,
                 name: graphDescription['name'],
@@ -2197,7 +2197,7 @@ function saveGraph() {
             }
         });
     } else {
-        // $.post("../../../DiaGenKri/public/visualisation/edit",
+        // $.post("../../public/visualisation/edit",
         //     {
         //         data: json,
         //         id: graphId,
@@ -2217,7 +2217,7 @@ function saveGraph() {
 
         $.ajax({
             type: "POST",
-            url: "../../../DiaGenKri/public/visualisation/edit",
+            url: "../../public/visualisation/edit",
             data: {
                 data: json,
                 id: graphId,

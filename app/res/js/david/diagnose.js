@@ -4,7 +4,7 @@ $(function(){
    	const id_graph = $(this).attr('id');
 
    	// load the graph on invisible canvas
-   	$.post("../../../DiaGenKri/public/visualisation/load",
+   	$.post("../../public/visualisation/load",
 	{
 		id: id_graph
 	},
@@ -18,8 +18,16 @@ $(function(){
 
 		loadGraph(myArray["data"], true);
 
+		// const k = null;
+		// try{
+		// 	console.log(id_graph);
+		// 	k = tree_vertices["fsr17"].height - tree_vertices[id_graph].height;
+		// } catch(err){
+		// 	console.log("[diagnose.js]", err)
+		// }
 		// and display modal for it		
-   		setModal(); 
+   		// setModal(k); 
+   		setModal();
 	}
 	);
    });

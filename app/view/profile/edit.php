@@ -1,7 +1,7 @@
 <?php
 
 if(!isset($_SESSION["user"])){
-    header("Location: ../../../DiaGenKri/public/home");
+    header("Location: ../../public/home");
 }
 
 require_once '../app/database/DBfunctions.php';
@@ -24,7 +24,10 @@ $data = DBfunctions::getUserProfile($userMail);
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css">
+    <link rel="stylesheet" href="../../app/res/css/main.css">
+    <script src="../../app/res/js/curations.js"></script>
+    <script src="../../app/res/js/upload-image.js"></script>
+
 
 </head>
 <nav class="navbar navbar-inverse">
@@ -39,7 +42,7 @@ $data = DBfunctions::getUserProfile($userMail);
                     <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
                     <svg class="svg-link" version="1.1" height="35px" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                          viewBox="280 250 280 190" style="enable-background:new 0 0 841.9 595.3;" xml:space="preserve">
-                        <a href="../../../DiaGenKri/public/home">
+                        <a href="../../public/home">
                         <g id="XMLID_1783_">
                             <text id="XMLID_1_" transform="matrix(1.244 0 0 1 291.3076 436.5898)" class="st0 st1 st2">ViDis</text>
                             <g id="XMLID_2190_">
@@ -60,14 +63,17 @@ $data = DBfunctions::getUserProfile($userMail);
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
-                <?php if(isset($_SESSION["user"])): ?>
-                <li><a href="../../../DiaGenKri/public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
+                <?php if(isset($_SESSION["user"]) && $_SESSION["user-admin"] == 1 || isset($_SESSION["user-add"]) && $_SESSION["user-add"] == 1): ?>
+                <li><a href="../../public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
                     </span> Create algorithm</a></li>
                 <?php endif; ?>
-                <li><a href="../../../DiaGenKri/public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
+                <?php if(isset($_SESSION["user"]) && $_SESSION["user-confirm"] == 1): ?>
+                    <li><a href="../../public/visualisation/curations"><span class="label label-pill label-danger count"></span> <span class="glyphicon glyphicon-bell" ></span> Curation requests</a></li>
+                <?php endif; ?>
+                <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
                 <?php if(isset($_SESSION["user"])): ?> <!-- && $_SESSION[user_level] === 6, which is admin for example-->
                     <?php if(isset($_SESSION["user-admin"]) && $_SESSION["user-admin"] == 1): ?>
-                        <li><a href="../../../DiaGenKri/public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
+                        <li><a href="../../public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
                     <?php endif; ?>                <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <span class="glyphicon glyphicon-user"></span> 
@@ -81,9 +87,38 @@ $data = DBfunctions::getUserProfile($userMail);
                         <li>
                             <div class="navbar-login">
                                 <div class="row" id="login-row">
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-4 image">
                                         <p class="text-center">
-                                            <span class="glyphicon glyphicon-user icon-size"></span>
+                                            <?php
+                                            $userMail = $_SESSION["user"];
+                                            if(file_exists("../app/res/photos/profilePhotos/" . $userMail . ".jpg")){
+                                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".jpg";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".JPG")){
+                                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".JPG";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".png")){
+                                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".png";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".PNG")){
+                                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".PNG";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".jpeg")){
+                                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".jpeg";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".JPEG")){
+                                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".JPEG";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            else{
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=\"../../app/res/photos/avatar.jpg\" style=\"max-width: 50%\">";
+                                            }
+                                            ?>
                                         </p>
                                     </div>
                                     <div class="col-lg-8">
@@ -96,7 +131,7 @@ $data = DBfunctions::getUserProfile($userMail);
                                         ?>
                                         </p>
                                         <p class="text-left">
-                                            <a href="../../../DiaGenKri/public/profile" class="btn btn-primary btn-block btn-sm">My profile</a>
+                                            <a href="../../public/profile" class="btn btn-primary btn-block btn-sm">My profile</a>
                                         </p>
                                     </div>
                                 </div>
@@ -108,7 +143,7 @@ $data = DBfunctions::getUserProfile($userMail);
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <p>
-                                            <a href="../../../DiaGenKri/public/logIn/logOutUser/" class="btn btn-danger btn-block">Log out</a>
+                                            <a href="../../public/logIn/logOutUser/" class="btn btn-danger btn-block">Log out</a>
                                         </p>
                                     </div>
                                 </div>
@@ -117,8 +152,8 @@ $data = DBfunctions::getUserProfile($userMail);
                     </ul>
                 </li>
                 <?php else: ?>
-                <li><a href="../../../DiaGenKri/public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
-                <li><a href="../../../DiaGenKri/public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
+                <li><a href="../../public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
+                <li><a href="../../public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
                 <?php endif; ?>
             </ul>
         </div>
@@ -135,31 +170,31 @@ $data = DBfunctions::getUserProfile($userMail);
                             <br>
                             <?php
                             if(file_exists("../app/res/photos/profilePhotos/" . $userMail . ".jpg")){
-                                $picture = "../../../DiaGenKri/app/res/photos/profilePhotos/" . $userMail . ".jpg";
+                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".jpg";
                                 echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 50%\" id=\"preview-img\">";
                             }
                             elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".JPG")){
-                                $picture = "../../../DiaGenKri/app/res/photos/profilePhotos/" . $userMail . ".JPG";
+                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".JPG";
                                 echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 50%\" id=\"preview-img\">";
                             }
                             elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".png")){
-                                $picture = "../../../DiaGenKri/app/res/photos/profilePhotos/" . $userMail . ".png";
+                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".png";
                                 echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 50%\" id=\"preview-img\">";
                             }
                             elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".PNG")){
-                                $picture = "../../../DiaGenKri/app/res/photos/profilePhotos/" . $userMail . ".PNG";
+                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".PNG";
                                 echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 50%\" id=\"preview-img\">";
                             }
                             elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".jpeg")){
-                                $picture = "../../../DiaGenKri/app/res/photos/profilePhotos/" . $userMail . ".jpeg";
+                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".jpeg";
                                 echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 50%\" id=\"preview-img\">";
                             }
                             elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".JPEG")){
-                                $picture = "../../../DiaGenKri/app/res/photos/profilePhotos/" . $userMail . ".JPEG";
+                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".JPEG";
                                 echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 50%\" id=\"preview-img\">";
                             }
                             else{
-                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=\"../../../DiaGenKri/app/res/photos/avatar.jpg\" style=\"max-width: 50%\" id=\"preview-img\">";
+                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=\"../../app/res/photos/avatar.jpg\" style=\"max-width: 50%\" id=\"preview-img\">";
                             }
                             ?>
                             <br>
@@ -205,77 +240,119 @@ $data = DBfunctions::getUserProfile($userMail);
                             $fow = "-";
                         }
 
+                        $rights = "";
                         if($admin == 1){
-                            $adminString = "admin, ";
-                        }else{
-                            $adminString = "";
+                            $rights = $rights .  "Admin";
                         }
 
                         if($readPR == 1){
-                            $readString = "read, ";
-                        }else{
-                            $readString = "";
+                            if($rights === ""){
+                                $rights = $rights . "Read";
+                            }
+                            $rights = $rights . ", " . "read";
                         }
 
-                        if($editPR == 1){
-                            $editString = "edit, ";
-                        }else{
-                            $editString = "";
+                        if($readPR == 1){
+                            if($rights === ""){
+                                $rights = $rights . "Edit";
+                            }
+                            $rights = $rights . ", " . "edit";
                         }
 
-                        if($deletePR == 1){
-                            $deleteString = "delete, ";
-                        }else{
-                            $deleteString = "";
+                        if($readPR == 1){
+                            if($rights === ""){
+                                $rights = $rights . "Delete";
+                            }
+                            $rights = $rights . ", " . "delete";
                         }
 
-                        if($addPR == 1){
-                            $addString = "add, ";
-                        }else{
-                            $addString = "";
+                        if($readPR == 1){
+                            if($rights === ""){
+                                $rights = $rights . "Add";
+                            }
+                            $rights = $rights . ", " . "add";
                         }
 
-                        if($confirmPR == 1){
-                            $confirmString = "confirm";
-                        }else{
-                            $confirmString = "";
+                        if($readPR == 1){
+                            if($rights === ""){
+                                $rights = $rights . "Confirm";
+                            }
+                            $rights = $rights . ", " . "confirm";
+                        }
+                        $rights = $rights . ".";
+
+                        $select = "<div class=\"form - group\">
+                        <div>
+                            <select required class=\"form-control\" id=\"sel1\" name=\"sel1\">
+                                <option disabled hidden>Choose your field of work</option>";
+                        $opt1 = "<option value=\"Doctor\" id=\"opt1\">Doctor</option>";
+                        $opt2 = "<option value=\"Scientist\" id=\"opt2\">Scientist</option>";
+                        $opt3 = "<option value=\"Researcher\" id=\"opt3\">Researcher</option>";
+                        $opt4 = "<option value=\"Other\" id=\"opt4\">Other</option>";
+                        if($fow === "doctor"){
+                            $opt1 = "<option selected value=\"doctor\" id=\"opt1\">Doctor</option>";
+                        }
+                        else if($fow === "scientist"){
+                            $opt2 = "<option selected value=\"scientist\" id=\"opt2\">Scientist</option>";
+                        }
+                        else if($fow === "researcher"){
+                            $opt3 = "<option selected value=\"researcher\" id=\"opt3\">Researcher</option>";
+                        }
+                        else{
+                            $opt4 = "<option selected value=\"other\" id=\"opt4\">Other</option>";
                         }
 
-                        echo "<tr><th class='th-st'>Name: </th><td>" .                                  "<div class=\"form-group\">
-                                                                                                        <input type=\"text\" class=\"form-control\" id=\"name\" placeholder=" . $name . " name=\"name\">
+                        $selectEnd =     "</select></div></div>";
+
+                        $select = $select . $opt1 . $opt2 . $opt3 . $opt4 . $selectEnd;
+
+                        $output =  "<tr><th class='th-st'>Name: </th><td>" .                                  "<div class=\"form-group\">
+                                                                                                        <input type=\"text\" class=\"form-control\" id=\"name\" placeholder=" . $name . " value=" . $name . " name=\"name\">
                                                                                                         </div>" . "</td></tr>" . "</td></tr>" .
 
                             "<tr><th class='th-st'>Surname: </th><td style=\"white-space: nowrap\">" . "<div class=\"form-group\">
-                                                                                                        <input type=\"text\" class=\"form-control\" id=\"surname\" placeholder=" . $surname . " name=\"surname\">
+                                                                                                        <input type=\"text\" class=\"form-control\" id=\"surname\" placeholder=" . $surname . " value=" . $surname . " name=\"surname\">
                                                                                                         </div>" . "</td></tr>" .
 
                             "<tr><th class='th-st'>E-mail: </th><td>" .                                 "<div class=\"form-group\">
-                                                                                                        <input type=\"email\" class=\"form-control\" id=\"email\" placeholder=" . $email . " \"Enter email\" name=\"email\">
+                                                                                                        <input type=\"email\" disabled title='You cannot change your E-mail address.' class=\"form-control\" id=\"email\" placeholder=" . $email . " \"Enter email\" name=\"email\">
                                                                                                         </div>" . "</td></tr>" . "</td></tr>" .
 
-                            "<tr><th class='th-st'>Field of work: </th><td>" .                          "<div class=\"form-group\">
-                                                                                                        <input type=\"text\" class=\"form-control\" id=\"fow\" placeholder=" . $fow . " name=\"fow\">
-                                                                                                        </div>" . "</td></tr>" . "</td></tr>" . "</td></tr>" .
+                            "<tr><th class='th-st'>Field of work: </th><td>" .
 
-                            "<tr><th class='th-st'>Administration rights: </th><td style=\"white-space: nowrap\">" . $adminString . $readString . $editString . $deleteString . $addString . $confirmString . "</td></tr>";
+                            $select .
 
+                            "<tr><th class='th-st'>Administration rights: </th><td style=\"white-space: nowrap\">" . $rights . "</td></tr>";
+
+                        echo $output;
                     }
                     ?>
                     </tbody>
                 </table>
                 <div class="btn-group col-md-3">
                     <button type="submit" class="btn btn-success" name='userChange' <?php echo "value=" . $_GET['email']; ?>>Save</button>
-                    <a href="../../../DiaGenKri/public/profile" type="button" class="btn btn-danger row-increased-bottom">Cancel</a>
+                    <a href="../../public/profile" type="button" class="btn btn-danger row-increased-bottom">Cancel</a><br>
+                </div>
+                <div>
+                    <?php
+                    try{
+                        if(isset($_SESSION["errors"])){
+                            foreach ($_SESSION["errors"] as $key => $value){
+
+                                echo "<span style=\"color: red\" id=\"errors\">$value</span><br>";
+                            }
+                            $_SESSION["errors"] = null;
+                        }
+                    } catch (Exception $e){
+
+                    }
+                    ?>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<footer class="container-fluid text-center">
+<!-- <footer class="container-fluid text-center">
     <p>©DiaGenKri</p>
-</footer>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquerymin.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-<script src="../../../DiaGenKri/app/res/js/upload-image.js"></script>
+</footer> -->

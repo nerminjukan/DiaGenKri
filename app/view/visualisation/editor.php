@@ -5,12 +5,12 @@
 
 if(isset($_GET["id"])){
     if(((!isset($_SESSION["user"])) || (!isset($_SESSION["user-edit"]) || $_SESSION["user-edit"] != 1)) && (!isset($_SESSION["user-admin"]) || $_SESSION["user-admin"] != 1)){
-        header("Location: ../../../DiaGenKri/public/visualisation");
+        header("Location: ../../public/visualisation");
     }
 }
 else{
     if(((!isset($_SESSION["user"])) || (!isset($_SESSION["user-add"]) || $_SESSION["user-add"] != 1)) && (!isset($_SESSION["user-admin"]) || $_SESSION["user-admin"] != 1)){
-        header("Location: ../../../DiaGenKri/public/home");
+        header("Location: ../../public/home");
     }
 
 }
@@ -38,18 +38,23 @@ include_once '../app/controllers/visualisation.php';
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
 
-    <script src="../../../DiaGenKri/app/res/js/raphael/raphael.min.js"></script>
-    <script src="../../../DiaGenKri/app/res/js/raphael/raphael.json.js"></script>
+    <script src="../../app/res/js/raphael/raphael.min.js"></script>
+    <script src="../../app/res/js/raphael/raphael.json.js"></script>
 
-    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/notify.min.js"></script>
-    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/raphael.pan-zoom.js"></script>
-    <!-- <script type="text/javascript" src="../../../DiaGenKri/app/res/js/nermin/nermin.js"></script> -->
-    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/david.js"></script> 
-    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/nermin/test.js"></script>
-    <script type="text/javascript" src="../../../DiaGenKri/app/res/js/david/getdata.js"></script> 
+    <script type="text/javascript" src="../../app/res/js/david/notify.min.js"></script>
+    <script type="text/javascript" src="../../app/res/js/david/raphael.pan-zoom.js"></script>
+    <!-- <script type="text/javascript" src="../../app/res/js/nermin/nermin.js"></script> -->
+    <script type="text/javascript" src="../../app/res/js/raphael/raphael.export.js"></script>
+    <script type="text/javascript" src="../../app/res/js/david/david.js"></script> 
+    <script type="text/javascript" src="../../app/res/js/nermin/test.js"></script>
+    <script type="text/javascript" src="../../app/res/js/david/getdata.js"></script> 
+    <script type="text/javascript" src="../../app/res/js/david/tree.js"></script>
+    <script src="../../app/res/js/curations.js"></script>
 
 
-    <link rel="stylesheet" href="../../../DiaGenKri/app/res/css/main.css">
+
+
+    <link rel="stylesheet" href="../../app/res/css/main.css">
 
 </head>
 
@@ -74,7 +79,7 @@ $description="";
                     <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
                     <svg class="svg-link" version="1.1" height="35px" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                          viewBox="280 250 280 190" style="enable-background:new 0 0 841.9 595.3;" xml:space="preserve">
-                        <a href="../../../DiaGenKri/public/home">
+                        <a href="../../public/home">
                         <g id="XMLID_1783_">
                             <text id="XMLID_1_" transform="matrix(1.244 0 0 1 291.3076 436.5898)" class="st0 st1 st2">ViDis</text>
                             <g id="XMLID_2190_">
@@ -95,10 +100,13 @@ $description="";
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="../../../DiaGenKri/public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
+                <?php if(isset($_SESSION["user"]) && $_SESSION["user-confirm"] == 1): ?>
+                    <li><a href="../../public/visualisation/curations"><span class="label label-pill label-danger count"></span> <span class="glyphicon glyphicon-bell" ></span> Curation requests</a></li>
+                <?php endif; ?>
+                <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
                 <?php if(isset($_SESSION["user"])): ?> <!-- && $_SESSION[user_level] === 6, which is admin for example-->
                     <?php if(isset($_SESSION["user-admin"]) && $_SESSION["user-admin"] == 1): ?>
-                        <li><a href="../../../DiaGenKri/public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
+                        <li><a href="../../public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
                     <?php endif; ?>                <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <span class="glyphicon glyphicon-user"></span> 
@@ -112,9 +120,38 @@ $description="";
                         <li>
                             <div class="navbar-login">
                                 <div class="row" id="login-row">
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-4 image">
                                         <p class="text-center">
-                                            <span class="glyphicon glyphicon-user icon-size"></span>
+                                            <?php
+                                            $userMail = $_SESSION["user"];
+                                            if(file_exists("../app/res/photos/profilePhotos/" . $userMail . ".jpg")){
+                                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".jpg";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".JPG")){
+                                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".JPG";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".png")){
+                                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".png";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".PNG")){
+                                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".PNG";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".jpeg")){
+                                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".jpeg";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".JPEG")){
+                                                $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".JPEG";
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
+                                            }
+                                            else{
+                                                echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=\"../../app/res/photos/avatar.jpg\" style=\"max-width: 50%\">";
+                                            }
+                                            ?>
                                         </p>
                                     </div>
                                     <div class="col-lg-8">
@@ -127,7 +164,7 @@ $description="";
                                         ?>
                                         </p>
                                         <p class="text-left">
-                                            <a href="../../../DiaGenKri/public/profile" class="btn btn-primary btn-block btn-sm">My profile</a>
+                                            <a href="../../public/profile" class="btn btn-primary btn-block btn-sm">My profile</a>
                                         </p>
                                     </div>
                                 </div>
@@ -139,7 +176,7 @@ $description="";
                                 <div class="row" id="login-row">
                                     <div class="col-lg-12">
                                         <p>
-                                            <a href="../../../DiaGenKri/public/logIn/logOutUser/" class="btn btn-danger btn-block">Log out</a>
+                                            <a href="../../public/logIn/logOutUser/" class="btn btn-danger btn-block">Log out</a>
                                         </p>
                                     </div>
                                 </div>
@@ -148,8 +185,8 @@ $description="";
                     </ul>
                 </li>
                 <?php else: ?>
-                <li><a href="../../../DiaGenKri/public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
-                <li><a href="../../../DiaGenKri/public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
+                <li><a href="../../public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
+                <li><a href="../../public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
 
                 <?php endif; ?>
             </ul>
@@ -201,14 +238,19 @@ $description="";
                 <button onclick="setDeleteShape()" id = "delete_shape_button" class="btn btn-block btn-warning">Delete vertex</button>
             </div>
 
-
-            <div class="well well-sm" id="test_patients">
-                <button type="button" onclick="setModal()" id = "test_modal" class="btn btn-block btn-info">TEST</button>
-            </div>
-
             <div class="well well-sm">
                 <button id="save" onclick="showModalSave()" type="button" class="btn btn-block btn-info">Save</button>
             </div>
+
+            <div class="well well-sm">
+                <a class="btn btn-primary btn-block" id="dl">Download PNG</a>
+                <canvas style="display: none" id="canvas" width="2000px" height="2000px"></canvas>
+                <div id="png-container"></div>
+            </div>
+
+            <!---<div class="well well-sm" id="test_patients">
+                <button type="button" onclick="setModal()" id = "test_modal" class="btn btn-block btn-info">TEST</button>
+            </div>--->
 
         </div>
         <div onclick="looseFocus(event)" ondrop="mainDraw(event)" class="col-sm-8" id="content">
@@ -218,19 +260,24 @@ $description="";
         <div class="col-sm-2 sidenav">
 
             <h2>Settings</h2>
-            <form>
-                <label class="myLabelForm" for="IDinput">Element ID</label></br>
-                <input class="myInputForm" id="IDinput" disabled type="text" name="fname"><br>
+            <div>
+                <!---<label class="myLabelForm" for="IDinput">Element ID</label></br>
+                <input class="myInputForm" id="IDinput" disabled type="text" name="fname"><br>--->
                 <label class="myLabelForm" for="IDtext">Text (short)</label></br>
                 <input class="myInputForm"disabled id="IDtext" type="text" maxlength="40"></br>
                 <label class="myLabelForm" for="IDdesc">Text (long)</label></br>
                 <textarea class="myInputForm" rows="6" cols="20" disabled id="IDdesc" type="text"></textarea>
-            </form>
-
-
-            <div class="well well-sm" style="margin-top: 20px">
-                <button type="button" data-toggle="modal" data-target="#helpModal" id = "help_btn" class="btn btn-block btn-info">Help</button>
-
+                <div class="well well-sm">
+                    <label class="myLabelForm" for="color">Element color</label></br>
+                    <input class="myInputForm" disabled id="color" type="color" onchange="saveColor(event, this)">
+                </div>
+                <div class="well well-sm">
+                    <label class="myLabelForm" for="color">Hide attribute<span style="color: red"><sup title="Adds an element that allows hiding algorithm sections by color.">?</sup></span></label></br>
+                    <input class="myInputForm" disabled id="leadColor" type="checkbox" onchange="saveLead(event, this)">
+                </div>
+                <div class="well well-sm" style="margin-top: 20px">
+                    <button type="button" data-toggle="modal" data-target="#helpModal" id = "help_btn" class="btn btn-block btn-info">Help</button>
+                </div>
             </div>
         </div>
     </div>
@@ -274,7 +321,7 @@ $description="";
                 <form name="gForm" class="form-horizontal" role="form">
                     <div class="form-group">
                         <label  class="col-sm-2 control-label"
-                                for="graphName">Graph name<label style="color: red">*</label></label>
+                                for="graphName">Algorithm name<label style="color: red">*</label></label>
                         <div class="col-sm-10">
                             <input name="gName" type="text" class="form-control"
                                    id="graphName" placeholder="Graph name"/>
@@ -283,7 +330,23 @@ $description="";
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label"
-                               for="graphDescritption" >Graph description</label>
+
+                               for="private" >Access<label style="color: red">*</label></label>
+                        <div class="col-sm-10">
+                            <div>
+                                <label class="radio-inline" for="private"><input class="radio" id="private" type="radio" name="access" value="1">Private</label>
+                            </div>
+                            <div>
+                                <label class="radio-inline" for="public"><input class="radio" type="radio" id="public" name="access" value="0">Public</label>
+
+                            </div>
+                            <label style="color: red; font-size: 14px" id="accessLab"></label>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="graphDescritption" >Algorithm description</label>
                         <div class="col-sm-10">
                             <pre><textarea class="form-control"
                                    id="graphDescritption" placeholder="Graph description" rows="6" cols="20" id="graphDescritption" type="text"></textarea></pre>
@@ -292,7 +355,7 @@ $description="";
                     <div class="form-group">
                         <label class="col-sm-2 control-label"
 
-                               for="graphType" >Intendent for<label style="color: red">*</label></label>
+                               for="graphType" >Intended for<label style="color: red">*</label></label>
                         <div class="col-sm-10">
                             <div>
                                 <label class="radio-inline" for="typeVisual"><input class="radio" id="typeVisual" type="radio" name="gType" value="visual">Doctors</label>
@@ -301,7 +364,6 @@ $description="";
                                 <label class="radio-inline" for="typeDiagnostic"><input class="radio" type="radio" id="typeDiagnostic" name="gType" value="diagnostic">Patients</label>
 
                             </div>
-                            <label style="color: red; font-size: 14px" id="typeLab"></label>
                         </div>
 
                     </div>
@@ -313,6 +375,17 @@ $description="";
                                 <option value="treatment" id="opt2">Treatment</option>
                                 <option value="other" id="opt3">Other</option>
                             </select>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Request curation</label>
+                        <div class="col-sm-10">
+                            <div class="form-group form-inline">
+                                <label class="radio-inline" for="curation"><input style="margin-right: 5px" class="radio" type="checkbox" id="curation" name="curation" value="1">Yes, request curation of algorithm</label>
+                            </div>
+
+                            <label style="color: red; font-size: 14px" id="typeLab"></label>
                         </div>
 
                     </div>
@@ -450,6 +523,6 @@ $description="";
     </div>
 </div>
 
-<footer class="container-fluid text-center fixed_bottom">
+<!---<footer class="container-fluid text-center fixed_bottom">
     <p>©DiaGenKri</p>
-</footer>
+</footer>--->

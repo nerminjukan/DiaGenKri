@@ -1,14 +1,13 @@
 <?php
 
-if(!isset($_SESSION["user"]) && $_SESSION["user-admin"] != 1){
-    header("Location: ../../public/home");
+if(((!isset($_SESSION["user"])) || (!isset($_SESSION["user-confirm"]) || $_SESSION["user-confirm"] != 1))){
+    header("Location: ../../public/visualisation");
 }
 
 require_once '../app/database/DBfunctions.php';
 include_once '../app/controllers/administrate.php';
 
-$data = DBfunctions::getUsersData();
-
+$data = DBfunctions::getCurations();
 
 ?>
 
@@ -16,18 +15,26 @@ $data = DBfunctions::getUsersData();
 <html lang="sl">
 
 <head>
-    <title>Administration</title>
+    <title>Graphs table</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- jquery, popper.js and bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+    <!-- additional javascript and stylesheets -->
     <link rel="stylesheet" href="../../app/res/css/main.css">
+    <script src="../../app/res/js/david/notify.min.js"></script>
 
-    <script type="text/javascript" src="../../app/res/js/david/notify.min.js"></script>
-    <script type="text/javascript" src="../../app/res/js/david/permissions.js"></script>
+    <script src="../../app/res/js/david/edit.js"></script>
+    <script src="../../app/res/js/filter.js"></script>
     <script src="../../app/res/js/curations.js"></script>
-
 
 
 </head>
@@ -63,7 +70,6 @@ $data = DBfunctions::getUsersData();
                         </a>
                     </svg>
             </div>
-
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
@@ -71,14 +77,14 @@ $data = DBfunctions::getUsersData();
                     <li><a href="../../public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
                     </span> Create algorithm</a></li>
                 <?php endif; ?>
-                <?php if(isset($_SESSION["user"]) && $_SESSION["user-confirm"] == 1): ?>
-                    <li><a href="../../public/visualisation/curations"><span class="label label-pill label-danger count"></span> <span class="glyphicon glyphicon-bell" ></span> Curation requests</a></li>
-                <?php endif; ?>
                 <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
-                <?php if(isset($_SESSION["user"])): ?> <!-- && $_SESSION[user_level] === 6, which is admin for example-->
+                <?php if(isset($_SESSION["user-admin"]) && $_SESSION["user-admin"] == 1): ?>
+                    <li><a href="../../public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
+                <?php endif; ?>
+                <?php if(isset($_SESSION["user"])): ?>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <span class="glyphicon glyphicon-user"></span>
+                            <span class="glyphicon glyphicon-user"></span> 
                             <strong><?php
                                 echo $_SESSION["user-name"];
                                 ?>
@@ -128,13 +134,14 @@ $data = DBfunctions::getUsersData();
                                                     echo $_SESSION["user-name"] . " " . $_SESSION["user-surname"];
                                                     ?>
                                                 </strong></p>
-                                            <p class="text-left small"><?php
+                                            <p id="user-mail-id" class="text-left small"><?php
                                                 echo $_SESSION["user"];
                                                 ?>
                                             </p>
                                             <p class="text-left">
                                                 <a href="../../public/profile" class="btn btn-primary btn-block btn-sm">My profile</a>
                                             </p>
+
                                         </div>
                                     </div>
                                 </div>
@@ -149,6 +156,7 @@ $data = DBfunctions::getUsersData();
                                             </p>
                                         </div>
                                     </div>
+
                                 </div>
                             </li>
                         </ul>
@@ -156,106 +164,135 @@ $data = DBfunctions::getUsersData();
                 <?php else: ?>
                     <li><a href="../../public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
                     <li><a href="../../public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
+
                 <?php endif; ?>
             </ul>
         </div>
     </div>
 </nav>
 
+<div class="well well-sm col-sm-12 flex-wrap">
+    <form name="gForm" role="form" class="form-inline" id="filterForm">
+        <div class="well well-sm form-group filter-settings">
+            <div class="form-group full-width">
+                <label for="gName">Search:</label>
+                <input onkeyup="filterTableCurations()" type="email" class="form-control full-width" id="gName" placeholder="Enter algorithm name"
+                       style="width:100%;">
+                <div>
+                    <br><label for="curated">Status:</label>
+                    <label class="radio-inline" for="curated"><input onchange="filterTableCurations()" checked class="radio" type="checkbox" id="curated" name="curated" value="0">Open requests only</label>
+                </div>
+            </div>
+        </div>
+
+
+    </form>
+
+
+    <!-- <div>
+        <a class="btn btn-success" href="../../public/visualisation/editor">New graph</a>
+    </div> -->
+
+</div>
+
+
 <div class="container-fluid">
     <div class="row content">
-        <div class="col-sm-12 text-left flex-wrap" style="margin-bottom: 0">
-            <a href="../../public/administrate" type="button" class="btn btn-primary row-increased-bottom row-increased-top" style="width: 100%; max-width: 960px;">Done</a>
-        </div>
-       <!--  <div class="col-sm-12 text-left flex-wrap" style="margin-bottom: 0; margin-top: 0">
-            <a href="../../public/administrate" type="button" class="btn btn-danger row-increased-bottom" style="width: 100%; max-width: 960px;">Cancel</a>
-        </div> -->
         <div class="col-sm-12 text-left flex-wrap">
-            <table id="graphTable" class="table table-hover table-responsive table-bordered" style="margin-top: 0px;">
+            <table id="curationTable" class="table table-hover table-responsive table-bordered">
                 <thead>
                 <tr>
-                    <th>User</th>
-                    <th>E-mail</th>
-                    <th>Privileges</th>
+                    <th>ID</th>
+                    <th>Algorithm name</th>
+                    <th>Requested by</th>
+                    <th>Request date</th>
+                    <th>Status</th>
+                    <th>Currated by</th>
+                    <th>View</th>
+                    <th>Curate</th>
+
                 </tr>
                 </thead>
                 <tbody>
-                <?php $i = 0; ?>
                 <?php foreach ($data as $key => $value){
-                    $name = $value["name"];
-                    $surname = $value["surname"];
-                    $email = $value["e-mail"];
-                    $fow = $value["fieldofwork"];
-                    $admin = $value["admin"];
-                    $readPR = $value["readPR"];
-                    $editPR = $value["editPR"];
-                    $deletePR = $value["deletePR"];
-                    $addPR = $value["addPR"];
-                    $confirmPR = $value["confirmPR"];
+                    $id = $value["id"];
+                    $algorithmID = $value["graph-id"];
+                    $algorithmName = $value["graph-name"];
+                    $requestedByName = $value["name"];
+                    $requestedBySurname = $value["surname"];
+                    $requestedByWholeName = $requestedByName . " " . $requestedBySurname;
+                    $requestedByMail = $value["requested-by"];
+                    $requestDate = $value["formated-date"];
+                    $status = $value["status"];
+                    $curatedBy = $value["curated-by"];
 
-                    $adminString = "<div class='flex-div'><input type='checkbox' id='admin"."$i'";
-                    if($admin == 1)
-                        $adminString = $adminString . " checked='checked' ";
-                    $adminString = $adminString . "><label for='admin"."$i'>admin</label></input></div>";
-
-                    $readString = "<div class='flex-div'><input type='checkbox' id='read"."$i'";
-                    if($readPR == 1)
-                        $readString = $readString . " checked='checked' ";
-                    $readString = $readString . "><label for='read"."$i'>read</label></input></div>";
-
-                    $editString = "<div class='flex-div'><input type='checkbox' id='edit"."$i'";
-                    if($editPR == 1)
-                        $editString = $editString . " checked='checked' ";
-                    $editString = $editString . "><label for='edit"."$i'>edit</label></input></div>";
-
-                    $deleteString = "<div class='flex-div'><input type='checkbox' id='delete"."$i'";
-                    if($deletePR == 1)
-                        $deleteString = $deleteString . " checked='checked' ";
-                    $deleteString = $deleteString . "><label for='delete"."$i'>delete</label></input></div>";
-
-                    $addString = "<div class='flex-div'><input type='checkbox' id='add"."$i'";
-                    if($addPR == 1)
-                        $addString = $addString . " checked='checked' ";
-                    $addString = $addString . "><label for='add"."$i'>add</label></input></div>";
-
-                    $confirmString = "<div class='flex-div'><input type='checkbox' id='confirm"."$i'";
-                    if($confirmPR == 1)
-                        $confirmString = $confirmString . " checked='checked' ";
-                    $confirmString = $confirmString . "><label for='confirm"."$i'>confirm</label></input></div>";
-
-
-                    // $privileges = "<form class='form-inline' action='savePR' method='post'>";
-                    // $privileges = $privileges . $adminString . $readString . $editString . $deleteString . $addString . $confirmString; 
-                    $privileges = $adminString . $readString . $editString . $deleteString . $addString . $confirmString; 
-
-                    if($email === $_SESSION["user"]){
-                        $button = "<button disabled title='You cannot change your own user privileges.' type='button' class='btn btn-primary' name='$i' id='$email'>Save</button>";
-
+                    if($status === '0'){
+                        $status = 'Open';
+                    }
+                    else if($status === '1'){
+                        $status = 'Closed - OK';
                     }
                     else{
-                        $button = "<button type='button' class='btn btn-primary save-permissions' name='$i' id='$email'>Save</button>";
+                        $status = 'Closed - NOK';
                     }
-                    // output string, start
-                    $output = "<tr class='tr-graphTable'>";
 
-                    $output = "$output" . "<td style='width: 25%;'>" . "$name" . " " . "$surname" . "</td>";
-                    $output = "$output" . "<td style='width: 25%;'>" . "$email" . "</td>";
-                    $output = "$output" . "<td class='flex-cell'>" . $privileges . $button . "</td>";
-                    // end
-                    $output = "$output" . "</tr>";
-                    
+                    if($curatedBy === null){
+                        $curatedBy = 'Not currated';
+                    }
+
+                    $disabled = " ";
+
+                    if($status === 'Closed - OK' || $status === 'Closed - NOK'){
+                        $disabled = ' disabled title="Already curated" ';
+                    }
+
+                    $button_view = "<button class='btn btn-block btn-primary view-graph-button' id='$algorithmID'>View</button>";
+
+                    $button_modal = "<button $disabled onclick='fillModal(event, this)' name='curate-$id' type=\"button\" class=\"btn btn-block btn-primary\" id='$id'>Curate</button>";
+
+                    $style = "";
+                    if($status === 'Open'){
+                        $style = "style=\"background-color: #ffff66\"";
+                    } else if($status === 'Closed - OK'){
+                        $style = "style=\"background-color: #66ff66\"";
+                    }
+                    else{
+                        $style = "style=\"background-color: #ff6666\"";
+                    }
+
+                    if($status === 'Open'){
+                        $output = "<tr>";
+                    }
+                    else{
+                        $output = "<tr style='display: none'>";
+                    }
+
+
+                    $output = "$output" . "<td>" . "$id" . "</td>";
+                    $output = "$output" . "<td>" . "$algorithmName" . "</td>";
+                    $output = "$output" . "<td>" . "$requestedByWholeName" . ": " . "$requestedByMail" . "</td>";
+                    $output = "$output" . "<td title=\"dd. mm. yyyy\">" . "$requestDate" . "</td>";
+                    $output = "$output" . "<td title=\"Request status\" $style>" . "$status" . "</td>";
+                    $output = "$output" . "<td>" . "$curatedBy" . "</td>";
+                    $output = "$output" . "<td>" . "$button_view" . "</td>";
+                    $output = "$output" . "<td>" . "$button_modal" . "</td>";
+
                     echo "$output";
 
-                    // 
-                    $i++;
                 }
                 ?>
-                
+
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+<!-- Modal CURATE -->
+<div id="makeModal">
+</div>
+
+<p hidden id="user-full-name"><?php echo $_SESSION["user-name"] . ' ' . $_SESSION["user-surname"]; ?></p>
 
 <!-- <footer class="container-fluid text-center">
     <p>©DiaGenKri</p>

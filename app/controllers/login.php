@@ -15,6 +15,12 @@ class LogIn extends Controller
         $user = $this->model('User');
         $user->name = $name;
 
+        if(!isset($_SESSION["errors"])){
+            $_SESSION["errors"] = array();
+            $_SESSION["umail"] = null;
+            $_SESSION["passw"] = null;
+        }
+
         $this->view('LogIn/index', ['name' => $user->name]);
     }
 
@@ -34,14 +40,21 @@ class LogIn extends Controller
     }
 
     public function loginUser(){
-        $validData = isset($_POST["email"]) && !empty($_POST["email"]) &&
-                     isset($_POST["password"]) && !empty($_POST["password"]);
+        $_SESSION["errors"] = array();
+
+        $validData = true;
+
+        if(!isset($_POST["email"]) || empty($_POST["email"])){
+            $validData = false;
+            $_SESSION["errors"]["email"] =  "You must provide your E-mail address.";
+        }
+        if(!isset($_POST["password"]) || empty($_POST["password"])){
+            $validData = false;
+            $_SESSION["errors"]["password"] = "You must provide your password.";
+        }
 
         $_POST["email"] = htmlspecialchars($_POST["email"]);
         $_POST["password"] = htmlspecialchars($_POST["password"]);
-
-        // var_dump($_POST);
-        // exit();
 
 
         if ($validData) {
@@ -73,11 +86,13 @@ class LogIn extends Controller
                 ViewHelper::redirect('../../home');
             }
             else{
+                $_SESSION["errors"]["login"] = "Login access denied, incorrect login information.";
                 ViewHelper::redirect('../../LogIn');
 
             }
-        } else {
-            echo "NE DELA";
+        }
+        else {
+            $_SESSION["uemail"] = $_POST["email"];
             ViewHelper::redirect('../../LogIn');
         }
         $_POST["email"] = "";
