@@ -62,7 +62,8 @@ if(isset($_SESSION["user"])){
     <div class="row content">
         <div class="col-sm-2 sidenav">
             <h3>LINKS</h3>
-            <p><a href="http://www.limfom-levkemija.org/domov.html">L&L</a></p>
+            <p><a href="http://www.limfom-levkemija.org/domov.html" target="_blank"><img class="image img-responsive img-thumbnail" src="../../app/res/photos/logo_LL.png"></a></p>
+            <p><a href="http://lrss.fri.uni-lj.si/bio/" target="_blank"><img class="image img-responsive img-thumbnail" src="../../app/res/photos/BG-logo.PNG"></a></p>
         </div>
         <div class="col-sm-8 text-left">
             <div class="container-fluid row-increased-top well">
@@ -72,7 +73,7 @@ if(isset($_SESSION["user"])){
                         $_GET["hash"] = htmlspecialchars($_GET["hash"]);
                         $res = DBfunctions::confirmActivation($_GET["email"], $_GET["hash"]);
                         if($res){
-                            echo "<p>Thank you form confirming your registration, please log into the application at the log in page!</p>";
+                            echo "<p>Thank you for confirming your registration, please log into the application at the log in page!</p>";
                         }
                         else{
                             echo "<p>Something went wrong, please contact our user support for help. We apologise for the inconvenience!</p>";
@@ -88,7 +89,7 @@ if(isset($_SESSION["user"])){
                         If the email has not arrived after 5 minutes from completing the registration process, please enter your email below and try again.
                         <br>Thank you for your patience!
                     </p>
-                    <form action = "<?= "register/resend/" ?>" method = "post">
+                    <form action = "<?= "resend" ?>" method = "post">
                         <div class="form-group">
                             <label for="email-resend">E-mail:</label>
                             <input type = "email" class="form-control" id="email-resend" name = "email-resend"/>
@@ -116,10 +117,16 @@ if(isset($_SESSION["user"])){
         </div>
         <div class="col-sm-2 sidenav">
             <div class="well">
-                <p>ADS</p>
+                <img src="../../app/res/photos/UL.png" class="img-responsive">
             </div>
             <div class="well">
-                <p>ADS</p>
+                <img src="../../app/res/photos/SVN.png" class="img-responsive">
+            </div>
+            <div class="well">
+                <img src="../../app/res/photos/MIZS_AN.png" class="img-responsive">
+            </div>
+            <div class="well">
+                <img src="../../app/res/photos/esc_an.jpg" class="img-responsive">
             </div>
         </div>
     </div>

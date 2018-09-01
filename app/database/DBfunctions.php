@@ -275,40 +275,46 @@ class DBfunctions {
 
     public static function activationCode($email){
         $db = DBconnect::getInstance();
-
-        $check = $db->prepare("SELECT COUNT(id) AS id FROM diagenkri.user_confirm WHERE `mail` = :email");
+        $check = $db->prepare("SELECT COUNT(id) AS id FROM diagenkri.user WHERE `e-mail` = :email");
         $check->bindParam(":email", $email);
         $check->execute();
         $anwser = $check->fetch(PDO::FETCH_NUM);
-        if($anwser[0] === '0'){
-            $key = $email . date("Y-m-d H:i:s") . random_int(1, 10000);
-            $key = md5($key);
+        if($anwser[0] == 1){
+            $check = $db->prepare("SELECT COUNT(id) AS id FROM diagenkri.user_confirm WHERE `mail` = :email");
+            $check->bindParam(":email", $email);
+            $check->execute();
+            $anwser = $check->fetch(PDO::FETCH_NUM);
+            if($anwser[0] === '0'){
+                $key = $email . date("Y-m-d H:i:s") . random_int(1, 10000);
+                $key = md5($key);
 
-            $statement = $db->prepare("INSERT INTO diagenkri.user_confirm (`mail`, code)
-            VALUES (:email, :code)");
-            $statement->bindParam(":email", $email);
-            $statement->bindParam(":code", $key);
-            $success = $statement->execute();
-            if($success){
-                return $key;
-            }else{
-                return 0;
-            }
+                $statement = $db->prepare("INSERT INTO diagenkri.user_confirm (`mail`, code)
+                VALUES (:email, :code)");
+                $statement->bindParam(":email", $email);
+                $statement->bindParam(":code", $key);
+                $success = $statement->execute();
+                if($success){
+                    return $key;
+                }else{
+                    return 0;
+                }
 
-        }
-        else{
-            $key = $email . date("Y-m-d H:i:s") . random_int(1, 10000);
-            $key = md5($key);
-            $update = $db->prepare("UPDATE diagenkri.user_confirm SET code=:code WHERE `mail`=:email ");
-            $update->bindParam(":email", $email);
-            $update->bindParam(":code", $key);
-            $success = $update->execute();
-            if($success){
-                return $key;
-            }else{
-                return 0;
+            }
+            else{
+                $key = $email . date("Y-m-d H:i:s") . random_int(1, 10000);
+                $key = md5($key);
+                $update = $db->prepare("UPDATE diagenkri.user_confirm SET code=:code WHERE `mail`=:email ");
+                $update->bindParam(":email", $email);
+                $update->bindParam(":code", $key);
+                $success = $update->execute();
+                if($success){
+                    return $key;
+                }else{
+                    return 0;
+                }
             }
         }
+
     }
 
     public static function confirmActivation($email, $key){

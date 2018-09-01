@@ -34,6 +34,8 @@ class Register extends Controller
     }
 
     public function add(){
+        var_dump($_POST);
+        var_dump($_SESSION);
 
         $validData = true;
 
@@ -86,25 +88,30 @@ class Register extends Controller
             $key = DBfunctions::insert($_POST["name"], $_POST["surname"], $_POST["email"], $_POST["password1"], $_POST["sel1"]);
 
             if($key){
-                var_dump($_POST["email"]);
+                //var_dump($_POST["email"]);
                 $response = $this->sendMail($_POST["email"], $key);
+
                 if($response){
                     $_SESSION["mails-sent"] = 1;
+                    ViewHelper::redirect('../confirm');
                 }
                 else{
                     $_SESSION["mails-sent"] = 0;
+                    $_SESSION["errors"]["errmail"] =  "Could not send confirmation mail, please refresh the page and try again.";
+                    ViewHelper::redirect('../../register');
                 }
-                ViewHelper::redirect('../../register/confirm');
             }
             else{
+                $_SESSION["errors"]["errkey"] =  "Could not create registration key, a user with this E-mail address may already exist. Please try again later or contact our support.";
                 ViewHelper::redirect('../../register');
+                var_dump($key);
             }
         } else {
             $_SESSION["uname"] = $_POST["name"];
             $_SESSION["usurname"] = $_POST["surname"];
             $_SESSION["usemail"] = $_POST["email"];
             $_SESSION["sel1"] = $_POST["sel1"];
-            ViewHelper::redirect('../../register');
+            //ViewHelper::redirect('../../register');
         }
         $_POST["name"] = "";
         $_POST["surname"] = "";
@@ -129,13 +136,15 @@ class Register extends Controller
             if($_SESSION["mails-sent"] <3){
                 $response = $this->sendMail($_POST["email-resend"], $key);
                 if($response){
-                    $_SESSION["mails-sent"] = 1;
+                    $_SESSION["mails-sent"] += 1;
+                    $_SESSION["errors"]["plus"] =  "PLUS";
+                    ViewHelper::redirect('confirm');
                 }
                 else{
                     $_SESSION["errors"] = array();
-
+                    $_SESSION["errors"]["mailerror"] =  "The mail could not be sent, please try again later.";
+                    ViewHelper::redirect('confirm');
                 }
-                $this->view('register/confirm');
             }
             else{
                 $_SESSION["errors"]["mailerror"] =  "You have reached the re-send limit. Please try again later.";
@@ -143,7 +152,7 @@ class Register extends Controller
             }
         }else{
             $_SESSION["errors"]["mailerror"] =  "The provided E-mail address is not registered in the system.";
-            ViewHelper::redirect('../../register');
+            ViewHelper::redirect('.');
         }
     }
 
