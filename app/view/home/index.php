@@ -168,8 +168,8 @@
         <div class="row content">
             <div class="col-sm-2 sidenav">
                 <h3>LINKS</h3>
-                <p><a href="http://www.limfom-levkemija.org/domov.html" target="_blank">L&L</a></p>
-                <p><a href="http://lrss.fri.uni-lj.si/bio/" target="_blank">Computational Biology Group</a></p>
+                <p><a href="http://www.limfom-levkemija.org/domov.html" target="_blank"><img class="image img-responsive img-thumbnail" src="../../app/res/photos/logo_LL.png"></a></p>
+                <p><a href="http://lrss.fri.uni-lj.si/bio/" target="_blank"><img class="image img-responsive img-thumbnail" src="../../app/res/photos/BG-logo.PNG"></a></p>
             </div>
             <div class="col-sm-8 text-left">
                 <h1>Welcome</h1>

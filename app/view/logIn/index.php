@@ -59,14 +59,28 @@
     <div class="row content">
         <div class="col-sm-2 sidenav">
             <h3>LINKS</h3>
-            <p><a href="http://www.limfom-levkemija.org/domov.html" target="_blank">L&L</a></p>
-            <p><a href="http://lrss.fri.uni-lj.si/bio/" target="_blank">Computational Biology Group</a></p>
+            <p><a href="http://www.limfom-levkemija.org/domov.html" target="_blank"><img class="image img-responsive img-thumbnail" src="../../app/res/photos/logo_LL.png"></a></p>
+            <p><a href="http://lrss.fri.uni-lj.si/bio/" target="_blank"><img class="image img-responsive img-thumbnail" src="../../app/res/photos/BG-logo.PNG"></a></p>
         </div>
         <div class="col-sm-8 text-left">
             <div>
                 <article>
                     <div align = "center">
                         <div style = "width:300px; margin-top: 0.8em" align = "left">
+                            <?php
+                            try{
+                                if(isset($_SESSION["errors"])){
+                                    foreach ($_SESSION["errors"] as $key => $value){
+
+                                        echo "<span style=\"color: red\" id=\"errors\">$value</span><br>";
+                                    }
+                                    $_SESSION["errors"] = null;
+                                }
+                            } catch (Exception $e){
+
+                            }
+                            ?>
+
                             <form class="well" action = "<?= "logIn/loginUser/" ?>" method = "post" content="">
                                 <div class="form-group">
                                 <label for="login-email">E-pošta</label>

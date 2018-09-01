@@ -152,6 +152,7 @@ function setNode(node) {
     try {
         // get progress bar element
         const progress = document.getElementById("myBar"); 
+
         // const width =  (100 / set[0].data("subtree_height"));
         let width = (100 / (tree_vertices[node.shape.id].height === 2 ? 2 : tree_vertices[node.shape.id].height));
         const k = _k - tree_vertices[node.shape.id].height; // calculate how many vertices was alread visited

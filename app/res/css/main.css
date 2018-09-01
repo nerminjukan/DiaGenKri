@@ -361,7 +361,6 @@ input:disabled, textarea:disabled {
 /* style for table on list algorithms tab */
 #graphTable {
   background-color: #F9F9F9;
-  max-width: 960px;
 }
 
 .tr-graphTable {
@@ -400,7 +399,6 @@ input:disabled, textarea:disabled {
 
 #filterForm{
   width: 100%;
-  max-width: 960px;
   display: flex;
   flex: 1 1 auto;
   align-items: stretch;
@@ -515,7 +513,7 @@ pre {
   border-radius: 4px;
   height: 20px;
 
-  display: flex;
+  /*display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
@@ -526,7 +524,7 @@ pre {
   height: 20px;
   background-color: #2e6da4;
   border-radius: 4px;
-  background-color: #f0ad4e;
+  /*background-color: #f0ad4e;
   border-color: #eea236;
 }*/
 

@@ -30,23 +30,63 @@ class profile extends Controller
         $user = $this->model('User');
         $user->name = $name;
 
+        if(!isset($_SESSION["errors"])){
+            $_SESSION["errors"] = array();
+            $_SESSION["uname"] = null;
+            $_SESSION["usurname"] = null;
+            $_SESSION["sel1"] = null;
+        }
+
         $this->view('profile/edit', ['name' => $user->name]);
         //ViewHelper::redirect('../../public/profile');
     }
 
     public function saveUA($name = ''){
         if(isset($_POST["userChange"])){
+
+            $validData = true;
+
+            $_SESSION["errors"] = array();
+
+            if(!isset($_POST["name"]) || empty($_POST["name"])){
+                $validData = false;
+                $_SESSION["errors"]["name"] =  "You must provide your name.";
+            }
+            if(!isset($_POST["surname"]) || empty($_POST["surname"])){
+                $validData = false;
+                $_SESSION["errors"]["surname"] = "You must provide your surname.";
+            }
+            if(!isset($_POST["sel1"]) || empty($_POST["sel1"])){
+                $validData = false;
+                $_SESSION["errors"]["fow"] = "You must select your field of work.";
+            }
+
             $email = $_POST["userChange"];
-            //unset($_POST["userChange"]);
 
-            print_r($_POST);
+            $_POST["name"] = htmlspecialchars($_POST["name"]);
+            $_POST["surname"] = htmlspecialchars($_POST["surname"]);
+            $_POST["sel1"] = htmlspecialchars($_POST["sel1"]);
 
-            //DBfunctions::saveProfileChanges($email, $_POST);
+            if($validData){
+                $res = DBfunctions::saveProfileChanges($email, $_POST["name"], $_POST["surname"], $_POST["sel1"]);
 
-            //ViewHelper::redirect('../../public/profile/edit');
+                if($res){
+                    ViewHelper::redirect('../../public/profile');
+                }
+                else{
+                    $_SESSION["errors"] = array();
+                    $_SESSION["errors"]["update-profile"] = "Could not update profile, try again later.";
+                    ViewHelper::redirect('../../public/profile/edit');
+                }
+            }
+            else{
+                ViewHelper::redirect('../../public/profile/edit');
+            }
         }
         else{
-            // TO DO
+            $_SESSION["errors"] = array();
+            $_SESSION["errors"]["no-user-mail"] = "Something went wrong, please try again later.";
+            ViewHelper::redirect('../../public/profile/edit');
         }
 
     }

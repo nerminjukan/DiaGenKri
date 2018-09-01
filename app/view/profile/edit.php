@@ -240,67 +240,113 @@ $data = DBfunctions::getUserProfile($userMail);
                             $fow = "-";
                         }
 
+                        $rights = "";
                         if($admin == 1){
-                            $adminString = "admin, ";
-                        }else{
-                            $adminString = "";
+                            $rights = $rights .  "Admin";
                         }
 
                         if($readPR == 1){
-                            $readString = "read, ";
-                        }else{
-                            $readString = "";
+                            if($rights === ""){
+                                $rights = $rights . "Read";
+                            }
+                            $rights = $rights . ", " . "read";
                         }
 
-                        if($editPR == 1){
-                            $editString = "edit, ";
-                        }else{
-                            $editString = "";
+                        if($readPR == 1){
+                            if($rights === ""){
+                                $rights = $rights . "Edit";
+                            }
+                            $rights = $rights . ", " . "edit";
                         }
 
-                        if($deletePR == 1){
-                            $deleteString = "delete, ";
-                        }else{
-                            $deleteString = "";
+                        if($readPR == 1){
+                            if($rights === ""){
+                                $rights = $rights . "Delete";
+                            }
+                            $rights = $rights . ", " . "delete";
                         }
 
-                        if($addPR == 1){
-                            $addString = "add, ";
-                        }else{
-                            $addString = "";
+                        if($readPR == 1){
+                            if($rights === ""){
+                                $rights = $rights . "Add";
+                            }
+                            $rights = $rights . ", " . "add";
                         }
 
-                        if($confirmPR == 1){
-                            $confirmString = "confirm";
-                        }else{
-                            $confirmString = "";
+                        if($readPR == 1){
+                            if($rights === ""){
+                                $rights = $rights . "Confirm";
+                            }
+                            $rights = $rights . ", " . "confirm";
+                        }
+                        $rights = $rights . ".";
+
+                        $select = "<div class=\"form - group\">
+                        <div>
+                            <select required class=\"form-control\" id=\"sel1\" name=\"sel1\">
+                                <option disabled hidden>Choose your field of work</option>";
+                        $opt1 = "<option value=\"Doctor\" id=\"opt1\">Doctor</option>";
+                        $opt2 = "<option value=\"Scientist\" id=\"opt2\">Scientist</option>";
+                        $opt3 = "<option value=\"Researcher\" id=\"opt3\">Researcher</option>";
+                        $opt4 = "<option value=\"Other\" id=\"opt4\">Other</option>";
+                        if($fow === "doctor"){
+                            $opt1 = "<option selected value=\"doctor\" id=\"opt1\">Doctor</option>";
+                        }
+                        else if($fow === "scientist"){
+                            $opt2 = "<option selected value=\"scientist\" id=\"opt2\">Scientist</option>";
+                        }
+                        else if($fow === "researcher"){
+                            $opt3 = "<option selected value=\"researcher\" id=\"opt3\">Researcher</option>";
+                        }
+                        else{
+                            $opt4 = "<option selected value=\"other\" id=\"opt4\">Other</option>";
                         }
 
-                        echo "<tr><th class='th-st'>Name: </th><td>" .                                  "<div class=\"form-group\">
-                                                                                                        <input type=\"text\" class=\"form-control\" id=\"name\" placeholder=" . $name . " name=\"name\">
+                        $selectEnd =     "</select></div></div>";
+
+                        $select = $select . $opt1 . $opt2 . $opt3 . $opt4 . $selectEnd;
+
+                        $output =  "<tr><th class='th-st'>Name: </th><td>" .                                  "<div class=\"form-group\">
+                                                                                                        <input type=\"text\" class=\"form-control\" id=\"name\" placeholder=" . $name . " value=" . $name . " name=\"name\">
                                                                                                         </div>" . "</td></tr>" . "</td></tr>" .
 
                             "<tr><th class='th-st'>Surname: </th><td style=\"white-space: nowrap\">" . "<div class=\"form-group\">
-                                                                                                        <input type=\"text\" class=\"form-control\" id=\"surname\" placeholder=" . $surname . " name=\"surname\">
+                                                                                                        <input type=\"text\" class=\"form-control\" id=\"surname\" placeholder=" . $surname . " value=" . $surname . " name=\"surname\">
                                                                                                         </div>" . "</td></tr>" .
 
                             "<tr><th class='th-st'>E-mail: </th><td>" .                                 "<div class=\"form-group\">
-                                                                                                        <input type=\"email\" class=\"form-control\" id=\"email\" placeholder=" . $email . " \"Enter email\" name=\"email\">
+                                                                                                        <input type=\"email\" disabled title='You cannot change your E-mail address.' class=\"form-control\" id=\"email\" placeholder=" . $email . " \"Enter email\" name=\"email\">
                                                                                                         </div>" . "</td></tr>" . "</td></tr>" .
 
-                            "<tr><th class='th-st'>Field of work: </th><td>" .                          "<div class=\"form-group\">
-                                                                                                        <input type=\"text\" class=\"form-control\" id=\"fow\" placeholder=" . $fow . " name=\"fow\">
-                                                                                                        </div>" . "</td></tr>" . "</td></tr>" . "</td></tr>" .
+                            "<tr><th class='th-st'>Field of work: </th><td>" .
 
-                            "<tr><th class='th-st'>Administration rights: </th><td style=\"white-space: nowrap\">" . $adminString . $readString . $editString . $deleteString . $addString . $confirmString . "</td></tr>";
+                            $select .
 
+                            "<tr><th class='th-st'>Administration rights: </th><td style=\"white-space: nowrap\">" . $rights . "</td></tr>";
+
+                        echo $output;
                     }
                     ?>
                     </tbody>
                 </table>
                 <div class="btn-group col-md-3">
                     <button type="submit" class="btn btn-success" name='userChange' <?php echo "value=" . $_GET['email']; ?>>Save</button>
-                    <a href="../../public/profile" type="button" class="btn btn-danger row-increased-bottom">Cancel</a>
+                    <a href="../../public/profile" type="button" class="btn btn-danger row-increased-bottom">Cancel</a><br>
+                </div>
+                <div>
+                    <?php
+                    try{
+                        if(isset($_SESSION["errors"])){
+                            foreach ($_SESSION["errors"] as $key => $value){
+
+                                echo "<span style=\"color: red\" id=\"errors\">$value</span><br>";
+                            }
+                            $_SESSION["errors"] = null;
+                        }
+                    } catch (Exception $e){
+
+                    }
+                    ?>
                 </div>
             </form>
         </div>

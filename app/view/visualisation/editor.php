@@ -50,10 +50,6 @@ include_once '../app/controllers/visualisation.php';
     <script type="text/javascript" src="../../app/res/js/david/getdata.js"></script> 
     <script type="text/javascript" src="../../app/res/js/david/tree.js"></script>
     <script src="../../app/res/js/curations.js"></script>
-
-
-
-
     <link rel="stylesheet" href="../../app/res/css/main.css">
 
 </head>
@@ -238,14 +234,19 @@ $description="";
                 <button onclick="setDeleteShape()" id = "delete_shape_button" class="btn btn-block btn-warning">Delete vertex</button>
             </div>
 
-
-            <div class="well well-sm" id="test_patients">
-                <button type="button" onclick="setModal()" id = "test_modal" class="btn btn-block btn-info">TEST</button>
-            </div>
-
             <div class="well well-sm">
                 <button id="save" onclick="showModalSave()" type="button" class="btn btn-block btn-info">Save</button>
             </div>
+
+            <div class="well well-sm">
+                <a class="btn btn-primary btn-block" id="dl">Download PNG</a>
+                <canvas style="display: none" id="canvas" width="2000px" height="2000px"></canvas>
+                <div id="png-container"></div>
+            </div>
+
+            <!---<div class="well well-sm" id="test_patients">
+                <button type="button" onclick="setModal()" id = "test_modal" class="btn btn-block btn-info">TEST</button>
+            </div>--->
 
         </div>
         <div onclick="looseFocus(event)" ondrop="mainDraw(event)" class="col-sm-8" id="content">
@@ -255,22 +256,24 @@ $description="";
         <div class="col-sm-2 sidenav">
 
             <h2>Settings</h2>
-            <form>
-                <label class="myLabelForm" for="IDinput">Element ID</label></br>
-                <input class="myInputForm" id="IDinput" disabled type="text" name="fname"><br>
+            <div>
+                <!---<label class="myLabelForm" for="IDinput">Element ID</label></br>
+                <input class="myInputForm" id="IDinput" disabled type="text" name="fname"><br>--->
                 <label class="myLabelForm" for="IDtext">Text (short)</label></br>
                 <input class="myInputForm"disabled id="IDtext" type="text" maxlength="40"></br>
                 <label class="myLabelForm" for="IDdesc">Text (long)</label></br>
                 <textarea class="myInputForm" rows="6" cols="20" disabled id="IDdesc" type="text"></textarea>
-            </form>
-            <div class="well well-sm">
-                <a class="btn btn-primary btn-block" id="dl">Download PNG</a>
-                <canvas style="display: none" id="canvas" width="2000px" height="2000px"></canvas>
-                <div id="png-container"></div>
-            </div>
-            <div class="well well-sm" style="margin-top: 20px">
-                <button type="button" data-toggle="modal" data-target="#helpModal" id = "help_btn" class="btn btn-block btn-info">Help</button>
-
+                <div class="well well-sm">
+                    <label class="myLabelForm" for="color">Element color</label></br>
+                    <input class="myInputForm" disabled id="color" type="color" onchange="saveColor(event, this)">
+                </div>
+                <div class="well well-sm">
+                    <label class="myLabelForm" for="color">Hide attribute<span style="color: red"><sup title="Adds an element that allows hiding algorithm sections by color.">?</sup></span></label></br>
+                    <input class="myInputForm" disabled id="leadColor" type="checkbox" onchange="saveLead(event, this)">
+                </div>
+                <div class="well well-sm" style="margin-top: 20px">
+                    <button type="button" data-toggle="modal" data-target="#helpModal" id = "help_btn" class="btn btn-block btn-info">Help</button>
+                </div>
             </div>
         </div>
     </div>
@@ -516,6 +519,6 @@ $description="";
     </div>
 </div>
 
-<footer class="container-fluid text-center fixed_bottom">
+<!---<footer class="container-fluid text-center fixed_bottom">
     <p>©DiaGenKri</p>
-</footer>
+</footer>--->

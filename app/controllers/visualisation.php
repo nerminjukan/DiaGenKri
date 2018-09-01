@@ -49,13 +49,17 @@ class Visualisation extends Controller
 
 
     public function edit(){
-        if(isset($_SESSION["user"]) && isset($_POST["data"]) && isset($_POST["name"]) && isset($_POST["description"]) && isset($_POST["access"]) && isset($_POST["gtype"]) && isset($_POST["atype"]) && isset($_POST["id"])){
+        if(isset($_SESSION["user"]) && isset($_POST["data"]) && isset($_POST["name"]) && isset($_POST["description"]) && isset($_POST["access"]) && isset($_POST["gtype"]) && isset($_POST["atype"]) && isset($_POST["id"]) && isset($_POST["curation"])){
 
 
             DBfunctions::editGraph($_SESSION["user"], $_POST["data"], $_POST["name"], $_POST["description"], $_POST["access"], $_POST["gtype"], $_POST["atype"],
                 $_POST["id"]);
 
-            // ViewHelper::redirect('../../public/visualisation/gallery');
+            if($_POST["curation"] === "1"){
+
+                $res = DBfunctions::createCurationRequest($_POST["id"], $_SESSION["user"]);
+                echo json_encode($res);
+            }
         }
     }
 
@@ -121,15 +125,17 @@ class Visualisation extends Controller
             if($result){
                 $result = $this->sendMail($_POST["author"], $_POST["id"], $_POST["explanation"], $_POST["result"], $_POST["curatorMail"], $_POST["curatorFullName"], $_POST["algName"]);
                 echo json_encode($result);
+                return;
             }
-            echo json_encode($result);
+            echo json_encode('update failure: ' . $result);
+            return;
         }
         echo json_encode('Not all data received!');
+        return;
     }
 
     public function sendMail($receiver, $id, $explanation, $decision, $curatorMail, $curatorFullName, $algName){
         $stat = "";
-        $receiver = 'petra.mikla@gmail.com';
         if($decision === 1 || $decision === '1'){
             $decision = 'We gladly inform you that the request was successfully approved!';
             $stat = 'approved';

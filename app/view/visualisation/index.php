@@ -10,6 +10,7 @@ include_once '../app/controllers/administrate.php';
 
 $data = DBfunctions::getGraphs();
 
+//var_dump($data);
 ?>
 
 <!DOCTYPE html>
@@ -174,7 +175,7 @@ $data = DBfunctions::getGraphs();
     </div>
 </nav>
 
-<div class="well well-sm col-sm-12 flex-wrap">
+<div class="well well-sm col-sm-12">
     <form name="gForm" role="form" class="form-inline" id="filterForm">
         <div class="well well-sm form-group filter-settings">
             <div class="form-group full-width">
@@ -241,7 +242,7 @@ $data = DBfunctions::getGraphs();
 
 <div class="container-fluid">
     <div class="row content">
-        <div class="col-sm-12 text-left flex-wrap">
+        <div class="col-lg-12 text-left">
             <table id="graphTable" class="table table-hover table-responsive table-bordered">
                 <thead>
                 <tr>
@@ -254,10 +255,10 @@ $data = DBfunctions::getGraphs();
 
                     <?php if(isset($_SESSION["user"])): ?>
                     <th>Created</th>
+                    <th>Edited</th>
                     <?php endif; ?>
 
                     <th>View</th>
-
 
                     <?php if(isset($_SESSION["user"]) && (isset($_SESSION["user-edit"]) ||  isset($_SESSION["user-admin"])) && ($_SESSION["user-edit"] == 1 || $_SESSION["user-admin"] == 1)): ?>
                         <th>Edit</th>
@@ -276,6 +277,23 @@ $data = DBfunctions::getGraphs();
                     $private = $value["private"];
                     $curated = $value["curated"];
                     $visual = $value["visual"];
+                    $uname = $value["uname"];
+                    $usurname = $value["usurname"];
+
+                    $wholename = "";
+                    if(isset($_SESSION["user"]) && isset($_SESSION["user-read"])){
+                        $wholename = $uname . " " . $usurname . " - " . $email;
+                    }
+                    else{
+                        $wholename = $uname . " " . $usurname;
+                    }
+
+                    if($curated === '0'){
+                        $curated = 'No';
+                    }
+                    else{
+                        $curated = 'Yes';
+                    }
 
                     if($curated === '0'){
                         $curated = 'No';
@@ -318,11 +336,20 @@ $data = DBfunctions::getGraphs();
                         $algorithmType = 'Diagnostic, treatment, other';
                     }
 
-                    $created = $value["created"];
+                    $created = $value["created-date"];
+                    $edited = $value["edit-date"];
+
+                    if($edited === null){
+                        $edited = 'Not edited';
+                    }
 
                     $button_edit = "<button class='btn btn-block btn-primary edit-graph-button' id='$id'>Edit</button>";
 
                     $button_view = "<button class='btn btn-block btn-primary view-graph-button' id='$id'>View</button>";
+
+                    if(isset($_SESSION["user"]) && isset($_SESSION["user-read"]) && ($_SESSION["user-read"] === '0' || $_SESSION["user-read"] === 0) && $_SESSION["user"] !== $email){
+                        $button_view = "<button disabled title='You can only view your own algorithms.' class='btn btn-block btn-primary' id='$id'>View</button>";
+                    }
 
 
                     $delete_alg = "<i id='$id' class='fa fa-times'></i>";
@@ -339,7 +366,7 @@ $data = DBfunctions::getGraphs();
                         $output = "<tr " . $styleClass;
 
                         $output = "$output" . "<td>" . "$id" . "</td>";
-                        $output = "$output" . "<td>" . "$email" . "</td>";
+                        $output = "$output" . "<td>" . "$wholename" . "</td>";
                         $output = "$output" . "<td>" . "$name" . "</td>";
                         $output = "$output" . "<td>" . "$curated" . "</td>";
 
@@ -352,7 +379,8 @@ $data = DBfunctions::getGraphs();
                         $output = "$output" . "<td>" . "$algorithmType" . "</td>";
 
                         if(isset($_SESSION["user"])){
-                            $output = "$output" . "<td>" . "$created" . "</td>";
+                            $output = "$output" . "<td title=\"dd. mm. yyyy\">" . "$created" . "</td>";
+                            $output = "$output" . "<td title=\"dd. mm. yyyy\">" . "$edited" . "</td>";
                         }
 
                         $output = "$output" . "<td>" . "$button_view" . "</td>";
