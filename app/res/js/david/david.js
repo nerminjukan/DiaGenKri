@@ -2430,7 +2430,7 @@ function setText() {
 // de-selects any selected element and hides handles
 function looseFocus(ev, triger = 0){
     //console.log(ev);
-    if(triger === 1 || ev.srcElement.id === 'canvID'){
+    if(triger === 1 || ev.target.id === 'canvID'){
         if(active !== null){
             setActive();
             //IDinput.disabled = true;

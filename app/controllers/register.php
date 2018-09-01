@@ -119,6 +119,10 @@ class Register extends Controller
     }
 
     public function resend(){
+        if(!isset($_SESSION["errors"])){
+            $_SESSION["errors"] = array();
+        }
+
         $_POST["email-resend"] = htmlspecialchars($_POST["email-resend"]);
         $key = DBfunctions::activationCode($_POST["email-resend"]);
         if($key != 0){
@@ -134,9 +138,12 @@ class Register extends Controller
                 $this->view('register/confirm');
             }
             else{
-
+                $_SESSION["errors"]["mailerror"] =  "You have reached the re-send limit. Please try again later.";
                 $this->view('register/confirm');
             }
+        }else{
+            $_SESSION["errors"]["mailerror"] =  "The provided E-mail address is not registered in the system.";
+            ViewHelper::redirect('../../register');
         }
     }
 

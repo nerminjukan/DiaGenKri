@@ -243,11 +243,11 @@ $data = DBfunctions::getUsersData();
                     $output = "$output" . "<td class='flex-cell'>" . $privileges . $button . "</td>";
                     // end
                     $output = "$output" . "</tr>";
-                    
-                    echo "$output";
 
-                    // 
-                    $i++;
+                    if($email !== $_SESSION["user"]){
+                        echo "$output";
+                        $i++;
+                    }
                 }
                 ?>
                 
