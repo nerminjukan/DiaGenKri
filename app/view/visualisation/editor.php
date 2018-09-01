@@ -50,10 +50,6 @@ include_once '../app/controllers/visualisation.php';
     <script type="text/javascript" src="../../app/res/js/david/getdata.js"></script> 
     <script type="text/javascript" src="../../app/res/js/david/tree.js"></script>
     <script src="../../app/res/js/curations.js"></script>
-
-
-
-
     <link rel="stylesheet" href="../../app/res/css/main.css">
 
 </head>

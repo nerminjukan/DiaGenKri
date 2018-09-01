@@ -24,7 +24,6 @@ $(document).ready(function(){
         } catch (e) {
 
         }
-        
     }, 10000);
 });
 

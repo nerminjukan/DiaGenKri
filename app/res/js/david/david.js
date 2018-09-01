@@ -1207,15 +1207,19 @@ function completeResetInputs(){
 
 // disables inputs
 function disableInputs(decision, input_id = null){
-    if(!input_id){
-        $( "#IDtext" ).prop( "disabled", decision );
-        $( "#IDdesc" ).prop( "disabled", decision );
-        IDcolor.disabled = decision;
-        IDlead.disabled = decision;
-        return;
-    }
+    try {
+        if(!input_id){
+            $( "#IDtext" ).prop( "disabled", decision );
+            $( "#IDdesc" ).prop( "disabled", decision );
+            IDcolor.disabled = decision;
+            IDlead.disabled = decision;
+            return;
+        }
 
-    $(input_id).prop( "disabled", decision);
+        $(input_id).prop( "disabled", decision);
+    } catch(err){
+        
+    }
 }
 
 // add event handlers back to elements
@@ -1358,7 +1362,7 @@ function extractParameters( name, url ) {
 // get data about graph with certain id
 function getGraphData(id_graph_load) {
     let info = null
-    $.post("../../../public/visualisation/load",
+    $.post("../../public/visualisation/load",
         {
             id: id_graph_load
         },
@@ -1366,7 +1370,8 @@ function getGraphData(id_graph_load) {
             const myArray = $.parseJSON(data);
             // const podatki = $.parseJSON(myArray["data"]);
             // window["f_json"] = myArray["data"]
-            //console.log("[david.js] myArray", myArray);
+
+            // console.log("[david.js] myArray", myArray);
             // console.log(podatki);
 
             info = {
@@ -1381,6 +1386,8 @@ function getGraphData(id_graph_load) {
                 algorithm_type: myArray["algorithm_type"]
             };
             // console.log("info about graph, without data:", info);
+
+            // populates form, there is try/catch block in the method - errors are handled
             populateForm("name", info);
         }
     );
@@ -1390,11 +1397,17 @@ function getGraphData(id_graph_load) {
 // populates form with name with data(object)
 function populateForm(name, data){
     //console.log('DATA:', data);
-
     try{
         document.getElementById("graphName").value = data.name;
         document.getElementById("graphDescritption").value = data.description;
         //console.log("data intended", data.intended);
+
+        if(data.access == 0){
+            document.getElementById("public").checked = true;
+        } else if(data.access == 1){
+            document.getElementById("private").checked = true;
+
+        }
 
         if(data.access == 0){
             document.getElementById("public").checked = true;
@@ -1485,6 +1498,49 @@ function getHeights(){
     }
 
     //console.log("[getHeights] heights done!")
+    // Vertex.treeHeight("prvi vertex");
+    // napolni še za vse ostale vertexe, najdi boljši način kot da n krat kličeš treeHeight(shrajevanje v array)
+}
+
+// iterate through shapes and connections and build tree
+// its useful for /bolniki tab where progress bar is needed
+function buildTree(){
+    console.log("BUILDING TREE BUILDING TREE BUILDING TREE BUILDING TREE");
+    tree_vertices = {};
+    for (let i = 0; i < shapes.length; i++) {
+        const shape = shapes[i];
+        tree_vertices[shape.id] = new Vertex(shape.id);
+    }
+    for (let i = 0; i < connections.length; i++) {
+        const conn = connections[i];
+        tree_vertices[conn.from.id].addChild(tree_vertices[conn.to.id]);
+        // mark incoming connection
+        tree_vertices[conn.to.id].incomingConns = true;
+        tree_vertices[conn.to.id].incomingConns_count += 1;
+        // also save parent
+        tree_vertices[conn.to.id].parent = tree_vertices[conn.from.id].vertex_id;
+
+    }
+    console.log("[buildTree] tree done!")
+    console.log(tree_vertices);
+}
+
+// returns height of tree, starting at first vertex
+// the first vertex(root node) is the one that has no incoming(to) connections,
+// there can be mutliple vertices without incoming connections so for every vertex that doesnt have
+// incoming connections treeHeight should be calculated
+function getHeights(){
+    console.log("GETING HEIGHTS GETING HEIGHT GETING HEIGHT");
+    for (const [id, vertex] of Object.entries(tree_vertices)) {
+        console.log("id:", id, "height:", vertex.height, "possible root(?):", !vertex.incomingConns);
+        // if there are no incoming connections, it is possible that this vertex is root so lets calculate tree height
+        if(!vertex.incomingConns){
+            Vertex.treeHeight(vertex);
+            console.log("calculating height for", vertex.vertex_id);
+        }
+    }
+
+    console.log("[getHeights] heights done!")
     // Vertex.treeHeight("prvi vertex");
     // napolni še za vse ostale vertexe, najdi boljši način kot da n krat kličeš treeHeight(shrajevanje v array)
 }
@@ -1626,8 +1682,6 @@ jQuery(function ($) {
         //console.log('No download button', e);
     }
 
-
-
     // // paper.print(100, 100, "Test string", paper.getFont("Times", 800), 30);
     // let txxt = paper.print(10, 50, "print", paper.getFont("Museo"), 30).attr({fill: "#fff"});
     // // following line will paint first letter in red
@@ -1711,7 +1765,7 @@ jQuery(function ($) {
         }
 
     });
-
+    
     $("#IDdesc").keyup(function(e){
         if(e.keyCode === 13) {
             $("#IDdesc").trigger( "blur" );
@@ -1729,12 +1783,14 @@ jQuery(function ($) {
             changingText.attr({text: currentText});
             if (changingText.data("type") === "shape_text")
                 console.log('text stat: ', textDiff);
+
             if(textDiff > 0){
                 changeWidth(changingText, 1);
             }
             else{
                 changeWidth(changingText, -1);
             }
+
             if(changingText.data("id_connection") !== undefined && changingText.data("type") === "connection_text"){
                 // console.log(changingText.data("id_connection"));
                 calculateSubPath(changingText.data("id_connection"));
@@ -1839,6 +1895,7 @@ function changeWidth(textShape, stat) {
         return;
     }
     let counter = 0;
+
     //console.log('diff_BEFORE: ', parent.attr('width') - textShape.getBBox().width);
     //console.log('stat: ', stat);
     if(stat === 0){
@@ -1854,6 +1911,16 @@ function changeWidth(textShape, stat) {
             }
         }
     }
+    else if(stat === -1){
+        if(parent.attr('width') - textShape.getBBox().width > 20) {
+            while (parent.attr('width') - textShape.getBBox().width > 20 && parent.attr('width') - 1 >= 100) {
+                counter++;
+                parent.attr('width', parent.attr('width') - 1);
+                console.log('counter: ', counter);
+
+            }
+        }
+    }
     else{
         if(parent.attr('width') - textShape.getBBox().width < 20){
             while(parent.attr('width') - textShape.getBBox().width < 20){
@@ -1864,6 +1931,7 @@ function changeWidth(textShape, stat) {
         }
     }
     //console.log('diff_AFTER: ', parent.attr('width') - textShape.getBBox().width);
+
     counter = 0;
     // update connections
     //TODO kaj je s to funkcijo??
@@ -1944,13 +2012,11 @@ function getPossibleRoots(){
     //     const conn = connections[i];
     //     const shape_from = conn.from.id;
     //     const shape_to = conn.to.id;
-
     // }
 
     for (const [id, obj] of Object.entries(tree_vertices)) {
         // if vertex has no incoming connections, set its root to true
         //console.log("id:",id,"vertex:",obj);
-
         if(!obj.incomingConns){
             possible_roots[obj.vertex_id] = obj;
             possible_roots[obj.vertex_id].root = true;
@@ -1968,30 +2034,35 @@ function getPossibleRoots(){
 
 // determine the true root by setting .data("root") to True
 function getTreeRoot(possible_roots){
-    min = 1000;
-    min_vertex_id = null;
+    max = -1;
+    max_vertex_id = null;
     // filter out one that has moust outgoing connections, which means it's root
+    // vertex with most outgoing connections is the one that has most children
+    // children of vertex are stored in dictionary, therfore length of dictionary needs to be checked
     for (const [id, vertex] of Object.entries(possible_roots)) {
-        //console.log("checking:", id, vertex);
-        if(vertex.incomingConns_count < min){
-            min_vertex_id = id;
-            min = vertex.incomingConns_count;
-            //console.log("it fits");
+        console.log("checking:", id, vertex);
+        // if(vertex.incomingConns_count < min){
+        //     min_vertex_id = id;
+        //     min = vertex.incomingConns_count;
+        //     console.log("it fits");
+        // }
+        const number_of_children = Object.keys(vertex.children).length;
+        if(number_of_children > max){
+            max_vertex_id = id;
+            max = number_of_children;
+            console.log("found new vertex with highest number of outgoing connections")
         }
     }
 
     for(let i = 0; i < shapes.length; i++){
         // if(possible_roots[shapes[i].id] != null && possible_roots[shapes[i].id].root){
-        if(possible_roots[shapes[i].id] != null && min_vertex_id == shapes[i].id){
+        if(possible_roots[shapes[i].id] != null && max_vertex_id == shapes[i].id){
             shapes[i].data("root", true);
-            //console.log(shapes[i], "is the root!");
+            console.log(shapes[i], "is the root!");
             break;
         }
     }
 }
-
-////////
-
 
 // inserts element information from Toolbar into dataTransfer, enables identification of dropped element onto canvas
 function startDrag(ev) {
@@ -2137,11 +2208,6 @@ function shapeDraw(arg, ev) {
 
         shape.data('desc', 'default-text');
 
-
-
-
-
-
         shape.mouseup(function () {
             console.log('mouseUP: ', dragging_set);
             // display only if shape was not dragged
@@ -2149,7 +2215,7 @@ function shapeDraw(arg, ev) {
                 document.getElementById('descText').innerHTML = shape.data('desc');
                 document.getElementById('h4ID').innerHTML = 'Node description: ' +  shape.id;
                 $("#longText").modal();
-                console.log("[longText modal] showing");
+                // console.log("[longText modal] showing");
             }
         });
 
@@ -2497,7 +2563,7 @@ function resetModal() {
 
 function cancelGraph() {
     if(confirm("You are about to leave the page, all your work will be lost. Do you want to proceed?")){
-        window.location.replace("../../../public/home");
+        window.location.replace("../../public/home");
     }
 }
 
@@ -2639,10 +2705,9 @@ function saveGraph() {
 
 
     if(!editingGraph){
-
         $.ajax({
             type: "POST",
-            url: "../../../public/visualisation/save",
+            url: "../../public/visualisation/save",
             data: {
                 data: json,
                 name: graphDescription['name'],
@@ -2673,10 +2738,9 @@ function saveGraph() {
             }
         });
     } else {
-
         $.ajax({
             type: "POST",
-            url: "../../../public/visualisation/edit",
+            url: "../../public/visualisation/edit",
             data: {
                 data: json,
                 id: graphId,
@@ -2721,6 +2785,7 @@ function saveGraph() {
 }
 
 function loadGraph(json, pacient=false, viewonly=false) {
+    // console.log("loadgraph, json received:", json);
     // application should go in view only state
     viewonly_graph = viewonly;
 
@@ -2734,8 +2799,10 @@ function loadGraph(json, pacient=false, viewonly=false) {
     id = 0; // id for shapes, connections, probably obsolete right now
     // also resets variables in window
 
-    if(pacient){
+    // console.log("[david.js/loadGraph]", pacient, viewonly_graph, editingGraph);
 
+
+    if(pacient){
         // console.log("CLEAR WINDOW CLEAR WINDOW CLEAR WINDOW CLEAR WINDOW")
         paper.fromJSON(json, function(el, data) {
             // console.log(data.setName);
@@ -2760,41 +2827,43 @@ function loadGraph(json, pacient=false, viewonly=false) {
     //     return;
 
     paper.clear();
-
-
+    // console.log("paper:", paper);
     try{
         paper.fromJSON(json, function(el, data) {
-        el.id = data.id;
-        // console.log('START START START START START');
+            el.id = data.id;
+            // console.log('START START START START START');
 
-        // console.log('[loadGraph] element id:',el.id, data.type);
+            // console.log('[loadGraph] element id:',el.id, data.type);
+            try{
+                if(data.type !== 'connection' && data.type !== 'sub_path' && data.type !== 'connection_text'){
+                    // console.log("NI KONEKŠN FOCK FOCK FOCK")
+                    // Recreate the set using the identifier
+                    if( !window[data.setName] ){
+                        window[data.setName] = paper.set();
 
-        if(data.type !== 'connection' && data.type !== 'sub_path' && data.type !== 'connection_text'){
-            // console.log("NI KONEKŠN FOCK FOCK FOCK")
-            // Recreate the set using the identifier
-            if( !window[data.setName] ){
-                window[data.setName] = paper.set();
+                        // window[data.setName].draggable();
 
-                // window[data.setName].draggable();
+                        canvasSets.push(window[data.setName]);
 
-                canvasSets.push(window[data.setName]);
+                        // console.log("[loadGraph] data.setName:", data.setName, canvasSets);
+                    } else {
+                        // console.log("[loadGraph] SET EXISTS EXISTS:", data.setName, window[data.setName])
+                    }
 
-                // console.log("[loadGraph] data.setName:", data.setName, canvasSets);
-            } else {
-                // console.log("[loadGraph] SET EXISTS EXISTS:", data.setName, window[data.setName])
+                    // Place each element back into the set
+                    //console.log('setName POST:' +data.setName);
+                    window[data.setName].push(el);
+
+                    // make set draggable
+                    // window[data.setName].draggable();
+                }
+            } catch(err){
+                console.log("[ERROR david.js/loadGraph] paper.fromJSON", err)
             }
 
-            // Place each element back into the set
-            //console.log('setName POST:' +data.setName);
-            window[data.setName].push(el);
+            // console.log('SAVING: ', window[data.setName]);
 
-            // make set draggable
-            // window[data.setName].draggable();
-        }
-
-        // console.log('SAVING: ', window[data.setName]);
-
-        // console.log('window :' +window[data.setName]);
+            // console.log('window :' +window[data.setName]);
 
          //console.log("[loadGraph] type of element:", el.type);
 
@@ -2867,15 +2936,17 @@ function loadGraph(json, pacient=false, viewonly=false) {
         // // console.log('[loadGraph] setName');
         el.setName = data.setName;
 
-        // el.click(function () {
-        //     console.log("click shape: matrix:", el.matrix);
-        // })
-
+            // el.click(function () {
+            //     console.log("click shape: matrix:", el.matrix);
+            // })
 
         // return el;
         // console.log('END END END END END');
 
-    });
+        });
+    } catch(err){
+        console.log("[ERROR david.js/loadGraph] paper.fromJSON", err)
+    }
 
     // make sets draggable
     if(!viewonly_graph){
@@ -2909,7 +2980,6 @@ function loadGraph(json, pacient=false, viewonly=false) {
         // meantime change width of all text elements to correct size
         //if(element.data("type") === "shape_text")
             //changeWidth(element, 0);
-
     });
 
     // recalculate subpaths
@@ -2942,14 +3012,7 @@ function loadGraph(json, pacient=false, viewonly=false) {
 
     //console.log('[loadGraph] LOADING finished');
 
-    }catch (e) {
-        console.log("ERROR: ", e);
-    }
-
-
 }
-
-
 
 
 

@@ -275,6 +275,7 @@ $data = DBfunctions::getCurations();
 
 
                     $output = "$output" . "<td>" . "$ctr" . "</td>";
+
                     $output = "$output" . "<td>" . "$algorithmName" . "</td>";
                     $output = "$output" . "<td>" . "$requestedByWholeName" . ": " . "$requestedByMail" . "</td>";
                     $output = "$output" . "<td title=\"dd. mm. yyyy\">" . "$requestDate" . "</td>";

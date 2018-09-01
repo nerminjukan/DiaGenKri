@@ -72,12 +72,14 @@
         if ( typeof json === 'string' ) json = JSON.parse(json);
 
         for ( var i in json ) {
+            // console.log("from json i:",json[i]);
             if ( json.hasOwnProperty(i) ) {
                 el = paper[json[i].type]()
                     .attr(json[i].attrs)
                     .transform(json[i].transform);
 
                 el.id = json[i].id;
+                // console.log("in if", el);
 
                 if ( callback ) el = callback(el, json[i].data);
 
