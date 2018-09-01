@@ -7,6 +7,7 @@ class Vertex {
 	    this.height = 1; // tree height of vertex
 	    this.incomingConns = false; // determine wheter vertex has incoming connections, if it doesnt, than it might be root node
         this.incomingConns_count = 0;
+        this.parent = null; // id of parent of this vertex, useful when user wants to one step back
   	}
 
   	// parameter @v is Vertex

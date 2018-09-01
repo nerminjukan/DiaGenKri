@@ -38,6 +38,7 @@ $(function(){
 		// console.log(data, status);
 		try {
 			const myArray = $.parseJSON(data);
+			// console.log("[viewonly] parsed data from database", myArray);
 			// const podatki = $.parseJSON(myArray["data"]);
 			// window["f_json"] = myArray["data"]
 			// console.log("[viewonly.js] myArray:", myArray);

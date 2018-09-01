@@ -163,6 +163,10 @@ class DBfunctions {
         $statement->execute();
 
         $result = $statement->fetch(PDO::FETCH_ASSOC);
+        // var_dump("res iz dbf:loadGraph", $result);
+        // echo $result;
+        // var_dump($statement);
+        // exit();
 
         return $result;
     }

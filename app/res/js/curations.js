@@ -330,7 +330,7 @@ function updateStatus(id, status, curatorMail) {
 }
 
 function validateCuration(id) {
-    if(! document.forms["cForm-"+id]["status"][0].checked === true || ! document.forms["cForm-"+id]["status"][1].checked === true){
+    if(! document.forms["cForm-"+id]["status"][0].checked === true){
         if(! document.forms["cForm-"+id]["status"][1].checked === true){
             return false;
         }

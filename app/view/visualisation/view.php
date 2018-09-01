@@ -34,6 +34,8 @@ $data = DBfunctions::getGraphs();
 
     <script type="text/javascript" src="../../app/res/js/david/david.js"></script>
     <script type="text/javascript" src="../../app/res/js/david/viewonly.js"></script>
+    <script type="text/javascript" src="../../app/res/js/david/tree.js"></script>
+
     <script src="../../app/res/js/curations.js"></script>
 
 

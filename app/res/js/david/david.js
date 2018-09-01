@@ -1174,7 +1174,7 @@ function getGraphData(id_graph_load) {
             const myArray = $.parseJSON(data);
             // const podatki = $.parseJSON(myArray["data"]);
             // window["f_json"] = myArray["data"]
-            console.log("[david.js] myArray", myArray);
+            // console.log("[david.js] myArray", myArray);
             // console.log(podatki);
 
             info = {
@@ -1189,6 +1189,7 @@ function getGraphData(id_graph_load) {
                 algorithm_type: myArray["algorithm_type"]
             };
             // console.log("info about graph, without data:", info);
+            // populates form, there is try/catch block in the method - errors are handled
             populateForm("name", info);
         }
     );
@@ -1271,6 +1272,8 @@ function buildTree(){
         // mark incoming connection
         tree_vertices[conn.to.id].incomingConns = true;
         tree_vertices[conn.to.id].incomingConns_count += 1;
+        // also save parent
+        tree_vertices[conn.to.id].parent = tree_vertices[conn.from.id].vertex_id;
 
     }
     console.log("[buildTree] tree done!")
@@ -1426,7 +1429,11 @@ jQuery(function ($) {
 
     paper.canvas.id='canvID';
 
-    document.getElementById('dl').addEventListener('click', imageDL, false);
+    try {
+        document.getElementById('dl').addEventListener('click', imageDL, false);
+    } catch(err) {
+        
+    }
 
 
     // // paper.print(100, 100, "Test string", paper.getFont("Times", 800), 30);
@@ -1512,7 +1519,7 @@ jQuery(function ($) {
         }
 
     });
-
+    
     $("#IDdesc").keyup(function(e){
         if(e.keyCode === 13) {
             $("#IDdesc").trigger( "blur" );
@@ -1768,21 +1775,29 @@ function getPossibleRoots(){
 
 // determine the true root by setting .data("root") to True
 function getTreeRoot(possible_roots){
-    min = 1000;
-    min_vertex_id = null;
+    max = -1;
+    max_vertex_id = null;
     // filter out one that has moust outgoing connections, which means it's root
+    // vertex with most outgoing connections is the one that has most children
+    // children of vertex are stored in dictionary, therfore length of dictionary needs to be checked
     for (const [id, vertex] of Object.entries(possible_roots)) {
         console.log("checking:", id, vertex);
-        if(vertex.incomingConns_count < min){
-            min_vertex_id = id;
-            min = vertex.incomingConns_count;
-            console.log("it fits");
+        // if(vertex.incomingConns_count < min){
+        //     min_vertex_id = id;
+        //     min = vertex.incomingConns_count;
+        //     console.log("it fits");
+        // }
+        const number_of_children = Object.keys(vertex.children).length;
+        if(number_of_children > max){
+            max_vertex_id = id;
+            max = number_of_children;
+            console.log("found new vertex with highest number of outgoing connections")
         }
     }
 
     for(let i = 0; i < shapes.length; i++){
         // if(possible_roots[shapes[i].id] != null && possible_roots[shapes[i].id].root){
-        if(possible_roots[shapes[i].id] != null && min_vertex_id == shapes[i].id){
+        if(possible_roots[shapes[i].id] != null && max_vertex_id == shapes[i].id){
             shapes[i].data("root", true);
             console.log(shapes[i], "is the root!");
             break;
@@ -2171,7 +2186,8 @@ function setText() {
 
 // de-selects any selected element and hides handles
 function looseFocus(ev, triger = 0){
-    if(triger === 1 || ev.srcElement.id === 'canvID'){
+    console.log("EVENT:",ev);
+    if(triger === 1 || ev.target.id === 'canvID'){
         if(active !== null){
             setActive();
             IDinput.disabled = true;
@@ -2553,6 +2569,7 @@ function saveGraph() {
 }
 
 function loadGraph(json, pacient=false, viewonly=false) {
+    // console.log("loadgraph, json received:", json);
     // application should go in view only state
     viewonly_graph = viewonly;
 
@@ -2566,8 +2583,9 @@ function loadGraph(json, pacient=false, viewonly=false) {
     id = 0; // id for shapes, connections, probably obsolete right now
     // also resets variables in window
 
-    if(pacient){
+    // console.log("[david.js/loadGraph]", pacient, viewonly_graph, editingGraph);
 
+    if(pacient){
         // console.log("CLEAR WINDOW CLEAR WINDOW CLEAR WINDOW CLEAR WINDOW")
         paper.fromJSON(json, function(el, data) {
             // console.log(data.setName);
@@ -2592,116 +2610,123 @@ function loadGraph(json, pacient=false, viewonly=false) {
     //     return;
 
     paper.clear();
+    // console.log("paper:", paper);
+    try{
+        paper.fromJSON(json, function(el, data) {
+            el.id = data.id;
+            // console.log('START START START START START');
 
-    paper.fromJSON(json, function(el, data) {
-        el.id = data.id;
-        // console.log('START START START START START');
+            // console.log('[loadGraph] element id:',el.id, data.type);
+            try{
+                if(data.type !== 'connection' && data.type !== 'sub_path' && data.type !== 'connection_text'){
+                    // console.log("NI KONEKŠN FOCK FOCK FOCK")
+                    // Recreate the set using the identifier
+                    if( !window[data.setName] ){
+                        window[data.setName] = paper.set();
 
-        // console.log('[loadGraph] element id:',el.id, data.type);
+                        // window[data.setName].draggable();
 
-        if(data.type !== 'connection' && data.type !== 'sub_path' && data.type !== 'connection_text'){
-            // console.log("NI KONEKŠN FOCK FOCK FOCK")
-            // Recreate the set using the identifier
-            if( !window[data.setName] ){
-                window[data.setName] = paper.set();
+                        canvasSets.push(window[data.setName]);
 
-                // window[data.setName].draggable();
+                        // console.log("[loadGraph] data.setName:", data.setName, canvasSets);
+                    } else {
+                        // console.log("[loadGraph] SET EXISTS EXISTS:", data.setName, window[data.setName])
+                    }
 
-                canvasSets.push(window[data.setName]);
+                    // Place each element back into the set
+                    //console.log('setName POST:' +data.setName);
+                    window[data.setName].push(el);
 
-                // console.log("[loadGraph] data.setName:", data.setName, canvasSets);
-            } else {
-                // console.log("[loadGraph] SET EXISTS EXISTS:", data.setName, window[data.setName])
-            }
-
-            // Place each element back into the set
-            //console.log('setName POST:' +data.setName);
-            window[data.setName].push(el);
-
-            // make set draggable
-            // window[data.setName].draggable();
-        }
-
-        // console.log('SAVING: ', window[data.setName]);
-
-        // console.log('window :' +window[data.setName]);
-
-        // console.log("[loadGraph] type of element:", el.type);
-
-
-        if(el.type === 'path'){
-            if (data.type === 'hide'){
-                let correct_set = getSet(el.id, 1);
-                // console.log(el.id, correct_set);
-                if(correct_set === null){
-                    // console.log("ERROR ERROR ERROR ERROR ERROR");
-                    return;
+                    // make set draggable
+                    // window[data.setName].draggable();
                 }
-                let px = canvasSets[correct_set][0].getBBox().x;
-                let py = canvasSets[correct_set][0].getBBox().y;
-
-                let d = ["M", px+5, py+10, "l", 10, 0, "M", px+10, py+5, "l", 0, 10].join(",");
-
-                // remove element and add it back
-                // whole procedure(creating new path, remove & add are necesseray because otherwise the transformations of path are wrong)
-                el.remove();
-                window[data.setName].pop();
-
-                el = paper.path(d).attr({"stroke-width": 3, stroke: Colors.green});
-                window[data.setName].push(el);
-
-                rainingEvents(el, "hide");
-                // console.log("[loadGraph] loaded HIDE path");
-            } else if(data.type === 'connection') {
-                // console.log("[loadGraph] path fromTo:", el.data("fromTo"));
-                let idSplit = data.fromTo.split(" ");
-                el.remove();
-                connections.push(paper.connection(paper.getById(idSplit[0]), paper.getById(idSplit[1]), "#000", data.id_connection));
-                // remove text because you will add new(previous) later
-                connections[connections.length - 1].text.remove();
-                // console.log(connections[connections.length - 1].text);
-                // remove two handlers, because they will be added later(on the bottom)
-                connections[connections.length - 1].text.undblclick(addDblclickHandlers);
-                connections[connections.length - 1].subpath.undblclick(addDblclickHandlers);
-
-                rainingEvents(el, "connection");
-
-                // console.log("[loadGraph] loaded CONNECTION path");
-            } else { //subpath, just remove because subpath is created when path(connection) is created
-                el.remove();
-                rainingEvents(el, "subpath")
-                // console.log("[loadGraph] loaded SUBPATH path");
+            } catch(err){
+                console.log("[ERROR david.js/loadGraph] paper.fromJSON", err)
             }
-        }
-        else if(el.type === 'text'){ // trick is to remove connection_text, because connection_text is created when path(connection) is created
-            // console.log("[loadGraph] loaded", data.type, "text");
-            rainingEvents(el, data.type);
-            if(data.type === "connection_text")
-                el.data("id_connection", data.id_connection);
-            else if(data.type === "shape_text")
-                el.data("parent", data.parent);
 
-        }
-        else if(el.type === 'rect'){
-            addToShapes(el);
-            rainingEvents(el, data.type);
-            if(data.type === "rect")
-                el.data("desc", data.desc);
-            // console.log("[loadGraph] loaded", data.type, "rect");
-            // el.data("subtree_height", data.subtree_height);
-        }
-        // // console.log('[loadGraph] setName');
-        el.setName = data.setName;
+            // console.log('SAVING: ', window[data.setName]);
 
-        // el.click(function () {
-        //     console.log("click shape: matrix:", el.matrix);
-        // })
+            // console.log('window :' +window[data.setName]);
+
+            // console.log("[loadGraph] type of element:", el.type);
 
 
-        // return el;
-        // console.log('END END END END END');
+            if(el.type === 'path'){
+                if (data.type === 'hide'){
+                    let correct_set = getSet(el.id, 1);
+                    // console.log(el.id, correct_set);
+                    if(correct_set === null){
+                        // console.log("ERROR ERROR ERROR ERROR ERROR");
+                        return;
+                    }
+                    let px = canvasSets[correct_set][0].getBBox().x;
+                    let py = canvasSets[correct_set][0].getBBox().y;
 
-    });
+                    let d = ["M", px+5, py+10, "l", 10, 0, "M", px+10, py+5, "l", 0, 10].join(",");
+
+                    // remove element and add it back
+                    // whole procedure(creating new path, remove & add are necesseray because otherwise the transformations of path are wrong)
+                    el.remove();
+                    window[data.setName].pop();
+
+                    el = paper.path(d).attr({"stroke-width": 3, stroke: Colors.green});
+                    window[data.setName].push(el);
+
+                    rainingEvents(el, "hide");
+                    // console.log("[loadGraph] loaded HIDE path");
+                } else if(data.type === 'connection') {
+                    // console.log("[loadGraph] path fromTo:", el.data("fromTo"));
+                    let idSplit = data.fromTo.split(" ");
+                    el.remove();
+                    connections.push(paper.connection(paper.getById(idSplit[0]), paper.getById(idSplit[1]), "#000", data.id_connection));
+                    // remove text because you will add new(previous) later
+                    connections[connections.length - 1].text.remove();
+                    // console.log(connections[connections.length - 1].text);
+                    // remove two handlers, because they will be added later(on the bottom)
+                    connections[connections.length - 1].text.undblclick(addDblclickHandlers);
+                    connections[connections.length - 1].subpath.undblclick(addDblclickHandlers);
+
+                    rainingEvents(el, "connection");
+
+                    // console.log("[loadGraph] loaded CONNECTION path");
+                } else { //subpath, just remove because subpath is created when path(connection) is created
+                    el.remove();
+                    rainingEvents(el, "subpath")
+                    // console.log("[loadGraph] loaded SUBPATH path");
+                }
+            }
+            else if(el.type === 'text'){ // trick is to remove connection_text, because connection_text is created when path(connection) is created
+                // console.log("[loadGraph] loaded", data.type, "text");
+                rainingEvents(el, data.type);
+                if(data.type === "connection_text")
+                    el.data("id_connection", data.id_connection);
+                else if(data.type === "shape_text")
+                    el.data("parent", data.parent);
+
+            }
+            else if(el.type === 'rect'){
+                addToShapes(el);
+                rainingEvents(el, data.type);
+                if(data.type === "rect")
+                    el.data("desc", data.desc);
+                // console.log("[loadGraph] loaded", data.type, "rect");
+                // el.data("subtree_height", data.subtree_height);
+            }
+            // // console.log('[loadGraph] setName');
+            el.setName = data.setName;
+
+            // el.click(function () {
+            //     console.log("click shape: matrix:", el.matrix);
+            // })
+
+
+            // return el;
+            // console.log('END END END END END');
+
+        });
+    } catch(err){
+        console.log("[ERROR david.js/loadGraph] paper.fromJSON", err)
+    }
 
     // make sets draggable
     if(!viewonly_graph){
