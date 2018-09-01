@@ -99,6 +99,21 @@ if(isset($_SESSION["user"])){
                 <?php endif; ?>
             </div>
         </div>
+        <div>
+            <?php
+            try{
+                if(isset($_SESSION["errors"])){
+                    foreach ($_SESSION["errors"] as $key => $value){
+
+                        echo "<span style=\"color: red\" id=\"errors\">$value</span><br>";
+                    }
+                    $_SESSION["errors"] = null;
+                }
+            } catch (Exception $e){
+
+            }
+            ?>
+        </div>
         <div class="col-sm-2 sidenav">
             <div class="well">
                 <p>ADS</p>

@@ -202,7 +202,7 @@ $data = DBfunctions::getCurations();
             <table id="curationTable" class="table table-hover table-responsive table-bordered">
                 <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>#</th>
                     <th>Algorithm name</th>
                     <th>Requested by</th>
                     <th>Request date</th>
@@ -215,8 +215,12 @@ $data = DBfunctions::getCurations();
                 </thead>
                 <tbody>
                 <?php foreach ($data as $key => $value){
+                    // curation ID
                     $id = $value["id"];
+
+                    // algorithm id
                     $algorithmID = $value["graph-id"];
+
                     $algorithmName = $value["graph-name"];
                     $requestedByName = $value["name"];
                     $requestedBySurname = $value["surname"];
@@ -225,6 +229,8 @@ $data = DBfunctions::getCurations();
                     $requestDate = $value["formated-date"];
                     $status = $value["status"];
                     $curatedBy = $value["curated-by"];
+
+                    $ctr = 1;
 
                     if($status === '0'){
                         $status = 'Open';
@@ -268,7 +274,7 @@ $data = DBfunctions::getCurations();
                     }
 
 
-                    $output = "$output" . "<td>" . "$id" . "</td>";
+                    $output = "$output" . "<td>" . "$ctr" . "</td>";
                     $output = "$output" . "<td>" . "$algorithmName" . "</td>";
                     $output = "$output" . "<td>" . "$requestedByWholeName" . ": " . "$requestedByMail" . "</td>";
                     $output = "$output" . "<td title=\"dd. mm. yyyy\">" . "$requestDate" . "</td>";
@@ -278,6 +284,8 @@ $data = DBfunctions::getCurations();
                     $output = "$output" . "<td>" . "$button_modal" . "</td>";
 
                     echo "$output";
+
+                    $ctr++;
 
                 }
                 ?>

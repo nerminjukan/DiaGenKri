@@ -246,7 +246,7 @@ $data = DBfunctions::getGraphs();
             <table id="graphTable" class="table table-hover table-responsive table-bordered">
                 <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>#</th>
                     <th>Author</th>
                     <th>Algorithm name</th>
                     <th>Curated</th>
@@ -260,13 +260,10 @@ $data = DBfunctions::getGraphs();
 
                     <th>View</th>
 
-                    <?php if(isset($_SESSION["user"]) && (isset($_SESSION["user-edit"]) ||  isset($_SESSION["user-admin"])) && ($_SESSION["user-edit"] == 1 || $_SESSION["user-admin"] == 1)): ?>
-                        <th>Edit</th>
-                    <?php endif; ?>
-                    <?php if(isset($_SESSION["user"]) && (isset($_SESSION["user-delete"]) ||  isset($_SESSION["user-admin"])) && ($_SESSION["user-delete"] == 1 || $_SESSION["user-admin"] == 1)): ?>
-                        <th>Delete</th>
+                    <th>Edit</th>
 
-                    <?php endif; ?>
+                    <th>Delete</th>
+
                 </tr>
                 </thead>
                 <tbody>
@@ -279,6 +276,8 @@ $data = DBfunctions::getGraphs();
                     $visual = $value["visual"];
                     $uname = $value["uname"];
                     $usurname = $value["usurname"];
+
+                    $ctr = 1;
 
                     $wholename = "";
                     if(isset($_SESSION["user"]) && isset($_SESSION["user-read"])){
@@ -338,14 +337,21 @@ $data = DBfunctions::getGraphs();
 
                     $button_edit = "<button class='btn btn-block btn-primary edit-graph-button' id='$id'>Edit</button>";
 
+                    if(!isset($_SESSION["user"]) || !(isset($_SESSION["user-edit"])) || $_SESSION["user-edit"] != 1){
+                        $button_edit = "";
+                    }
+
+                    $delete_alg = "<i id='$id' class='fa fa-times'></i>";
+
+                    if(isset($_SESSION["user"]) && (isset($_SESSION["user-delete"])) && ($_SESSION["user-delete"] == 1)){
+                        $delete_alg = "";
+                    }
+
                     $button_view = "<button class='btn btn-block btn-primary view-graph-button' id='$id'>View</button>";
 
                     if(isset($_SESSION["user"]) && isset($_SESSION["user-read"]) && ($_SESSION["user-read"] === '0' || $_SESSION["user-read"] === 0) && $_SESSION["user"] !== $email){
-                        $button_view = "<button disabled title='You can only view your own algorithms.' class='btn btn-block btn-primary' id='$id'>View</button>";
+                        $button_view = "";
                     }
-
-
-                    $delete_alg = "<i id='$id' class='fa fa-times'></i>";
 
                     $output = "";
 
@@ -358,7 +364,7 @@ $data = DBfunctions::getGraphs();
                         }
                         $output = "<tr " . $styleClass;
 
-                        $output = "$output" . "<td>" . "$id" . "</td>";
+                        $output = "$output" . "<td>" . "$ctr" . "</td>";
                         $output = "$output" . "<td>" . "$wholename" . "</td>";
                         $output = "$output" . "<td>" . "$name" . "</td>";
                         $output = "$output" . "<td>" . "$curated" . "</td>";
@@ -392,10 +398,7 @@ $data = DBfunctions::getGraphs();
                             }
                         }
 
-                        // end
-
                         $output = "$output" . "<td hidden>$private</td>" . "</tr>";
-
 
                     }
 
@@ -403,6 +406,7 @@ $data = DBfunctions::getGraphs();
                     // echo "<tr class='tr-sc'><td style=\"white-space: nowrap; width: 6%\">$id</td><td style=\"white-space: nowrap; width: 12%\">$email</td><td style=\"white-space: nowrap; width: 19%\">$name</td><td style=\"white-space: nowrap; width: 16%\">$visual</td><td style=\"white-space: nowrap; width: 21%\">$algorithmType</td><td style=\"white-space: nowrap; width: 12.5%\">$created</td><td style=\"white-space: nowrap; width: 10.2%\">$button_edit</td></tr>";
                     if((isset($_SESSION["user"]) && $private === '1' && $_SESSION["user"] === $email) || $private === '0'){
                         echo "$output";
+                        $ctr++;
                     }
                 }
                 ?>
