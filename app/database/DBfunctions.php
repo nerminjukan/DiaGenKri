@@ -185,6 +185,18 @@ class DBfunctions {
         return $result1;
     }
 
+    public static function getGraphData($gid){
+        $db = DBconnect::getInstance();
+
+        $statement = $db->prepare("SELECT diagenkri.graph.`e-mail` FROM diagenkri.graph WHERE id=:gid;");
+        $statement->bindParam(":gid", $gid);
+        $statement->execute();
+
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        return $result;
+    }
+
     public static function getGraphs(){
         $db = DBconnect::getInstance();
         $result = null;
