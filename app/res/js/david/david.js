@@ -1207,15 +1207,19 @@ function completeResetInputs(){
 
 // disables inputs
 function disableInputs(decision, input_id = null){
-    if(!input_id){
-        $( "#IDtext" ).prop( "disabled", decision );
-        $( "#IDdesc" ).prop( "disabled", decision );
-        IDcolor.disabled = decision;
-        IDlead.disabled = decision;
-        return;
-    }
+    try {
+        if(!input_id){
+            $( "#IDtext" ).prop( "disabled", decision );
+            $( "#IDdesc" ).prop( "disabled", decision );
+            IDcolor.disabled = decision;
+            IDlead.disabled = decision;
+            return;
+        }
 
-    $(input_id).prop( "disabled", decision);
+        $(input_id).prop( "disabled", decision);
+    } catch(err){
+        
+    }
 }
 
 // add event handlers back to elements
@@ -3007,11 +3011,6 @@ function loadGraph(json, pacient=false, viewonly=false) {
 
 
     //console.log('[loadGraph] LOADING finished');
-
-    }catch (e) {
-        console.log("ERROR: ", e);
-    }
-
 
 }
 
