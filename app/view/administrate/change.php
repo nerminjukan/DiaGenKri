@@ -228,7 +228,13 @@ $data = DBfunctions::getUsersData();
                     // $privileges = $privileges . $adminString . $readString . $editString . $deleteString . $addString . $confirmString; 
                     $privileges = $adminString . $readString . $editString . $deleteString . $addString . $confirmString; 
 
-                    $button = "<button type='button' class='btn btn-primary save-permissions' name='$i' id='$email'>Save</button>";
+                    if($email === $_SESSION["user"]){
+                        $button = "<button disabled title='You cannot change your own user privileges.' type='button' class='btn btn-primary' name='$i' id='$email'>Save</button>";
+
+                    }
+                    else{
+                        $button = "<button type='button' class='btn btn-primary save-permissions' name='$i' id='$email'>Save</button>";
+                    }
                     // output string, start
                     $output = "<tr class='tr-graphTable'>";
 

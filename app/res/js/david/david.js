@@ -326,7 +326,7 @@ Raphael.st.draggable = function() {
 
              });*/
             dragging_set = false;
-            console.log('drag: ', dragging_set);
+            //console.log('drag: ', dragging_set);
 
             // console.log('[draggable] end of drag');
         };
@@ -413,6 +413,8 @@ let delete_shape = false
 let remove_connectionn_id = null;
 // variable for zoom
 let panZoom = null;
+//variable for first/root element
+let rootElement = null;
 
 // HTML input ID input field
 var IDinput;
@@ -523,6 +525,9 @@ function removeShape(shape_id){
     canvasSets.splice(getSet(shape_id), 1);
     console.log("REMOVING:");
     toRemove.forEach(function (e) {
+        if(rootElement === e){
+            rootElement = null;
+        }
         console.log(e.id)
         e.remove();
     });
@@ -538,6 +543,8 @@ function removeShape(shape_id){
         line_first_shape_id = null;
         line_second_shape_id = null;
     }
+
+    active = null;
 }
 
 // returns array that contains ids of all connections that comes to that shape
@@ -635,14 +642,175 @@ function setActive(node = null) {
         //active = null;
     }
 }
+
+function setColor(me) {
+    IDcolor.value = me.attr('fill');
+}
+
+function saveColor(event, me){
+    //console.log(event);
+    //console.log(me.value);
+    if(active !== null){
+        active.attr({'fill': me.value});
+    }
+}
+
+function setLead(me) {
+    //console.log(active.data('resizableID'));
+    if(active.data('resizableID') !== null && active.data('resizableID') !== undefined){
+        IDlead.checked = true;
+    }
+    else{
+        IDlead.checked = false;
+    }
+}
+
+function recursiveHide(nodeID, first_id, color) {
+    var shape = paper.getById(nodeID);
+    var hide = paper.getById(first_id).data('connections');
+    var setID;
+    for(let i = 0; i < connections.length; i++){
+        if(connections[i].from.id === shape.id){
+            if(hide){
+                if(shape.data('type') !== 'decision'){
+                    try{
+                        paper.getById(shape.data('resizableID')).attr({stroke: Colors.red});
+                    } catch (e) {
+                        //console.log(e);
+                    }
+                }
+                setID = getSet(connections[i].to.id);
+                //console.log('element color: ', connections[i].to.attr('fill'));
+                //console.log(color);
+                if(setID && connections[i].to.id !== first_id && connections[i].to.attr('fill') === color){
+                    paper.getById(connections[i].to.id).data('hidden', 'true');
+                    changeIncomingConnections(connections[i].to.id, true);
+                    connections[i].line.hide();
+                    connections[i].text.hide();
+                    canvasSets[setID].forEach( function (e) {
+                            paper.getById(e.id).hide();
+                        }
+                    );
+                }
+                else{
+                    if(nodeID === first_id){
+                        continue;
+                    }
+                    else{
+                        connections[i].line.hide();
+                        connections[i].text.hide();
+                        continue
+                    }
+                }
+            }
+            else{
+                if(shape.data('type') !== 'decision'){
+                    try{
+                        paper.getById(shape.data('resizableID')).attr({stroke: Colors.green});
+                    }catch (e) {
+                        //console.log(e);
+                    }
+                }
+                setID = getSet(connections[i].to.id);
+                //console.log('element color: ', connections[i].to.attr('fill'));
+                //console.log(color);
+                if(setID && connections[i].to.id !== first_id && connections[i].to.attr('fill') === color){
+                    paper.getById(connections[i].to.id).data('hidden', 'false');
+                    changeIncomingConnections(connections[i].to.id, false);
+                    connections[i].line.show();
+                    connections[i].text.show();
+                    canvasSets[setID].forEach( function (e) {
+                            paper.getById(e.id).show();
+                        }
+                    );
+                }
+                else{
+                    if(connections[i].to.data('hidden') !== 'true'){
+                        connections[i].line.show();
+                        connections[i].text.show();
+                        continue;
+                    }
+                }
+            }
+            if(connections[i].to.attr('fill') === color){
+                recursiveHide(connections[i].to.id, first_id, color);
+            }
+        }
+        else{
+            //console.log('no connections');
+        }
+    }
+}
+
+function hideColorSegment(node, color) {
+    //console.log('hiding color: ', color);
+    //console.log('first node: ', node);
+    recursiveHide(node.id, node.id, color);
+    var status = node.data('connections');
+    node.data('connections', !status);
+    //paper.connection(connections[connections.length - 1]);
+}
+
+function saveLead(event, me) {
+    if(active !== null){
+        let set, txt, resizable, dx, dy, x, y;
+        if(IDlead.checked === true){
+            //console.log('active: ', active);
+            // CREATE + sign
+            // console.log("[shapeDraw] ev.offset:", ev.offsetX, ev.offsetY)
+            set = canvasSets[getSet(active.id)];
+
+            dx = set[0].matrix.e;
+            dy = set[0].matrix.f;
+            // console.log("[saveGraph] dx, dy:",dx, dy);
+
+
+            let d = ["M", set[0].attr('x')+5, set[0].attr('y')+10, "l", 10, 0, "M", set[0].attr('x')+10, set[0].attr('y')+5, "l", 0, 10].join(",");
+            resizable = paper.path(d).attr({"stroke-width": 3, stroke: Colors.green, 'cursor': 'copy'});
+            resizable.matrix.e = set[0].matrix.e;
+            resizable.matrix.f = set[0].matrix.f;
+            resizable.transform('t' + dx + ',' + dy);
+            resizable.mouseover(hoverIn);
+            resizable.mouseout(hoverOut);
+            resizable.data('type', 'hide');
+            resizable.data('parentID', set[0].id);
+            set[0].data('resizableID', resizable.id);
+            resizable.click(function(){hideColorSegment(set[0], set[0].attr('fill'))});
+            txt = set.pop();
+            resizable.insertBefore(txt);
+            resizable.setName = 'name' + set[0].id;
+            set.push(resizable);
+            set.push(txt);
+            //console.log('resizable: ', resizable);
+        }
+        else{
+            set = canvasSets[getSet(active.id)];
+            txt = set.pop();
+            resizable = set.pop();
+            set[0].data('resizableID', null);
+            resizable.remove();
+            set.push(txt);
+        }
+
+        //paper.connection(connections[connections.length - 1]);
+    }
+}
+
 function onShapeClicked(){
     // enable inputs, because maybe user missclicked and wants to edit text
     disableInputs(false);
+    if(this.data('type') === 'decision'){
+        $( "#IDdesc" ).prop( "disabled", true );
+        $( "#leadColor" ).prop( "disabled", true );
+    }
     // saves the current shape to a global scope
     setActive(this);
-    changingText = this.data('type') === 'decision' ? canvasSets[getSet(this.id)][1] : canvasSets[getSet(this.id)][2]
+    changingText = canvasSets[getSet(this.id)][canvasSets[getSet(this.id)].length-1];
+    //changingText = this.data('type') === 'decision' ? canvasSets[getSet(this.id)][1] : canvasSets[getSet(this.id)][2];
     resetText(changingText, this);
-    IDinput.setAttribute('value', this.id);
+    setColor(this);
+    setLead(this);
+    //IDinput.setAttribute('value', this.id);
 
     //console.log("id of shape:", this.id);
     if(!add_connection && !delete_shape)
@@ -987,7 +1155,7 @@ function textClicked(){
     console.log("CORRECT INDEX:", indexCorrectSet);
     //active = canvasSets[indexCorrectSet][0];
     setActive(canvasSets[indexCorrectSet][0]);
-    IDinput.setAttribute('value', active.id);
+    //IDinput.setAttribute('value', active.id);
 
 
     // remember which text you are changin
@@ -1030,9 +1198,11 @@ function resetText(textShape, vertexShape, focus=false){
 function completeResetInputs(){
     setActive();
     changingText = null;
-    IDinput.setAttribute('value', "");
+    //IDinput.setAttribute('value', "");
     document.getElementById("IDtext").value = "";
     document.getElementById("IDdesc").value = "";
+    IDcolor.value = "#000000";
+    IDlead.checked = false;
 }
 
 // disables inputs
@@ -1040,6 +1210,8 @@ function disableInputs(decision, input_id = null){
     if(!input_id){
         $( "#IDtext" ).prop( "disabled", decision );
         $( "#IDdesc" ).prop( "disabled", decision );
+        IDcolor.disabled = decision;
+        IDlead.disabled = decision;
         return;
     }
 
@@ -1049,6 +1221,7 @@ function disableInputs(decision, input_id = null){
 // add event handlers back to elements
 // +++++++++++++++++++++++++++++++++++
 function rainingEvents(item, type){
+    //console.log(type);
     if(type === "rect"){
         rectEvents(item, type);
     } else if (type === "decision") {
@@ -1056,6 +1229,7 @@ function rainingEvents(item, type){
     } else if (type === "connection") {
         pathEvents(item, type);
     } else if (type === "hide") {
+        //console.log(item, type);
         pathEvents(item, type);
     } else if (type === "subpath") {
         pathEvents(item, type);
@@ -1099,7 +1273,7 @@ function pathEvents(item, type){
     if(type === "connection"){
         item.data('type', 'connection');
     } else if (type === "hide"){
-        // console.log("[pathEvents] type", type);
+        //console.log("[pathEvents] item", item);
         item.mouseover(hoverIn);
         item.mouseout(hoverOut);
         item.data('type', 'hide');
@@ -1111,7 +1285,7 @@ function pathEvents(item, type){
 
 
         // adds a dblclick handler to the 'hide' rectangle
-        item.click(function(){hideNodes(item.data('parentID'))});
+        item.click(function(){hideColorSegment(parent_shape, parent_shape.attr('fill'))});
     } else if (type === "subpath"){
         item.data('type', 'subpath');
     }
@@ -1132,6 +1306,11 @@ function textEvents(item, type){
                 this.attr({'font-size': 10});
             });
         }
+        else{
+            if(item.attr("text") === "default-text"){
+                item.attr({'text': ""});
+            }
+        }
     } else if(type === "connection_text"){
         // console.log("[textEvents] type", type);
 
@@ -1145,6 +1324,11 @@ function textEvents(item, type){
             item.mouseout(function (){
                 this.attr({'font-size': 12});
             });
+        }
+        else{
+            if(item.attr("text") === "default-text"){
+                item.attr({'text': ""});
+            }
         }
         item.toFront();
     }
@@ -1174,7 +1358,7 @@ function extractParameters( name, url ) {
 // get data about graph with certain id
 function getGraphData(id_graph_load) {
     let info = null
-    $.post("../../../DiaGenKri/public/visualisation/load",
+    $.post("../../../public/visualisation/load",
         {
             id: id_graph_load
         },
@@ -1182,7 +1366,7 @@ function getGraphData(id_graph_load) {
             const myArray = $.parseJSON(data);
             // const podatki = $.parseJSON(myArray["data"]);
             // window["f_json"] = myArray["data"]
-            console.log("[david.js] myArray", myArray);
+            //console.log("[david.js] myArray", myArray);
             // console.log(podatki);
 
             info = {
@@ -1205,12 +1389,12 @@ function getGraphData(id_graph_load) {
 
 // populates form with name with data(object)
 function populateForm(name, data){
-    console.log('DATA:', data);
+    //console.log('DATA:', data);
 
     try{
         document.getElementById("graphName").value = data.name;
         document.getElementById("graphDescritption").value = data.description;
-        console.log("data intended", data.intended);
+        //console.log("data intended", data.intended);
 
         if(data.access == 0){
             document.getElementById("public").checked = true;
@@ -1220,12 +1404,12 @@ function populateForm(name, data){
         }
 
         if(data.intended == 0){
-            console.log("in 0 if");
+            //console.log("in 0 if");
             document.getElementById("typeDiagnostic").checked = true;
-            $("#test_patients").removeClass("hide-me");
+            //$("#test_patients").removeClass("hide-me");
         } else if(data.intended == 1){
             document.getElementById("typeVisual").checked = true;
-            $("#test_patients").addClass("hide-me");
+            //$("#test_patients").addClass("hide-me");
 
         }
 
@@ -1254,12 +1438,12 @@ function populateForm(name, data){
         } else if (data.algorithm_type == 1){
             diagnostic.selected = true;
         } else {
-            console.log("should say nothing, yup, silly me, oh silly mo moo")
+            //console.log("should say nothing, yup, silly me, oh silly mo moo")
         }
 
-        console.log("[populateForm] will fill data with ", data);
+        //console.log("[populateForm] will fill data with ", data);
     } catch(err){
-        console.log("No save modal", err);
+        //console.log("No save modal", err);
     }
 
 }
@@ -1267,7 +1451,7 @@ function populateForm(name, data){
 // iterate through shapes and connections and build tree
 // its useful for /bolniki tab where progress bar is needed
 function buildTree(){
-    console.log("BUILDING TREE BUILDING TREE BUILDING TREE BUILDING TREE");
+    //console.log("BUILDING TREE BUILDING TREE BUILDING TREE BUILDING TREE");
     tree_vertices = {};
     for (let i = 0; i < shapes.length; i++) {
         const shape = shapes[i];
@@ -1281,8 +1465,8 @@ function buildTree(){
         tree_vertices[conn.to.id].incomingConns_count += 1;
 
     }
-    console.log("[buildTree] tree done!")
-    console.log(tree_vertices);
+    //console.log("[buildTree] tree done!")
+    //console.log(tree_vertices);
 }
 
 // returns height of tree, starting at first vertex
@@ -1290,17 +1474,17 @@ function buildTree(){
 // there can be mutliple vertices without incoming connections so for every vertex that doesnt have
 // incoming connections treeHeight should be calculated
 function getHeights(){
-    console.log("GETING HEIGHTS GETING HEIGHT GETING HEIGHT");
+    //console.log("GETING HEIGHTS GETING HEIGHT GETING HEIGHT");
     for (const [id, vertex] of Object.entries(tree_vertices)) {
-        console.log("id:", id, "height:", vertex.height, "possible root(?):", !vertex.incomingConns);
+        //console.log("id:", id, "height:", vertex.height, "possible root(?):", !vertex.incomingConns);
         // if there are no incoming connections, it is possible that this vertex is root so lets calculate tree height
         if(!vertex.incomingConns){
             Vertex.treeHeight(vertex);
-            console.log("calculating height for", vertex.vertex_id);
+            //console.log("calculating height for", vertex.vertex_id);
         }
     }
 
-    console.log("[getHeights] heights done!")
+    //console.log("[getHeights] heights done!")
     // Vertex.treeHeight("prvi vertex");
     // napolni še za vse ostale vertexe, najdi boljši način kot da n krat kličeš treeHeight(shrajevanje v array)
 }
@@ -1419,6 +1603,8 @@ jQuery(function ($) {
     IDinput = document.getElementById('IDinput');
     IDtext = document.getElementById('IDtext');
     IDdesc = document.getElementById('IDdesc');
+    IDcolor = document.getElementById('color');
+    IDlead = document.getElementById('leadColor');
 
     // drag and drop is possible "everywhere"
     document.addEventListener("dragover", function (ev) {
@@ -1434,7 +1620,12 @@ jQuery(function ($) {
 
     paper.canvas.id='canvID';
 
-    document.getElementById('dl').addEventListener('click', imageDL, false);
+    try{
+        document.getElementById('dl').addEventListener('click', imageDL, false);
+    } catch (e) {
+        //console.log('No download button', e);
+    }
+
 
 
     // // paper.print(100, 100, "Test string", paper.getFont("Times", 800), 30);
@@ -1608,11 +1799,11 @@ jQuery(function ($) {
 
     // listen for change in events so you can show TEST button when needed
     $("#typeDiagnostic").click(function(){
-        $("#test_patients").removeClass("hide-me");
+        //$("#test_patients").removeClass("hide-me");
     });
 
     $("#typeVisual").click(function(){
-        $("#test_patients").addClass("hide-me");
+        //$("#test_patients").addClass("hide-me");
 
     });
 
@@ -1648,17 +1839,17 @@ function changeWidth(textShape, stat) {
         return;
     }
     let counter = 0;
-    console.log('diff_BEFORE: ', parent.attr('width') - textShape.getBBox().width);
-    console.log('stat: ', stat);
+    //console.log('diff_BEFORE: ', parent.attr('width') - textShape.getBBox().width);
+    //console.log('stat: ', stat);
     if(stat === 0){
-        parent.attr('width', textShape.getBBox().width + 20);
+        parent.attr('width', textShape.getBBox().width + 30);
     }
     else if(stat === -1){
         if(parent.attr('width') - textShape.getBBox().width > 20) {
             while (parent.attr('width') - textShape.getBBox().width > 20 && parent.attr('width') - 1 >= 100) {
                 counter++;
                 parent.attr('width', parent.attr('width') - 1);
-                console.log('counter: ', counter);
+                //console.log('counter: ', counter);
 
             }
         }
@@ -1668,15 +1859,16 @@ function changeWidth(textShape, stat) {
             while(parent.attr('width') - textShape.getBBox().width < 20){
                 counter++;
                 parent.attr('width', parent.attr('width') + 1);
-                console.log('counter: ', counter);
+                //console.log('counter: ', counter);
             }
         }
     }
-    console.log('diff_AFTER: ', parent.attr('width') - textShape.getBBox().width);
+    //console.log('diff_AFTER: ', parent.attr('width') - textShape.getBBox().width);
     counter = 0;
     // update connections
+    //TODO kaj je s to funkcijo??
     for (let i = connections.length; i--;) {
-        paper.connection(connections[i]);
+        //paper.connection(connections[i]);
     }
 }
 
@@ -1757,7 +1949,7 @@ function getPossibleRoots(){
 
     for (const [id, obj] of Object.entries(tree_vertices)) {
         // if vertex has no incoming connections, set its root to true
-        console.log("id:",id,"vertex:",obj);
+        //console.log("id:",id,"vertex:",obj);
 
         if(!obj.incomingConns){
             possible_roots[obj.vertex_id] = obj;
@@ -1768,7 +1960,7 @@ function getPossibleRoots(){
         }
 
     }
-    console.log("possible_roots:", possible_roots);
+    //console.log("possible_roots:", possible_roots);
     return possible_roots;
 }
 // IZBOLJŠAVA ZGORNJE FUNKCIJE, NEPOTREBNA FOR ZANKA!!!!
@@ -1780,11 +1972,11 @@ function getTreeRoot(possible_roots){
     min_vertex_id = null;
     // filter out one that has moust outgoing connections, which means it's root
     for (const [id, vertex] of Object.entries(possible_roots)) {
-        console.log("checking:", id, vertex);
+        //console.log("checking:", id, vertex);
         if(vertex.incomingConns_count < min){
             min_vertex_id = id;
             min = vertex.incomingConns_count;
-            console.log("it fits");
+            //console.log("it fits");
         }
     }
 
@@ -1792,7 +1984,7 @@ function getTreeRoot(possible_roots){
         // if(possible_roots[shapes[i].id] != null && possible_roots[shapes[i].id].root){
         if(possible_roots[shapes[i].id] != null && min_vertex_id == shapes[i].id){
             shapes[i].data("root", true);
-            console.log(shapes[i], "is the root!");
+            //console.log(shapes[i], "is the root!");
             break;
         }
     }
@@ -1800,15 +1992,6 @@ function getTreeRoot(possible_roots){
 
 ////////
 
-// helper function for 'element.click' event handler
-function getRandomColor() {
-    var letters = '0123456789ABCDEF';
-    var color = '#';
-    for (var i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-}
 
 // inserts element information from Toolbar into dataTransfer, enables identification of dropped element onto canvas
 function startDrag(ev) {
@@ -1825,10 +2008,13 @@ function changeIncomingConnections(node_id, change){
                 // console.log("[changeIncomingConnections] hiding connection with id", connections[i].id)
             }
             else{
-                connections[i].line.show();
-                connections[i].text.show();
-                if(connections[i].subpath.data('visible') === true){
-                    connections[i].subpath.show();
+                console.log(paper.getById(connections[i].from.id).data('hidden'));
+                if(connections[i].from.data('hidden') !== 'true'){
+                    connections[i].line.show();
+                    connections[i].text.show();
+                    if(connections[i].subpath.data('visible') === true){
+                        connections[i].subpath.show();
+                    }
                 }
                 // console.log("[changeIncomingConnections] showing connection with id", connections[i].id)
 
@@ -1945,25 +2131,16 @@ function shapeDraw(arg, ev) {
     // draws a rectangle
     if(arg === "aSquare"){
         // create element and draw it on canvas
-        shape =  paper.rect(ev.offsetX, ev.offsetY, 100, 40).attr({fill: "white", cursor: "move"}).data('setID', id);
+        shape =  paper.rect(ev.offsetX, ev.offsetY, 100, 40).attr({fill: "#ffffff", cursor: "move"}).data('setID', id);
 
         shape.data('connections', true);
 
         shape.data('desc', 'default-text');
 
 
-        // CREATE + sign
-        // console.log("[shapeDraw] ev.offset:", ev.offsetX, ev.offsetY)
-        let d = ["M", ev.offsetX+5, ev.offsetY+10, "l", 10, 0, "M", ev.offsetX+10, ev.offsetY+5, "l", 0, 10].join(",");
-        let resizable = paper.path(d).attr({"stroke-width": 3, stroke: Colors.green});
-        resizable.mouseover(hoverIn);
-        resizable.mouseout(hoverOut);
-        // DONE + sign
 
-        // creates a 'hide' rectangle
-        // var resizable = paper.rect(ev.offsetX+5, ev.offsetY+5, 10, 10).attr({fill: "green"});
-        resizable.data('type', 'hide');
-        resizable.data('parentID', shape.id);
+
+
 
         shape.mouseup(function () {
             console.log('mouseUP: ', dragging_set);
@@ -1976,15 +2153,12 @@ function shapeDraw(arg, ev) {
             }
         });
 
-        shape.data('resizableID', resizable.id);
+
         // adds a text field
         // adds a text field
         txt = paper.text(ev.offsetX+15, ev.offsetY+20, "default-text").attr({'font-size': 10, 'fill': 'black', 'text-anchor': 'start'});
         txt.data("type", "shape_text");
         txt.data("parent", shape.id);
-
-        // adds a dblclick handler to the 'hide' rectangle
-        resizable.click(function(){hideNodes(resizable.data('parentID'))});
 
 
         // adds a dblclick handler to the text field
@@ -2001,7 +2175,7 @@ function shapeDraw(arg, ev) {
 
         // adds the elements to a set
         set.push(shape);
-        set.push(resizable);
+
         set.push(txt);
         set.draggable();
 
@@ -2016,7 +2190,7 @@ function shapeDraw(arg, ev) {
     }
     // draws a decision node, similar process as for rectangle element, doesn't include the 'details' element
     else if(arg === "aDecision"){
-        shape = paper.rect(ev.offsetX, ev.offsetY, 50, 50).attr({fill: "white", cursor: "move"}).data('setID', id);
+        shape = paper.rect(ev.offsetX, ev.offsetY, 50, 50).attr({fill: "#ffffff", cursor: "move"}).data('setID', id);
         shape.rotate(45);
         shape.data('rotate', true);
         shape.data('type', 'decision');
@@ -2050,7 +2224,7 @@ function shapeDraw(arg, ev) {
         id++;
     }
     // draws a link (for testing purposes)
-    else if(arg === "aLink"){
+    /*else if(arg === "aLink"){
         var x = ev.offsetX + 90;
         var y = ev.offsetY + 10;
         shape = paper.path("M" + ev.offsetX+" "+ev.offsetY+"L" + x + " " + y).attr({stroke: "pink", "stroke-width":4}).data('setID', id);
@@ -2062,7 +2236,7 @@ function shapeDraw(arg, ev) {
 
         canvasSets.push(set);
         id++;
-    }
+    }*/
     // if the shape is not recognised, nothing is drawn
     else{
         return null;
@@ -2071,15 +2245,23 @@ function shapeDraw(arg, ev) {
     //console.log("set id: ", set.data('id'));
     addToShapes(shape);
 
+    if(rootElement === null){
+        rootElement = shape;
+    }
+
     // saves the current shape to a global scope
     //active = shape;
 
     // sets the values in IDinput and IDtext to the currently active shape's values
-    IDinput.setAttribute('value', shape.id);
+    //IDinput.setAttribute('value', shape.id);
     // when creating
     IDtext.removeAttribute('disabled');
 
     IDdesc.removeAttribute('disabled');
+
+    IDcolor.removeAttribute('disabled');
+
+    IDlead.removeAttribute('disabled');
 
     // RELEVANT PARTS WERE MOVED TO onShapeClicked() because there were two click handlers
     // shape click event handler
@@ -2133,7 +2315,8 @@ function getSet(id, which = 0){
         if(canvasSets[i].length === 2 && which === 2)
             continue;
 
-        // console.log("[getSet]:",canvasSets[i][which].id);
+        //console.log("[idSearch]:",id);
+        //console.log("[getSet]:",canvasSets[i][which].id);
         if(canvasSets[i][which].id === id){
             // console.log("found correct set", id);
             return i;
@@ -2180,15 +2363,20 @@ function setText() {
 
 // de-selects any selected element and hides handles
 function looseFocus(ev, triger = 0){
+    //console.log(ev);
     if(triger === 1 || ev.srcElement.id === 'canvID'){
         if(active !== null){
             setActive();
-            IDinput.disabled = true;
-            IDinput.value = "";
+            //IDinput.disabled = true;
+            //IDinput.value = "";
+            IDcolor.value = "#000000";
+            IDcolor.disabled = true;
             IDtext.disabled = true;
             IDtext.value = "";
             IDdesc.disabled = true;
             IDdesc.value = "";
+            IDlead.checked = false;
+            IDlead.disabled = true;
             $(".modal").modal('hide');
         }
         else{
@@ -2196,7 +2384,6 @@ function looseFocus(ev, triger = 0){
         }
     }
 }
-
 // TODO fix dragging of decision node, check all event-handlers after re-load
 // TODO fix dragging of decision node, check all event-handlers after re-load
 
@@ -2310,7 +2497,7 @@ function resetModal() {
 
 function cancelGraph() {
     if(confirm("You are about to leave the page, all your work will be lost. Do you want to proceed?")){
-        window.location.replace("../../../DiaGenKri/public/home");
+        window.location.replace("../../../public/home");
     }
 }
 
@@ -2452,22 +2639,10 @@ function saveGraph() {
 
 
     if(!editingGraph){
-        // $.post("../../../DiaGenKri/public/visualisation/save",
-        //     {
-        //         data: json,
-        //         name: graphDescription['name'],
-        //         description: graphDescription['description'],
-        //         gtype: graphDescription['gtype'],
-        //         atype: graphDescription['atype']
-        //     },
-        //     function(data, status){
-        //         //console.log("[saveGraph] in post(data: )",data, status);
-        //         console.log('[saveGraph] SAVE:', status === "success" ? "saved successfuly" : "not saved successfuly", "\ndata:", data);
-        //         //json = data;
-        //     });
+
         $.ajax({
             type: "POST",
-            url: "../../../DiaGenKri/public/visualisation/save",
+            url: "../../../public/visualisation/save",
             data: {
                 data: json,
                 name: graphDescription['name'],
@@ -2498,27 +2673,10 @@ function saveGraph() {
             }
         });
     } else {
-        // $.post("../../../DiaGenKri/public/visualisation/edit",
-        //     {
-        //         data: json,
-        //         id: graphId,
-        //         name: graphDescription['name'],
-        //         description: graphDescription['description'],
-        //         gtype: graphDescription['gtype'],
-        //         atype: graphDescription['atype']
-        //     },
-        //     function(data, status){
-        //         console.log('[saveGraph]', status === "success" ? "saved successfuly" : "not saved successfuly", "\ndata:", data);
-        //         $.notify("Algorithm successfuly saved!",
-        //             { position: 'bottom center',
-        //              className: 'success',
-        //              gap: 5 }
-        //         );
-        //     });
 
         $.ajax({
             type: "POST",
-            url: "../../../DiaGenKri/public/visualisation/edit",
+            url: "../../../public/visualisation/edit",
             data: {
                 data: json,
                 id: graphId,
@@ -2526,11 +2684,13 @@ function saveGraph() {
                 access: graphDescription['access'],
                 description: graphDescription['description'],
                 gtype: graphDescription['gtype'],
-                atype: graphDescription['atype']
+                atype: graphDescription['atype'],
+                curation: graphDescription['curation']
             },
             success: function(data, status){
                 // console.log('[saveGraph] EDIT:', status === "success" ? "saved successfuly" : "not saved successfuly", "\ndata:", data);
-                if(data === "1"){
+                if(data){
+                    //console.log(data);
                     $.notify("Algorithm successfuly saved!",
                         { position: 'bottom center',
                             className: 'success',
@@ -2601,7 +2761,9 @@ function loadGraph(json, pacient=false, viewonly=false) {
 
     paper.clear();
 
-    paper.fromJSON(json, function(el, data) {
+
+    try{
+        paper.fromJSON(json, function(el, data) {
         el.id = data.id;
         // console.log('START START START START START');
 
@@ -2634,15 +2796,16 @@ function loadGraph(json, pacient=false, viewonly=false) {
 
         // console.log('window :' +window[data.setName]);
 
-        // console.log("[loadGraph] type of element:", el.type);
+         //console.log("[loadGraph] type of element:", el.type);
 
-
+        //console.log(el)
         if(el.type === 'path'){
             if (data.type === 'hide'){
+                //console.log('hide element found!', el);
                 let correct_set = getSet(el.id, 1);
-                // console.log(el.id, correct_set);
+                //console.log(el.id, correct_set);
                 if(correct_set === null){
-                    // console.log("ERROR ERROR ERROR ERROR ERROR");
+                    //console.log("ERROR ERROR ERROR ERROR ERROR");
                     return;
                 }
                 let px = canvasSets[correct_set][0].getBBox().x;
@@ -2655,11 +2818,11 @@ function loadGraph(json, pacient=false, viewonly=false) {
                 el.remove();
                 window[data.setName].pop();
 
-                el = paper.path(d).attr({"stroke-width": 3, stroke: Colors.green});
+                el = paper.path(d).attr({"stroke-width": 3, stroke: Colors.green, 'cursor': 'copy'});
                 window[data.setName].push(el);
 
                 rainingEvents(el, "hide");
-                // console.log("[loadGraph] loaded HIDE path");
+                //console.log("[loadGraph] loaded HIDE path");
             } else if(data.type === 'connection') {
                 // console.log("[loadGraph] path fromTo:", el.data("fromTo"));
                 let idSplit = data.fromTo.split(" ");
@@ -2693,6 +2856,9 @@ function loadGraph(json, pacient=false, viewonly=false) {
         else if(el.type === 'rect'){
             addToShapes(el);
             rainingEvents(el, data.type);
+            if(viewonly_graph){
+                el.attr({'cursor': 'default'});
+            }
             if(data.type === "rect")
                 el.data("desc", data.desc);
             // console.log("[loadGraph] loaded", data.type, "rect");
@@ -2741,8 +2907,8 @@ function loadGraph(json, pacient=false, viewonly=false) {
         }
 
         // meantime change width of all text elements to correct size
-        if(element.data("type") === "shape_text")
-            changeWidth(element, 0);
+        //if(element.data("type") === "shape_text")
+            //changeWidth(element, 0);
 
     });
 
@@ -2774,7 +2940,11 @@ function loadGraph(json, pacient=false, viewonly=false) {
     getTreeRoot(getPossibleRoots());
 
 
-    console.log('[loadGraph] LOADING finished');
+    //console.log('[loadGraph] LOADING finished');
+
+    }catch (e) {
+        console.log("ERROR: ", e);
+    }
 
 
 }

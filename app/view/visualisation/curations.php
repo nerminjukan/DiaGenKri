@@ -77,7 +77,7 @@ $data = DBfunctions::getCurations();
                     <li><a href="../../public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
                     </span> Create algorithm</a></li>
                 <?php endif; ?>
-
+                <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
                 <?php if(isset($_SESSION["user-admin"]) && $_SESSION["user-admin"] == 1): ?>
                     <li><a href="../../public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
                 <?php endif; ?>
@@ -180,7 +180,7 @@ $data = DBfunctions::getCurations();
                        style="width:100%;">
                 <div>
                     <br><label for="curated">Status:</label>
-                    <label class="radio-inline" for="curated"><input onchange="filterTableCurations()" class="radio" type="checkbox" id="curated" name="curated" value="0">Open requests only</label>
+                    <label class="radio-inline" for="curated"><input onchange="filterTableCurations()" checked class="radio" type="checkbox" id="curated" name="curated" value="0">Open requests only</label>
                 </div>
             </div>
         </div>
@@ -260,7 +260,13 @@ $data = DBfunctions::getCurations();
                         $style = "style=\"background-color: #ff6666\"";
                     }
 
-                    $output = "<tr>";
+                    if($status === 'Open'){
+                        $output = "<tr>";
+                    }
+                    else{
+                        $output = "<tr style='display: none'>";
+                    }
+
 
                     $output = "$output" . "<td>" . "$id" . "</td>";
                     $output = "$output" . "<td>" . "$algorithmName" . "</td>";

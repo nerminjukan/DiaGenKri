@@ -215,47 +215,52 @@ $data = DBfunctions::getUserProfile($userMail);
                         $fow = "-";
                     }
 
+                    $rights = "";
                     if($admin == 1){
-                        $adminString = "admin, ";
-                    }else{
-                        $adminString = "";
+                        $rights = $rights .  "Admin";
                     }
 
                     if($readPR == 1){
-                        $readString = "read, ";
-                    }else{
-                        $readString = "";
+                        if($rights === ""){
+                            $rights = $rights . "Read";
+                        }
+                        $rights = $rights . ", " . "read";
                     }
 
-                    if($editPR == 1){
-                        $editString = "edit, ";
-                    }else{
-                        $editString = "";
+                    if($readPR == 1){
+                        if($rights === ""){
+                            $rights = $rights . "Edit";
+                        }
+                        $rights = $rights . ", " . "edit";
                     }
 
-                    if($deletePR == 1){
-                        $deleteString = "delete, ";
-                    }else{
-                        $deleteString = "";
+                    if($readPR == 1){
+                        if($rights === ""){
+                            $rights = $rights . "Delete";
+                        }
+                        $rights = $rights . ", " . "delete";
                     }
 
-                    if($addPR == 1){
-                        $addString = "add, ";
-                    }else{
-                        $addString = "";
+                    if($readPR == 1){
+                        if($rights === ""){
+                            $rights = $rights . "Add";
+                        }
+                        $rights = $rights . ", " . "add";
                     }
 
-                    if($confirmPR == 1){
-                        $confirmString = "confirm";
-                    }else{
-                        $confirmString = "";
+                    if($readPR == 1){
+                        if($rights === ""){
+                            $rights = $rights . "Confirm";
+                        }
+                        $rights = $rights . ", " . "confirm";
                     }
+                    $rights = $rights . ".";
 
                     echo "<tr><th class='th-st'>Name: </th><td>" . $name . "</td></tr>" .
                          "<tr><th class='th-st'>Surname: </th><td style=\"white-space: nowrap\">" . $surname . "</td></tr>" .
                          "<tr><th class='th-st'>E-mail: </th><td>" . $email . "</td></tr>" .
                          "<tr><th class='th-st'>Field of work: </th><td>" . $fow . "</td></tr>" .
-                         "<tr><th class='th-st'>Administration rights: </th><td style=\"white-space: nowrap\">" . $adminString . $readString . $editString . $deleteString . $addString . $confirmString . "</td></tr>";
+                         "<tr><th class='th-st'>Administration rights: </th><td style=\"white-space: nowrap\">" . $rights . "</td></tr>";
 
                 }
                 ?>

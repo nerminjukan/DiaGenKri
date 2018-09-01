@@ -19,7 +19,12 @@ $(document).ready(function(){
     load_unseen_notification();
 
     setInterval(function(){
-        load_unseen_notification();
+        try{
+            load_unseen_notification();
+        } catch (e) {
+
+        }
+        
     }, 10000);
 });
 

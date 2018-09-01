@@ -361,7 +361,6 @@ input:disabled, textarea:disabled {
 /* style for table on list algorithms tab */
 #graphTable {
   background-color: #F9F9F9;
-  max-width: 960px;
 }
 
 .tr-graphTable {
@@ -400,7 +399,6 @@ input:disabled, textarea:disabled {
 
 #filterForm{
   width: 100%;
-  max-width: 960px;
   display: flex;
   flex: 1 1 auto;
   align-items: stretch;

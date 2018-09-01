@@ -61,30 +61,57 @@
     <div class="row content">
         <div class="col-sm-2 sidenav">
             <h3>LINKS</h3>
-            <p><a href="http://www.limfom-levkemija.org/domov.html">L&L</a></p>
+            <p><a href="http://www.limfom-levkemija.org/domov.html" target="_blank"><img class="image img-responsive img-thumbnail" src="../../app/res/photos/logo_LL.png"></a></p>
+            <p><a href="http://lrss.fri.uni-lj.si/bio/" target="_blank"><img class="image img-responsive img-thumbnail" src="../../app/res/photos/BG-logo.PNG"></a></p>
         </div>
         <div class="col-sm-8 text-left">
             <div class="container-fluid row-increased-top">
+                <?php
+                try{
+                    if(isset($_SESSION["errors"])){
+                        foreach ($_SESSION["errors"] as $key => $value){
+
+                            echo "<span style=\"color: red\" id=\"errors\">$value</span><br>";
+                        }
+                        $_SESSION["errors"] = null;
+                    }
+                } catch (Exception $e){
+
+                }
+                ?>
                 <form class="well" action = "<?= "register/add/" ?>" method = "post" content="">
                     <div class="form-group">
                         <label for="name">Name:</label>
-                        <input type ="text" class="form-control" id="name" name ="name"/>
+                        <input placeholder="Enter your name" <?php if(isset($_SESSION["uname"])){echo "value=\"" . $_SESSION["uname"] . "\"";} ?> type ="text" class="form-control" id="name" name ="name"/>
                     </div>
                     <div class="form-group">
                         <label for="surname">Surname:</label>
-                        <input type ="text" class="form-control" id="surname" name ="surname"/>
+                        <input placeholder="Enter your surname" <?php if(isset($_SESSION["usurname"])){echo "value=\"" . $_SESSION["usurname"] . "\"";} ?> type ="text" class="form-control" id="surname" name ="surname"/>
                     </div>
                     <div class="form-group">
                         <label for="email">E-mail:</label>
-                        <input type = "email" class="form-control" id="email" name = "email"/>
+                        <input placeholder="Enter your E-mail address" <?php if(isset($_SESSION["usemail"])){echo "value=\"" . $_SESSION["usemail"] . "\"";} ?> type = "email" class="form-control" id="email" name = "email"/>
                     </div>
                     <div class="form-group">
                         <label for="password1">Password:</label>
-                        <input type="password" class="form-control" id="password1" name="password1"/>
+                        <input placeholder="Enter your password" type="password" class="form-control" id="password1" name="password1"/>
                     </div>
                     <div class="form-group">
                         <label for="password2">Password (repeat):</label>
-                        <input type="password" class="form-control" id="password2" name="password2"/>
+                        <input placeholder="Repeat your password" type="password" class="form-control" id="password2" name="password2"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="sel1">Field of work</label>
+                        <div>
+                            <select required class="form-control" id="sel1" name="sel1">
+                                <option disabled selected hidden>Choose your field of work</option>
+                                <option value="Doctor" id="opt1">Doctor</option>
+                                <option value="Scientist" id="opt2">Scientist</option>
+                                <option value="Researcher" id="opt3">Researcher</option>
+                                <option value="Other" id="opt4">Other</option>
+                            </select>
+                        </div>
+
                     </div>
                     <button class="btn btn-default row-increased-bottom" type="submit" value ="Oddaj">Submit</button>
                 </form>
