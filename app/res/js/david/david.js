@@ -1156,6 +1156,9 @@ function textClicked(){
     //active = canvasSets[indexCorrectSet][0];
     setActive(canvasSets[indexCorrectSet][0]);
     //IDinput.setAttribute('value', active.id);
+    setColor(canvasSets[indexCorrectSet][0]);
+    setLead(canvasSets[indexCorrectSet][0]);
+
 
 
     // remember which text you are changin
