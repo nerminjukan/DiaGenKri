@@ -67,7 +67,7 @@ $data = DBfunctions::getUsersData();
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
-                <?php if(isset($_SESSION["user"]) && $_SESSION["user-admin"] == 1 || isset($_SESSION["user-add"]) && $_SESSION["user-add"] == 1): ?>
+                <?php if(isset($_SESSION["user"]) && isset($_SESSION["user-add"]) && $_SESSION["user-add"] == 1): ?>
                     <li><a href="../../public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
                     </span> Create algorithm</a></li>
                 <?php endif; ?>
@@ -243,11 +243,11 @@ $data = DBfunctions::getUsersData();
                     $output = "$output" . "<td class='flex-cell'>" . $privileges . $button . "</td>";
                     // end
                     $output = "$output" . "</tr>";
-                    
-                    echo "$output";
 
-                    // 
-                    $i++;
+                    if($email !== $_SESSION["user"]){
+                        echo "$output";
+                        $i++;
+                    }
                 }
                 ?>
                 

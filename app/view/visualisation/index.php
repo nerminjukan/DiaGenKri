@@ -75,7 +75,7 @@ $data = DBfunctions::getGraphs();
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
-                <?php if(isset($_SESSION["user"]) && $_SESSION["user-admin"] == 1 || isset($_SESSION["user-add"]) && $_SESSION["user-add"] == 1): ?>
+                <?php if(isset($_SESSION["user"]) &&  isset($_SESSION["user-add"]) && $_SESSION["user-add"] == 1): ?>
                 <li><a href="../../public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
                     </span> Create algorithm</a></li>
                 <?php endif; ?>
@@ -195,9 +195,11 @@ $data = DBfunctions::getGraphs();
             <label class="col-sm-6 control-label">Intended for:</label>
 
             <div class="col-sm-6">
+                <?php if(isset($_SESSION["user"])): ?>
                 <div>
                     <label class="radio-inline" for="typeDAll"><input onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" checked class="radio" type="radio" id="typeDAll" name="gType" value="all">All</label>
                 </div>
+                <?php endif; ?>
                 <div>
 
                     <label class="radio-inline" for="typeVisual"><input onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" class="radio" id="typeVisual" type="radio" name="gType" value="visual" <?php if(!isset($_SESSION["user"])): ?> checked="checked" <?php endif; ?> >Patients</label>
@@ -246,7 +248,7 @@ $data = DBfunctions::getGraphs();
             <table id="graphTable" class="table table-hover table-responsive table-bordered">
                 <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>#</th>
                     <th>Author</th>
                     <th>Algorithm name</th>
                     <th>Curated</th>
@@ -260,17 +262,19 @@ $data = DBfunctions::getGraphs();
 
                     <th>View</th>
 
-                    <?php if(isset($_SESSION["user"]) && (isset($_SESSION["user-edit"]) ||  isset($_SESSION["user-admin"])) && ($_SESSION["user-edit"] == 1 || $_SESSION["user-admin"] == 1)): ?>
-                        <th>Edit</th>
+                    <?php if(isset($_SESSION["user"])): ?>
+                    <th>Edit</th>
+                    <th>Delete</th>
                     <?php endif; ?>
-                    <?php if(isset($_SESSION["user"]) && (isset($_SESSION["user-delete"]) ||  isset($_SESSION["user-admin"])) && ($_SESSION["user-delete"] == 1 || $_SESSION["user-admin"] == 1)): ?>
-                        <th>Delete</th>
 
-                    <?php endif; ?>
                 </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($data as $key => $value){
+                <?php
+
+                $ctr = 1;
+
+                foreach ($data as $key => $value){
                     $id = $value["id"];
                     $email = $value["e-mail"];
                     $name = $value["name"];
@@ -279,6 +283,8 @@ $data = DBfunctions::getGraphs();
                     $visual = $value["visual"];
                     $uname = $value["uname"];
                     $usurname = $value["usurname"];
+
+
 
                     $wholename = "";
                     if(isset($_SESSION["user"]) && isset($_SESSION["user-read"])){
@@ -336,16 +342,30 @@ $data = DBfunctions::getGraphs();
                         $edited = 'Not edited';
                     }
 
+                    $tv = "View algorithm: $name";
+                    $te = "Edit algorithm: $name";
+                    $td = "Delete algorithm: $name";
+
                     $button_edit = "<button class='btn btn-block btn-primary edit-graph-button' id='$id'>Edit</button>";
+
+                    if((!isset($_SESSION["user"]) ||  (isset($_SESSION["user-edit"]) && $_SESSION["user-edit"] != 1)) && (isset($_SESSION["user"]) && $_SESSION["user"] !== $email)){
+                        $button_edit = "";
+                        $te = "You do not have permission to edit this algorithm.";
+                    }
+
+                    $delete_alg = "<i id='$id' class='fa fa-times'></i>";
+
+                    if((!isset($_SESSION["user"]) || (isset($_SESSION["user-delete"]) && $_SESSION["user-delete"] != 1)) && (isset($_SESSION["user"]) && $_SESSION["user"] !== $email)){
+                        $delete_alg = "";
+                        $td = "You do not have permission to delete this algorithm.";
+                    }
 
                     $button_view = "<button class='btn btn-block btn-primary view-graph-button' id='$id'>View</button>";
 
-                    if(isset($_SESSION["user"]) && isset($_SESSION["user-read"]) && ($_SESSION["user-read"] === '0' || $_SESSION["user-read"] === 0) && $_SESSION["user"] !== $email){
-                        $button_view = "<button disabled title='You can only view your own algorithms.' class='btn btn-block btn-primary' id='$id'>View</button>";
+                    if((!isset($_SESSION["user"]) || (isset($_SESSION["user-read"]) && $_SESSION["user-read"] != 1)) && (isset($_SESSION["user"]) && $_SESSION["user"] !== $email)){
+                        $button_view = "";
+                        $tv = "You do not have permission to view this algorithm.";
                     }
-
-
-                    $delete_alg = "<i id='$id' class='fa fa-times'></i>";
 
                     $output = "";
 
@@ -358,7 +378,7 @@ $data = DBfunctions::getGraphs();
                         }
                         $output = "<tr " . $styleClass;
 
-                        $output = "$output" . "<td>" . "$id" . "</td>";
+                        $output = "$output" . "<td>" . "$ctr" . "</td>";
                         $output = "$output" . "<td>" . "$wholename" . "</td>";
                         $output = "$output" . "<td>" . "$name" . "</td>";
                         $output = "$output" . "<td>" . "$curated" . "</td>";
@@ -376,33 +396,20 @@ $data = DBfunctions::getGraphs();
                             $output = "$output" . "<td title=\"dd. mm. yyyy\">" . "$edited" . "</td>";
                         }
 
-                        $output = "$output" . "<td>" . "$button_view" . "</td>";
+                        $output = "$output" . "<td title='$tv'>" . "$button_view" . "</td>";
 
                         if(isset($_SESSION["user"])){
-                            if(isset($_SESSION["user"]) && (isset($_SESSION["user-edit"]) ||  isset($_SESSION["user-admin"])) && ($_SESSION["user-edit"] == 1 || $_SESSION["user-admin"] == 1)){
-                                $output = "$output" . "<td>" . "$button_edit" . "</td>";
-                            }
-                            //$output = "$output" . "<td>" . "$button_edit" . "</td>";
-                            if(isset($_SESSION["user"]) && (isset($_SESSION["user-delete"]) ||  isset($_SESSION["user-admin"])) && ($_SESSION["user-delete"] == 1 || $_SESSION["user-admin"] == 1)){
-                                $output = "$output" . "<td class='center-me'>";
-                                    if($email == $_SESSION["user"] || $_SESSION["user-admin"] == 1){
-                                        $output = $output . "$delete_alg";
-                                    }
-                                    $output = $output . "</td>";
-                            }
+                            $output = "$output" . "<td title='$te'>" . "$button_edit" . "</td>";
+                            $output = "$output" . "<td title='$td' class='center-me'>" . "$delete_alg" . "</td>";
                         }
-
-                        // end
 
                         $output = "$output" . "<td hidden>$private</td>" . "</tr>";
 
-
                     }
 
-
-                    // echo "<tr class='tr-sc'><td style=\"white-space: nowrap; width: 6%\">$id</td><td style=\"white-space: nowrap; width: 12%\">$email</td><td style=\"white-space: nowrap; width: 19%\">$name</td><td style=\"white-space: nowrap; width: 16%\">$visual</td><td style=\"white-space: nowrap; width: 21%\">$algorithmType</td><td style=\"white-space: nowrap; width: 12.5%\">$created</td><td style=\"white-space: nowrap; width: 10.2%\">$button_edit</td></tr>";
                     if((isset($_SESSION["user"]) && $private === '1' && $_SESSION["user"] === $email) || $private === '0'){
                         echo "$output";
+                        $ctr++;
                     }
                 }
                 ?>

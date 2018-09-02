@@ -53,7 +53,7 @@
             <div class="collapse navbar-collapse" id="myNavbar">
                 <ul class="nav navbar-nav navbar-right">
 
-                    <?php if(isset($_SESSION["user"]) && $_SESSION["user-admin"] == 1 || isset($_SESSION["user-add"]) && $_SESSION["user-add"] == 1): ?>
+                    <?php if(isset($_SESSION["user"]) && isset($_SESSION["user-add"]) && $_SESSION["user-add"] == 1): ?>
                 <li><a href="../../public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
                     </span> Create algorithm</a></li>
                 <?php endif; ?>
@@ -176,7 +176,7 @@
                 <p>This website is dedicated to visualising algorithms for genetic disease diagnosis.</p>
                 <hr>
                 <h3>What would you like to do?</h3>
-                <?php if(isset($_SESSION["user"])):?>
+                <?php if(isset($_SESSION["user"]) && isset($_SESSION["user-add"]) && $_SESSION["user-add"] == 1):?>
                 <div class="container col-sm-4 row-increased-top">
                     <a href="../../public/visualisation/editor" title=""><img src="../../app/res/photos/graph-example.jpg" class="image img-responsive img-thumbnail"></a>
                     <div class="middle">

@@ -682,7 +682,7 @@ function recursiveHide(nodeID, first_id, color) {
                 setID = getSet(connections[i].to.id);
                 //console.log('element color: ', connections[i].to.attr('fill'));
                 //console.log(color);
-                if(setID && connections[i].to.id !== first_id && connections[i].to.attr('fill') === color){
+                if(setID > -1 && connections[i].to.id !== first_id && connections[i].to.attr('fill') === color){
                     paper.getById(connections[i].to.id).data('hidden', 'true');
                     changeIncomingConnections(connections[i].to.id, true);
                     connections[i].line.hide();
@@ -714,7 +714,7 @@ function recursiveHide(nodeID, first_id, color) {
                 setID = getSet(connections[i].to.id);
                 //console.log('element color: ', connections[i].to.attr('fill'));
                 //console.log(color);
-                if(setID && connections[i].to.id !== first_id && connections[i].to.attr('fill') === color){
+                if(setID > -1 && connections[i].to.id !== first_id && connections[i].to.attr('fill') === color){
                     paper.getById(connections[i].to.id).data('hidden', 'false');
                     changeIncomingConnections(connections[i].to.id, false);
                     connections[i].line.show();
@@ -2430,7 +2430,7 @@ function setText() {
 // de-selects any selected element and hides handles
 function looseFocus(ev, triger = 0){
     //console.log(ev);
-    if(triger === 1 || ev.srcElement.id === 'canvID'){
+    if(triger === 1 || ev.target.id === 'canvID'){
         if(active !== null){
             setActive();
             //IDinput.disabled = true;

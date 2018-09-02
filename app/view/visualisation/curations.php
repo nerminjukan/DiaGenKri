@@ -73,7 +73,7 @@ $data = DBfunctions::getCurations();
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
-                <?php if(isset($_SESSION["user"]) && $_SESSION["user-admin"] == 1 || isset($_SESSION["user-add"]) && $_SESSION["user-add"] == 1): ?>
+                <?php if(isset($_SESSION["user"]) &&  isset($_SESSION["user-add"]) && $_SESSION["user-add"] == 1): ?>
                     <li><a href="../../public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
                     </span> Create algorithm</a></li>
                 <?php endif; ?>
@@ -215,8 +215,13 @@ $data = DBfunctions::getCurations();
                 </thead>
                 <tbody>
                 <?php foreach ($data as $key => $value){
+
+                    // curation request ID
                     $id = $value["id"];
+
+                    // algorithm id
                     $algorithmID = $value["graph-id"];
+
                     $algorithmName = $value["graph-name"];
                     $requestedByName = $value["name"];
                     $requestedBySurname = $value["surname"];
@@ -225,6 +230,8 @@ $data = DBfunctions::getCurations();
                     $requestDate = $value["formated-date"];
                     $status = $value["status"];
                     $curatedBy = $value["curated-by"];
+
+                    $ctr = 1;
 
                     if($status === '0'){
                         $status = 'Open';
@@ -267,7 +274,9 @@ $data = DBfunctions::getCurations();
                         $output = "<tr style='display: none'>";
                     }
 
+
                     $output = "$output" . "<td>" . "$id" . "</td>";
+
                     $output = "$output" . "<td>" . "$algorithmName" . "</td>";
                     $output = "$output" . "<td>" . "$requestedByWholeName" . ": " . "$requestedByMail" . "</td>";
                     $output = "$output" . "<td title=\"dd. mm. yyyy\">" . "$requestDate" . "</td>";
@@ -277,6 +286,7 @@ $data = DBfunctions::getCurations();
                     $output = "$output" . "<td>" . "$button_modal" . "</td>";
 
                     echo "$output";
+
 
                 }
                 ?>

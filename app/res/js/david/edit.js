@@ -23,7 +23,9 @@ $(function(){
    $('button.view-graph-button').click(function(){
 		const id_graph = $(this).attr('id');
 		console.log("id:", id_graph);
-		window.location.replace("../../public/visualisation/viewonly?id=" + id_graph);
+		//window.location.replace("../../public/visualisation/viewonly?id=" + id_graph);
+       let win = window.open("../../public/visualisation/viewonly?id=" + id_graph, '_blank');
+       win.focus();
    });
 
 
