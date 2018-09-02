@@ -342,22 +342,29 @@ $data = DBfunctions::getGraphs();
                         $edited = 'Not edited';
                     }
 
+                    $tv = "View algorithm: $name";
+                    $te = "Edit algorithm: $name";
+                    $td = "Delete algorithm: $name";
+
                     $button_edit = "<button class='btn btn-block btn-primary edit-graph-button' id='$id'>Edit</button>";
 
                     if((!isset($_SESSION["user"]) ||  (isset($_SESSION["user-edit"]) && $_SESSION["user-edit"] != 1)) && (isset($_SESSION["user"]) && $_SESSION["user"] !== $email)){
                         $button_edit = "";
+                        $te = "You do not have permission to edit this algorithm.";
                     }
 
                     $delete_alg = "<i id='$id' class='fa fa-times'></i>";
 
                     if((!isset($_SESSION["user"]) || (isset($_SESSION["user-delete"]) && $_SESSION["user-delete"] != 1)) && (isset($_SESSION["user"]) && $_SESSION["user"] !== $email)){
                         $delete_alg = "";
+                        $td = "You do not have permission to delete this algorithm.";
                     }
 
                     $button_view = "<button class='btn btn-block btn-primary view-graph-button' id='$id'>View</button>";
 
                     if((!isset($_SESSION["user"]) || (isset($_SESSION["user-read"]) && $_SESSION["user-read"] != 1)) && (isset($_SESSION["user"]) && $_SESSION["user"] !== $email)){
                         $button_view = "";
+                        $tv = "You do not have permission to view this algorithm.";
                     }
 
                     $output = "";
@@ -389,11 +396,11 @@ $data = DBfunctions::getGraphs();
                             $output = "$output" . "<td title=\"dd. mm. yyyy\">" . "$edited" . "</td>";
                         }
 
-                        $output = "$output" . "<td>" . "$button_view" . "</td>";
+                        $output = "$output" . "<td title='$tv'>" . "$button_view" . "</td>";
 
                         if(isset($_SESSION["user"])){
-                            $output = "$output" . "<td>" . "$button_edit" . "</td>";
-                            $output = "$output" . "<td class='center-me'>" . "$delete_alg" . "</td>";
+                            $output = "$output" . "<td title='$te'>" . "$button_edit" . "</td>";
+                            $output = "$output" . "<td title='$td' class='center-me'>" . "$delete_alg" . "</td>";
                         }
 
                         $output = "$output" . "<td hidden>$private</td>" . "</tr>";
