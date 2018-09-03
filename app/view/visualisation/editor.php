@@ -220,23 +220,23 @@ $description="";
             </div>
 
             <div class="well well-sm">
-                <button onclick="addConnection()" id = "add_connection_button" class="btn btn-block btn-success">Add connection</button>
+                <button onclick="addConnection()" title="Click this button and then select two different elements on the canvas to select them." id = "add_connection_button" class="btn btn-block btn-success">Add connection</button>
             </div>
 
             <div class="well well-sm">
-                <button onclick="setDeleteConnection()" id = "delete_connection_button" class="btn btn-block btn-warning">Delete connection</button>
+                <button onclick="setDeleteConnection()" title="Click this button and then select a connection between two elements to delete it." id = "delete_connection_button" class="btn btn-block btn-warning">Delete connection</button>
             </div>
 
             <div class="well well-sm">
-                <button onclick="setDeleteShape()" id = "delete_shape_button" class="btn btn-block btn-warning">Delete vertex</button>
+                <button onclick="setDeleteShape()" title="Click this button and then select an element on the canvas to delete it." id = "delete_shape_button" class="btn btn-block btn-warning">Delete vertex</button>
             </div>
 
             <div class="well well-sm">
-                <button id="save" onclick="showModalSave()" type="button" class="btn btn-block btn-info">Save</button>
+                <button id="save" onclick="showModalSave()" title="Click this button to open the save modal." type="button" class="btn btn-block btn-info">Save</button>
             </div>
 
             <div class="well well-sm">
-                <a class="btn btn-primary btn-block" id="dl">Download PNG</a>
+                <a title="Click this button to download the content of the canvas in PNG format." class="btn btn-primary btn-block" id="dl">Download PNG</a>
                 <canvas style="display: none" id="canvas" width="2000px" height="2000px"></canvas>
                 <div id="png-container"></div>
             </div>
@@ -269,7 +269,7 @@ $description="";
                     <input class="myInputForm" disabled id="leadColor" type="checkbox" onchange="saveLead(event, this)">
                 </div>
                 <div class="well well-sm" style="margin-top: 20px">
-                    <button type="button" data-toggle="modal" data-target="#helpModal" id = "help_btn" class="btn btn-block btn-info">Help</button>
+                    <button title="Click this button to show the help modal." type="button" data-toggle="modal" data-target="#helpModal" id = "help_btn" class="btn btn-block btn-info">Help</button>
                 </div>
             </div>
         </div>
