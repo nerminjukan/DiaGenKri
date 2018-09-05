@@ -1945,7 +1945,7 @@ function changeWidth(textShape, stat) {
     // update connections
     //TODO kaj je s to funkcijo??
     for (let i = connections.length; i--;) {
-        //paper.connection(connections[i]);
+        paper.connection(connections[i]);
     }
 }
 
