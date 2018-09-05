@@ -302,7 +302,13 @@ Raphael.st.draggable = function() {
 
 
         },
-        startFnc = function() {},
+        startFnc = function() {
+            setActive(me[0]);
+            changingText = canvasSets[getSet(me[0].id)][canvasSets[getSet(me[0].id)].length-1];
+            resetText(changingText, me[0]);
+            setColor(me[0]);
+            setLead(me[0]);
+        }
         endFnc = function() {
             ox = lx;
             oy = ly;

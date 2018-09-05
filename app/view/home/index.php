@@ -187,7 +187,7 @@
                 <div class="container col-sm-4 row-increased-top">
                     <a href="../../public/visualisation/diagnosis" title=""><img src="../../app/res/photos/disease-modal.jpg" class="image img-responsive img-thumbnail"></a>
                     <div class="middle">
-                        <div class="text"><a class="a-tag" href="../../public/visualisation/diagnosis" title="">Diagnose yourself</a></div>
+                        <div class="text"><a class="a-tag" href="/bolniki" title="">Diagnose yourself</a></div>
                     </div>
                 </div>
                 <div class="container col-sm-4 row-increased-top">

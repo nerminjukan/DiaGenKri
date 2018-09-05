@@ -188,6 +188,34 @@ $data = DBfunctions::getGraphs();
                 </thead>
                 <tbody>
                 <?php foreach ($data as $key => $value){
+                    // filter out thoose, if user is not logged in
+                    $private = $value["private"];
+                    $visual = $value["visual"]; // patients = 0, doctors = 1
+                    $email = $value["e-mail"];
+
+
+                    // skip lines if user is not logged in and algorithm is not public and for patients 
+                    if(!(isset($_SESSION["user"]))){
+                        if($visual != 0 || $private != 0)
+                            continue;
+                    } else {
+                        // private algorithm can be only be read by user who made it
+                        if($private != 0 && ($_SESSION["user"] != $email)){
+                            continue;
+                        } else {
+                            // only users with read right may view doctors algorithms
+                            if($visual != 0) {
+                                // user is logged in but does not have read right for other (public) algorithms- "2-factor-authentication" because it's already filtered in table of algorithms
+                                if((isset($_SESSION["user-read"]) && $_SESSION["user-read"] != 1) && ($_SESSION["user"] != $email)){
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+
+                    
+
+
                     $id = $value["id"];
                     $name = $value["name"];
 

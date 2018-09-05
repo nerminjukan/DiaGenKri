@@ -333,22 +333,22 @@ input:disabled, textarea:disabled {
   margin-bottom: 1em;
 }
 
-#pacientTable {
+/*#pacientTable {
   max-width: 960px;
 
-  background-color: #F9F9F9;
+  background-color: #F9F9F9;*/
   
 /*  display: block;
-  height: 100%;*/
+  height: 100%;
   margin-top: 20px;
-}
+}*/
 
 /*#pacientTable > td {
   width: 400px;
 }*/
 
 
-.pacient-disease {
+/*.pacient-disease {
   width: 450px;
 }
 
@@ -356,7 +356,7 @@ input:disabled, textarea:disabled {
 
   width: 150px;
 
-}
+}*/
 
 /* style for table on list algorithms tab */
 #graphTable {

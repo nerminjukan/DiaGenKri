@@ -125,7 +125,7 @@ class Visualisation extends Controller
             if($result){
                 $result = $this->sendMail($_POST["author"], $_POST["id"], $_POST["explanation"], $_POST["result"], $_POST["curatorMail"], $_POST["curatorFullName"], $_POST["algName"]);
                 // echo json_encode($result);
-                var_dump($_POST["author"], $_POST["id"], $_POST["explanation"], $_POST["result"], $_POST["curatorMail"], $_POST["curatorFullName"], $_POST["algName"]);
+                // var_dump($_POST["author"], $_POST["id"], $_POST["explanation"], $_POST["result"], $_POST["curatorMail"], $_POST["curatorFullName"], $_POST["algName"]);
                 echo $result;
                 return;
             }
