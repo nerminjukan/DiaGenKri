@@ -257,7 +257,7 @@ $description="";
                 <!---<label class="myLabelForm" for="IDinput">Element ID</label></br>
                 <input class="myInputForm" id="IDinput" disabled type="text" name="fname"><br>--->
                 <label class="myLabelForm" for="IDtext">Text (short)</label></br>
-                <input class="myInputForm"disabled id="IDtext" type="text" maxlength="40"></br>
+                <input class="myInputForm"disabled id="IDtext" type="text" maxlength="100"></br>
                 <label class="myLabelForm" for="IDdesc">Text (long)</label></br>
                 <textarea class="myInputForm" rows="6" cols="20" disabled id="IDdesc" type="text"></textarea>
                 <div class="well well-sm">

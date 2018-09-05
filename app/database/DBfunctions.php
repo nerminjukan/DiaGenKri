@@ -498,25 +498,25 @@ class DBfunctions {
 
         $result = $statement->execute();
 
-        if($status === '1' || $status === 1){
+        if($status == 1){
 
             $gidstm = $db->prepare("SELECT `graph-id` FROM diagenkri.`graph-curation`
                                               WHERE id = :id");
 
             $gidstm->bindParam(":id", $id);
-
             $gidstm->execute();
-
             $resultId = $gidstm->fetch(PDO::FETCH_NUM);
+
+            $curated = 1;
+            $gid = $resultId[0];
+
+            // var_dump($gid);
+            // exit;
 
             $statement1 = $db->prepare("UPDATE diagenkri.graph SET curated = :curated
                                              WHERE id = :id");
             $statement1->bindParam(":curated", $curated);
             $statement1->bindParam(":id", $gid);
-
-            $curated = 1;
-
-            $gid = $resultId;
 
             $result1 = $statement1->execute();
 

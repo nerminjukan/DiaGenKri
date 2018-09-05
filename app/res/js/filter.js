@@ -459,14 +459,26 @@ function filterTable() {
 }
 
 function radioValue() {
-    if(document.forms["gForm"]["gType"][0].checked === true){
-        return 'all';
+    let f = document.forms["gForm"];
+    let radios = f.elements["gType"];
+    console.log("radios:", radios, radios.length);
+
+    // if radios.length is not undefined (if it's true), radios is an array and that means that there are multiple choices(All, Patients,..)
+    if(radios.length){
+        if (radios[0].checked === true){
+            return 'all';
+        }
+        else if (radios[1].checked === true){
+            return 'Patients';
+        }
+        else{
+            return 'Doctors';
+        }
     }
-    else if(document.forms["gForm"]["gType"][1].checked === true){
-        return 'Patients';
-    }
-    else{
-        return 'Doctors';
+    // only one radio item in radios and radio button does not have length attribute,
+    // that happens only when user is not logged and on "Patients page" - in that case only algorithms for "Patients" are visible
+    else { 
+        return 'Patients'
     }
 }
 

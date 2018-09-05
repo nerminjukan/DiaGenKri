@@ -254,8 +254,8 @@ function saveCuration(id, curatorFullName, curatorMail){
         },
         success: function(data, status){
             // console.log('[saveGraph] save', status === "success" ? "saved successfuly" : "not saved successfuly", "\ndata:", data);
-            if(data){
-                console.log(dataGet["result"]);
+            if(data == 1){
+                console.log("curation:", dataGet["result"]);
                 updateStatus(id, dataGet['result'], curatorMail);
                 clearCuration(id);
                 $.notify("Curation successfuly saved.",
@@ -302,6 +302,9 @@ function getCurationData(id) {
     let tr = getRowData(id);
 
     author = tr.getElementsByTagName("td")[2].innerHTML;
+    // author = "name surname email", only email is needed
+    author1 = author.substring(author.lastIndexOf(" ") + 1);
+    author = author1.trim(); // remove any whitespaces left
 
     data["result"] = result;
     data["explanation"] = explanation;
