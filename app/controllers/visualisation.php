@@ -124,19 +124,23 @@ class Visualisation extends Controller
 
             if($result){
                 $result = $this->sendMail($_POST["author"], $_POST["id"], $_POST["explanation"], $_POST["result"], $_POST["curatorMail"], $_POST["curatorFullName"], $_POST["algName"]);
-                echo json_encode($result);
+                // echo json_encode($result);
+                // var_dump($_POST["author"], $_POST["id"], $_POST["explanation"], $_POST["result"], $_POST["curatorMail"], $_POST["curatorFullName"], $_POST["algName"]);
+                echo $result;
                 return;
             }
-            echo json_encode('update failure: ' . $result);
+            echo "update failure " . $result;
+            // echo json_encode('update failure: ' . $result);
             return;
         }
-        echo json_encode('Not all data received!');
+        echo "not all data received!";
+        // echo json_encode('Not all data received!');
         return;
     }
 
     public function sendMail($receiver, $id, $explanation, $decision, $curatorMail, $curatorFullName, $algName){
         $stat = "";
-        if($decision === 1 || $decision === '1'){
+        if($decision == 1){
             $decision = 'We gladly inform you that the request was successfully approved!';
             $stat = 'approved';
         }else{

@@ -160,11 +160,11 @@ $data = DBfunctions::getUsersData();
 
 <div class="container-fluid">
     <div class="row content">
-        <div class="col-sm-12 text-left flex-wrap" style="margin-bottom: 0">
-            <button type="button" class="btn btn-primary row-increased-bottom row-increased-top" data-toggle="modal" data-target="#editModal" style="width: 100%; max-width: 960px;">Edit privileges</button>
+        <div class="col-sm-12 text-left" style="margin-bottom: 0">
+            <button type="button" class="btn btn-primary row-increased-bottom row-increased-top" data-toggle="modal" data-target="#editModal" style="width: 100%;">Edit privileges</button>
         </div>
-        <div class="col-sm-12 text-left flex-wrap">
-            <table id="graphTable" class="table table-hover table-responsive table-bordered" style="margin-top: 0px;">
+        <div class="col-sm-12 text-left table-responsive">
+            <table id="graphTable" class="table table-hover table-bordered" style="margin-top: 0px;">
                 <thead>
                 <tr>
                     <th>User</th>
