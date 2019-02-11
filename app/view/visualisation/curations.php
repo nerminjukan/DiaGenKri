@@ -3,7 +3,11 @@
 if(((!isset($_SESSION["user"])) || (!isset($_SESSION["user-confirm"]) || $_SESSION["user-confirm"] != 1))){
     header("Location: ../../public/visualisation");
 }
-
+// include language array
+if(file_exists('../app/language/lang/lang_' . $_SESSION["lang"] . '.php'))
+    require_once '../app/language/lang/lang_' . $_SESSION["lang"] . '.php';
+else
+    require_once '../app/language/lang/lang_en.php';
 require_once '../app/database/DBfunctions.php';
 include_once '../app/controllers/administrate.php';
 
@@ -12,10 +16,10 @@ $data = DBfunctions::getCurations();
 ?>
 
 <!DOCTYPE html>
-<html lang="sl">
+<html lang="<?php echo $lang["lang"]?>">
 
 <head>
-    <title>Graphs table</title>
+    <title><?php echo $lang["curations_title"]?></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- font awesome -->
@@ -33,8 +37,6 @@ $data = DBfunctions::getCurations();
     <script src="../../app/res/js/david/notify.min.js"></script>
 
     <script src="../../app/res/js/david/edit.js"></script>
-    <script src="../../app/res/js/filter.js"></script>
-    <script src="../../app/res/js/curations.js"></script>
 
 
 </head>
@@ -73,13 +75,24 @@ $data = DBfunctions::getCurations();
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown"><a id="myLanId" class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-sign-language"></i> <?php echo $_SESSION["lang"]; ?><span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <?php
+                        foreach ($_SESSION["available_languages"] as $key => $value) {
+                            if ($value == $_SESSION["lang"])
+                                continue;
+                            echo "<li><a href=../../public/visualisation/curations?lang=$value>$value</a></li>";
+                        }
+                        ?>
+                    </ul>
+                </li>
                 <?php if(isset($_SESSION["user"]) &&  isset($_SESSION["user-add"]) && $_SESSION["user-add"] == 1): ?>
                     <li><a href="../../public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
-                    </span> Create algorithm</a></li>
+                    </span> <?php echo $lang["algorithm_create"]; ?></a></li>
                 <?php endif; ?>
-                <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
+                <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span> <?php echo $lang["algorithm_list"]; ?></a></li>
                 <?php if(isset($_SESSION["user-admin"]) && $_SESSION["user-admin"] == 1): ?>
-                    <li><a href="../../public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
+                    <li><a href="../../public/administrate"><span class="glyphicon glyphicon-cog"></span> <?php echo $lang["user_administrate"]; ?></a></li>
                 <?php endif; ?>
                 <?php if(isset($_SESSION["user"])): ?>
                     <li class="dropdown">
@@ -139,7 +152,7 @@ $data = DBfunctions::getCurations();
                                                 ?>
                                             </p>
                                             <p class="text-left">
-                                                <a href="../../public/profile" class="btn btn-primary btn-block btn-sm">My profile</a>
+                                                <a href="../../public/profile" class="btn btn-primary btn-block btn-sm"><?php echo $lang["profile_link"]; ?></a>
                                             </p>
 
                                         </div>
@@ -152,7 +165,7 @@ $data = DBfunctions::getCurations();
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <p>
-                                                <a href="../../public/logIn/logOutUser/" class="btn btn-danger btn-block">Log out</a>
+                                                <a href="../../public/logIn/logOutUser/" class="btn btn-danger btn-block"><?php echo $lang["user_log_out"]; ?></a>
                                             </p>
                                         </div>
                                     </div>
@@ -162,8 +175,8 @@ $data = DBfunctions::getCurations();
                         </ul>
                     </li>
                 <?php else: ?>
-                    <li><a href="../../public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
-                    <li><a href="../../public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
+                    <li><a href="../../public/register"><span class="glyphicon glyphicon-log-in"></span> <?php echo $lang["user_register"]; ?></a></li>
+                    <li><a href="../../public/logIn"><span class="glyphicon glyphicon-user"></span> <?php echo $lang["user_log_in"]; ?></a></li>
 
                 <?php endif; ?>
             </ul>
@@ -175,12 +188,12 @@ $data = DBfunctions::getCurations();
     <form name="gForm" role="form" class="form-inline" id="filterForm">
         <div class="well well-sm form-group filter-settings">
             <div class="form-group full-width">
-                <label for="gName">Search:</label>
-                <input onkeyup="filterTableCurations()" type="email" class="form-control full-width" id="gName" placeholder="Enter algorithm name"
+                <label for="gName"><?php echo $lang['curations_search']; ?></label>
+                <input onkeyup="filterTableCurations()" type="email" class="form-control full-width" id="gName" placeholder="<?php echo $lang['curations_search_h']; ?>"
                        style="width:100%;">
                 <div>
-                    <br><label for="curated">Status:</label>
-                    <label class="radio-inline" for="curated"><input onchange="filterTableCurations()" checked class="radio" type="checkbox" id="curated" name="curated" value="0">Open requests only</label>
+                    <br><label for="curated"><?php echo $lang['curations_status']; ?></label>
+                    <label class="radio-inline" for="curated"><input onchange="filterTableCurations()" checked class="radio" type="checkbox" id="curated" name="curated" value="0"><?php echo $lang['curations_status_s']; ?></label>
                 </div>
             </div>
         </div>
@@ -202,14 +215,14 @@ $data = DBfunctions::getCurations();
             <table id="curationTable" class="table table-hover table-responsive table-bordered">
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Algorithm name</th>
-                    <th>Requested by</th>
-                    <th>Request date</th>
-                    <th>Status</th>
-                    <th>Currated by</th>
-                    <th>View</th>
-                    <th>Curate</th>
+                    <th><?php echo $lang['curations_id']; ?></th>
+                    <th><?php echo $lang['curations_an']; ?></th>
+                    <th><?php echo $lang['curations_rb']; ?></th>
+                    <th><?php echo $lang['curations_rd']; ?></th>
+                    <th><?php echo $lang['curations_st']; ?></th>
+                    <th><?php echo $lang['curations_cb']; ?></th>
+                    <th><?php echo $lang['curations_v']; ?></th>
+                    <th><?php echo $lang['curations_c']; ?></th>
 
                 </tr>
                 </thead>
@@ -234,40 +247,40 @@ $data = DBfunctions::getCurations();
                     $ctr = 1;
 
                     if($status === '0'){
-                        $status = 'Open';
+                        $status = $lang['curations_s-o'];
                     }
                     else if($status === '1'){
-                        $status = 'Closed - OK';
+                        $status = $lang['curations_s-cok'];
                     }
                     else{
-                        $status = 'Closed - NOK';
+                        $status = $lang['curations_s-cnok'];
                     }
 
                     if($curatedBy === null){
-                        $curatedBy = 'Not currated';
+                        $curatedBy = $lang['curations_nc'];
                     }
 
                     $disabled = " ";
 
-                    if($status === 'Closed - OK' || $status === 'Closed - NOK'){
-                        $disabled = ' disabled title="Already curated" ';
+                    if($status === $lang['curations_s-cok'] || $status === $lang['curations_s-cnok']){
+                        $disabled = ' disabled title=\''.$lang['curations_allc'] . '\'';
                     }
 
-                    $button_view = "<button class='btn btn-block btn-primary view-graph-button' id='$algorithmID'>View</button>";
+                    $button_view = "<button class='btn btn-block btn-primary view-graph-button' id='$algorithmID'>".$lang['curations_v']."</button>";
 
-                    $button_modal = "<button $disabled onclick='fillModal(event, this)' name='curate-$id' type=\"button\" class=\"btn btn-block btn-primary\" id='$id'>Curate</button>";
+                    $button_modal = "<button $disabled onclick='fillModal(event, this)' name='curate-$id' type=\"button\" class=\"btn btn-block btn-primary\" id='$id'>".$lang['curations_c']."</button>";
 
                     $style = "";
-                    if($status === 'Open'){
+                    if($status === $lang['curations_s-o']){
                         $style = "style=\"background-color: #ffff66\"";
-                    } else if($status === 'Closed - OK'){
+                    } else if($status === $lang['curations_s-cok']){
                         $style = "style=\"background-color: #66ff66\"";
                     }
                     else{
                         $style = "style=\"background-color: #ff6666\"";
                     }
 
-                    if($status === 'Open'){
+                    if($status === $lang['curations_s-o']){
                         $output = "<tr>";
                     }
                     else{
@@ -306,3 +319,5 @@ $data = DBfunctions::getCurations();
 <!-- <footer class="container-fluid text-center">
     <p>©DiaGenKri</p>
 </footer> -->
+<script src="../../app/res/js/curations.js"></script>
+<script src="../../app/res/js/filter.js"></script>

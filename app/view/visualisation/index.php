@@ -1,8 +1,10 @@
 <?php
 
-
-
-
+// include language array
+if(file_exists('../app/language/lang/lang_' . $_SESSION["lang"] . '.php'))
+    require_once '../app/language/lang/lang_' . $_SESSION["lang"] . '.php';
+else
+    require_once '../app/language/lang/lang_en.php';
 
 
 require_once '../app/database/DBfunctions.php';
@@ -14,7 +16,7 @@ $data = DBfunctions::getGraphs();
 ?>
 
 <!DOCTYPE html>
-<html lang="sl">
+<html lang="<?php echo $lang["lang"]?>">
 
 <head>
     <title>Graphs table</title>
@@ -36,7 +38,6 @@ $data = DBfunctions::getGraphs();
 
     <script src="../../app/res/js/david/edit.js"></script>
     <script src="../../app/res/js/filter.js"></script>
-    <script src="../../app/res/js/curations.js"></script>
 
 
 </head>
@@ -75,15 +76,26 @@ $data = DBfunctions::getGraphs();
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown"><a id="myLanId" class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-sign-language"></i> <?php echo $_SESSION["lang"]; ?><span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <?php
+                        foreach ($_SESSION["available_languages"] as $key => $value) {
+                            if ($value == $_SESSION["lang"])
+                                continue;
+                            echo "<li><a href=../../public/visualisation?lang=$value>$value</a></li>";
+                        }
+                        ?>
+                    </ul>
+                </li>
                 <?php if(isset($_SESSION["user"]) &&  isset($_SESSION["user-add"]) && $_SESSION["user-add"] == 1): ?>
                 <li><a href="../../public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
-                    </span> Create algorithm</a></li>
+                    </span> <?php echo $lang["algorithm_create"]; ?></a></li>
                 <?php endif; ?>
                 <?php if(isset($_SESSION["user"]) && $_SESSION["user-confirm"] == 1): ?>
-                    <li><a href="../../public/visualisation/curations"><span class="label label-pill label-danger count"></span> <span class="glyphicon glyphicon-bell" ></span> Curation requests</a></li>
+                    <li><a href="../../public/visualisation/curations"><span class="label label-pill label-danger count"></span> <span class="glyphicon glyphicon-bell" ></span><?php echo $lang["algorithm_curation_request"]; ?></a></li>
                 <?php endif; ?>
                     <?php if(isset($_SESSION["user-admin"]) && $_SESSION["user-admin"] == 1): ?>
-                        <li><a href="../../public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
+                        <li><a href="../../public/administrate"><span class="glyphicon glyphicon-cog"></span> <?php echo $lang["user_administrate"]; ?></a></li>
                     <?php endif; ?>
                 <?php if(isset($_SESSION["user"])): ?>
                 <li class="dropdown">
@@ -143,7 +155,7 @@ $data = DBfunctions::getGraphs();
                                         ?>
                                         </p>
                                         <p class="text-left">
-                                            <a href="../../public/profile" class="btn btn-primary btn-block btn-sm">My profile</a>
+                                            <a href="../../public/profile" class="btn btn-primary btn-block btn-sm"><?php echo $lang["profile_link"]; ?></a>
                                         </p>
 
                                     </div>
@@ -156,7 +168,7 @@ $data = DBfunctions::getGraphs();
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <p>
-                                            <a href="../../public/logIn/logOutUser/" class="btn btn-danger btn-block">Log out</a>
+                                            <a href="../../public/logIn/logOutUser/" class="btn btn-danger btn-block"><?php echo $lang["user_log_out"]; ?></a>
                                         </p>
                                     </div>
                                 </div>
@@ -166,8 +178,8 @@ $data = DBfunctions::getGraphs();
                     </ul>
                 </li>
                 <?php else: ?>
-                <li><a href="../../public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
-                <li><a href="../../public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
+                <li><a href="../../public/register"><span class="glyphicon glyphicon-log-in"></span> <?php echo $lang["user_register"]; ?></a></li>
+                <li><a href="../../public/logIn"><span class="glyphicon glyphicon-user"></span> <?php echo $lang["user_log_in"]; ?></a></li>
 
                 <?php endif; ?>
             </ul>
@@ -179,12 +191,12 @@ $data = DBfunctions::getGraphs();
     <form name="gForm" role="form" class="form-inline" id="filterForm">
         <div class="well well-sm form-group filter-settings">
             <div class="form-group full-width">
-                <label for="gName">Search:</label>
-                <input onkeyup="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" type="email" class="form-control full-width" id="gName" placeholder="Enter algorithm name"
+                <label for="gName"><?php echo $lang['list_srch']?></label>
+                <input onkeyup="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" type="email" class="form-control full-width" id="gName" placeholder="<?php echo $lang['list_srch_h']?>"
                 style="width:100%;">
                 <div>
-                    <br><label for="gName">Curated:</label>
-                    <label class="radio-inline" for="curated"><input onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" class="radio" type="checkbox" id="curated" name="curated" value="0">Curated only</label>
+                    <br><label for="gName"><?php echo $lang['list_crtd']?></label>
+                    <label class="radio-inline" for="curated"><input onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" class="radio" type="checkbox" id="curated" name="curated" value="0"><?php echo $lang['list_crtd_h']?></label>
                 </div>
             </div>
             <!-- <div>
@@ -192,21 +204,21 @@ $data = DBfunctions::getGraphs();
             </div> -->
         </div>
         <div class="well well-sm form-group filter-settings">
-            <label class="col-sm-6 control-label">Intended for:</label>
+            <label class="col-sm-6 control-label"><?php echo $lang['list_for']?></label>
 
             <div class="col-sm-6">
                 <?php if(isset($_SESSION["user"])): ?>
                 <div>
-                    <label class="radio-inline" for="typeDAll"><input onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" checked class="radio" type="radio" id="typeDAll" name="gType" value="all">All</label>
+                    <label class="radio-inline" for="typeDAll"><input onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" checked class="radio" type="radio" id="typeDAll" name="gType" value="all"><?php echo $lang['list_for-op1']?></label>
                 </div>
                 <?php endif; ?>
                 <div>
 
-                    <label class="radio-inline" for="typeVisual"><input onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" class="radio" id="typeVisual" type="radio" name="gType" value="visual" <?php if(!isset($_SESSION["user"])): ?> checked="checked" <?php endif; ?> >Patients</label>
+                    <label class="radio-inline" for="typeVisual"><input onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" class="radio" id="typeVisual" type="radio" name="gType" value="visual" <?php if(!isset($_SESSION["user"])): ?> checked="checked" <?php endif; ?> ><?php echo $lang['list_for-op2']?></label>
                 </div>
                 <?php if(isset($_SESSION["user"])): ?>
                 <div>
-                    <label class="radio-inline" for="typeDiagnostic"><input onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" class="radio" type="radio" id="typeDiagnostic" name="gType" value="diagnostic">Doctors</label>
+                    <label class="radio-inline" for="typeDiagnostic"><input onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" class="radio" type="radio" id="typeDiagnostic" name="gType" value="diagnostic"><?php echo $lang['list_for-op3']?></label>
                 </div>
                 <?php endif; ?>
 
@@ -215,17 +227,17 @@ $data = DBfunctions::getGraphs();
             </div>
         </div>
         <div class="well well-sm form-group filter-settings">
-            <label class="col-sm-6 control-label">Algorithm type:</label>
+            <label class="col-sm-6 control-label"><?php echo $lang['list_type']?></label>
             <div class="col-sm-6">
                 <div>
 
-                    <label class="radio-inline" for="typeADiagnostic"><input checked onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" class="radio" type="checkbox" id="typeADiagnostic" name="aType" value="1">Diagnostic</label>
+                    <label class="radio-inline" for="typeADiagnostic"><input checked onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" class="radio" type="checkbox" id="typeADiagnostic" name="aType" value="1"><?php echo $lang['list_type-op1']?></label>
                 </div>
                 <div>
-                    <label class="radio-inline" for="typeATreatment"><input checked onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" class="radio" id="typeATreatment" type="checkbox" name="aType" value="2">Treatment</label>
+                    <label class="radio-inline" for="typeATreatment"><input checked onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" class="radio" id="typeATreatment" type="checkbox" name="aType" value="2"><?php echo $lang['list_type-op2']?></label>
                 </div>
                 <div>
-                    <label class="radio-inline" for="typeAOther"><input checked onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" class="radio" type="checkbox" id="typeAOther" name="aType" value="4">Other</label>
+                    <label class="radio-inline" for="typeAOther"><input checked onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" class="radio" type="checkbox" id="typeAOther" name="aType" value="4"><?php echo $lang['list_type-op3']?></label>
 
                 </div>
                 <label style="color: red; font-size: 14px" id="typeLab"></label>
@@ -249,22 +261,22 @@ $data = DBfunctions::getGraphs();
                 <thead>
                 <tr>
                     <th>#</th>
-                    <th>Author</th>
-                    <th>Algorithm name</th>
-                    <th>Curated</th>
-                    <th style="width: 100px;">Intended for</th>
-                    <th>Algorithm type</th>
+                    <th><?php echo $lang['list_auth']?></th>
+                    <th><?php echo $lang['list_name']?></th>
+                    <th><?php echo $lang['list_crt']?></th>
+                    <th style="width: 100px;"><?php echo $lang['list_fr']?></th>
+                    <th><?php echo $lang['list_tp']?></th>
 
                     <?php if(isset($_SESSION["user"])): ?>
-                    <th>Created</th>
-                    <th>Edited</th>
+                    <th><?php echo $lang['list_cre']?></th>
+                    <th><?php echo $lang['list_edt']?></th>
                     <?php endif; ?>
 
-                    <th>View</th>
+                    <th><?php echo $lang['list_vi']?></th>
 
                     <?php if(isset($_SESSION["user"])): ?>
-                    <th>Edit</th>
-                    <th>Delete</th>
+                    <th><?php echo $lang['list_ed']?></th>
+                    <th><?php echo $lang['list_del']?></th>
                     <?php endif; ?>
 
                 </tr>
@@ -295,17 +307,17 @@ $data = DBfunctions::getGraphs();
                     }
 
                     if($curated === '0'){
-                        $curated = 'No';
+                        $curated = $lang['list_no'];
                     }
                     else{
-                        $curated = 'Yes';
+                        $curated = $lang['list_yes'];
                     }
 
                     if($visual === '0'){
-                        $visual = 'Patients';
+                        $visual = $lang['list_for-op2'];
                     }
                     else{
-                        $visual = 'Doctors';
+                        $visual = $lang['list_for-op3'];
                     }
 
                     $algorithmType = $value["algorithm_type"];
@@ -314,63 +326,63 @@ $data = DBfunctions::getGraphs();
                         $algorithmType = '-';
                     }
                     else if($algorithmType === '1'){
-                        $algorithmType = 'Diagnostic';
+                        $algorithmType = $lang['list_type-op1'];
                     }
                     else if($algorithmType === '2'){
-                        $algorithmType = 'Treatment';
+                        $algorithmType = $lang['list_type-op2'];
                     }
                     else if($algorithmType === '3'){
-                        $algorithmType = 'Diagnostic, treatment';
+                        $algorithmType = $lang['list_type-op1'] .", ". strtolower($lang['list_type-op2']);
                     }
                     else if($algorithmType === '4'){
-                        $algorithmType = 'Other';
+                        $algorithmType = $lang['list_type-op3'];
                     }
                     else if($algorithmType === '5'){
-                        $algorithmType = 'Diagnostic, other';
+                        $algorithmType = $lang['list_type-op1'] . ", " . strtolower($lang['list_type-op3']);
                     }
                     else if($algorithmType === '6'){
-                        $algorithmType = 'Treatment, other';
+                        $algorithmType = $lang['list_type-op2'] . ", " . strtolower($lang['list_type-op3']);
                     }
                     else if($algorithmType === '7'){
-                        $algorithmType = 'Diagnostic, treatment, other';
+                        $algorithmType = $lang['list_type-op1'] . ", " . strtolower($lang['list_type-op2']) .  ", " . strtolower($lang['list_type-op3']);
                     }
 
                     $created = $value["created-date"];
                     $edited = $value["edit-date"];
 
                     if($edited === null){
-                        $edited = 'Not edited';
+                        $edited = $lang['list_edited'];
                     }
 
-                    $tv = "View algorithm: $name";
-                    $te = "Edit algorithm: $name";
-                    $td = "Delete algorithm: $name";
+                    $tv = $lang['list_vi_h-yes'].$name;
+                    $te = $lang['list_ed_h-yes'].$name;
+                    $td = $lang['list_del_h-yes'].$name;
 
-                    $button_edit = "<button class='btn btn-block btn-primary edit-graph-button' id='$id'>Edit</button>";
+                    $button_edit = "<button class='btn btn-block btn-primary edit-graph-button' id='$id'>".$lang['list_ed']."</button>";
 
                     if((!isset($_SESSION["user"]) ||  (isset($_SESSION["user-edit"]) && $_SESSION["user-edit"] != 1)) && (isset($_SESSION["user"]) && $_SESSION["user"] !== $email)){
                         $button_edit = "";
-                        $te = "You do not have permission to edit this algorithm.";
+                        $te = $lang['list_ed_h-no'];
                     }
 
                     $delete_alg = "<i id='$id' class='fa fa-times'></i>";
 
                     if((!isset($_SESSION["user"]) || (isset($_SESSION["user-delete"]) && $_SESSION["user-delete"] != 1)) && (isset($_SESSION["user"]) && $_SESSION["user"] !== $email)){
                         $delete_alg = "";
-                        $td = "You do not have permission to delete this algorithm.";
+                        $td = $lang['list_del_h-no'];
                     }
 
-                    $button_view = "<button class='btn btn-block btn-primary view-graph-button' id='$id'>View</button>";
+                    $button_view = "<button class='btn btn-block btn-primary view-graph-button' id='$id'>".$lang['list_vi']."</button>";
 
                     if((!isset($_SESSION["user"]) || (isset($_SESSION["user-read"]) && $_SESSION["user-read"] != 1)) && (isset($_SESSION["user"]) && $_SESSION["user"] !== $email)){
                         $button_view = "";
-                        $tv = "You do not have permission to view this algorithm.";
+                        $tv = $lang['list_vi_h-no'] ;
                     }
 
                     $output = "";
 
                     // doctors algorithms shouldnt be visible to public
-                    if("$visual" === 'Patients' || isset($_SESSION["user"])){
+                    if("$visual" === $lang["list_for-op2"] || isset($_SESSION["user"])){
                         // output string, start
                         $styleClass = " class='tr-graphTable'>";
                         if(isset($_SESSION["user"]) && $private === '1' && $_SESSION["user"] === $email){
@@ -423,3 +435,5 @@ $data = DBfunctions::getGraphs();
 <!-- <footer class="container-fluid text-center">
     <p>©DiaGenKri</p>
 </footer> -->
+<script src="../../app/res/js/curations.js"></script>
+<script src="../../app/res/js/filter.js"></script>

@@ -16,7 +16,11 @@ else{
     }
 
 }
-
+// include language array
+if(file_exists('../app/language/lang/lang_' . $_SESSION["lang"] . '.php'))
+    require_once '../app/language/lang/lang_' . $_SESSION["lang"] . '.php';
+else
+    require_once '../app/language/lang/lang_en.php';
 require_once '../app/database/DBfunctions.php';
 include_once '../app/controllers/visualisation.php';
 
@@ -24,9 +28,9 @@ include_once '../app/controllers/visualisation.php';
 
 ?>
 <!DOCTYPE html>
-<html lang="sl">
+<html lang="<?php echo $lang["title_document_home-index"]?>">
 <head>
-    <title>Visualisation</title>
+    <title> <?php echo $lang['editor_title']; ?></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -38,16 +42,6 @@ include_once '../app/controllers/visualisation.php';
     <script src="../../app/res/js/raphael/raphael.min.js"></script>
     <script src="../../app/res/js/raphael/raphael.json.js"></script>
 
-    <script type="text/javascript" src="../../app/res/js/david/notify.min.js"></script>
-    <script type="text/javascript" src="../../app/res/js/david/raphael.pan-zoom.js"></script>
-    <!-- <script type="text/javascript" src="../../app/res/js/nermin/nermin.js"></script> -->
-    <script type="text/javascript" src="../../app/res/js/raphael/raphael.export.js"></script>
-    <script type="text/javascript" src="../../app/res/js/david/david.js"></script> 
-    <script type="text/javascript" src="../../app/res/js/nermin/test.js"></script>
-    <script type="text/javascript" src="../../app/res/js/david/getdata.js"></script> 
-    <script type="text/javascript" src="../../app/res/js/david/tree.js"></script>
-    <script src="../../app/res/js/curations.js"></script>
-    <link rel="stylesheet" href="../../app/res/css/main.css">
 
 </head>
 
@@ -93,13 +87,24 @@ $description="";
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown"><a id="myLanId" class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-sign-language"></i> <?php echo $_SESSION["lang"]; ?><span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <?php
+                        foreach ($_SESSION["available_languages"] as $key => $value) {
+                            if ($value == $_SESSION["lang"])
+                                continue;
+                            echo "<li><a href=../../public/visualisation/editor?lang=$value>$value</a></li>";
+                        }
+                        ?>
+                    </ul>
+                </li>
                 <?php if(isset($_SESSION["user"]) && $_SESSION["user-confirm"] == 1): ?>
-                    <li><a href="../../public/visualisation/curations"><span class="label label-pill label-danger count"></span> <span class="glyphicon glyphicon-bell" ></span> Curation requests</a></li>
+                    <li><a href="../../public/visualisation/curations"><span class="label label-pill label-danger count"></span> <span class="glyphicon glyphicon-bell" ></span> <?php echo $lang["algorithm_curation_request"]; ?></a></li>
                 <?php endif; ?>
-                <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
+                <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span><?php echo $lang["algorithm_list"]; ?></a></li>
                 <?php if(isset($_SESSION["user"])): ?> <!-- && $_SESSION[user_level] === 6, which is admin for example-->
                     <?php if(isset($_SESSION["user-admin"]) && $_SESSION["user-admin"] == 1): ?>
-                        <li><a href="../../public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
+                        <li><a href="../../public/administrate"><span class="glyphicon glyphicon-cog"></span> <?php echo $lang["user_administrate"]; ?></a></li>
                     <?php endif; ?>                <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <span class="glyphicon glyphicon-user"></span> 
@@ -157,7 +162,7 @@ $description="";
                                         ?>
                                         </p>
                                         <p class="text-left">
-                                            <a href="../../public/profile" class="btn btn-primary btn-block btn-sm">My profile</a>
+                                            <a href="../../public/profile" class="btn btn-primary btn-block btn-sm"><?php echo $lang["profile_link"]; ?></a>
                                         </p>
                                     </div>
                                 </div>
@@ -169,7 +174,7 @@ $description="";
                                 <div class="row" id="login-row">
                                     <div class="col-lg-12">
                                         <p>
-                                            <a href="../../public/logIn/logOutUser/" class="btn btn-danger btn-block">Log out</a>
+                                            <a href="../../public/logIn/logOutUser/" class="btn btn-danger btn-block"><?php echo $lang["user_log_out"]; ?></a>
                                         </p>
                                     </div>
                                 </div>
@@ -178,8 +183,8 @@ $description="";
                     </ul>
                 </li>
                 <?php else: ?>
-                <li><a href="../../public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
-                <li><a href="../../public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
+                <li><a href="../../public/register"><span class="glyphicon glyphicon-log-in"></span> <?php echo $lang["user_register"]; ?></a></li>
+                <li><a href="../../public/logIn"><span class="glyphicon glyphicon-user"></span> <?php echo $lang["user_log_in"]; ?></a></li>
 
                 <?php endif; ?>
             </ul>
@@ -189,7 +194,7 @@ $description="";
 <div class="container-fluid text-center" id="main-container">
     <div class="row content">
         <div class="col-sm-2 sidenav">
-            <h2>Toolbar</h2>
+            <h2><?php echo $lang['editor_toolbar']; ?></h2>
 
             <div class="well well-sm">
                 <a ondragstart="startDrag(event)" draggable="true"  id="aSquare" href="javascript:void(0);" style="overflow: hidden; width: 80px; height: 60px; padding: 1px; display: inline-block; cursor: move">
@@ -220,23 +225,23 @@ $description="";
             </div>
 
             <div class="well well-sm">
-                <button onclick="addConnection()" title="Click this button and then select two different elements on the canvas to select them." id = "add_connection_button" class="btn btn-block btn-success">Add connection</button>
+                <button onclick="addConnection()" title="<?php echo $lang['editor_add-c_h']; ?>" id = "add_connection_button" class="btn btn-block btn-success"><?php echo $lang['editor_add-c']; ?></button>
             </div>
 
             <div class="well well-sm">
-                <button onclick="setDeleteConnection()" title="Click this button and then select a connection between two elements to delete it." id = "delete_connection_button" class="btn btn-block btn-warning">Delete connection</button>
+                <button onclick="setDeleteConnection()" title="<?php echo $lang['editor_delete-c_h']; ?>" id = "delete_connection_button" class="btn btn-block btn-warning"><?php echo $lang['editor_delete-c']; ?></button>
             </div>
 
             <div class="well well-sm">
-                <button onclick="setDeleteShape()" title="Click this button and then select an element on the canvas to delete it." id = "delete_shape_button" class="btn btn-block btn-warning">Delete vertex</button>
+                <button onclick="setDeleteShape()" title="<?php echo $lang['editor_delete-v_h']; ?>" id = "delete_shape_button" class="btn btn-block btn-warning"><?php echo $lang['editor_delete-v']; ?></button>
             </div>
 
             <div class="well well-sm">
-                <button id="save" onclick="showModalSave()" title="Click this button to open the save modal." type="button" class="btn btn-block btn-info">Save</button>
+                <button id="save" onclick="showModalSave()" title="<?php echo $lang['editor_save_h']; ?>" type="button" class="btn btn-block btn-info"><?php echo $lang['editor_save']; ?></button>
             </div>
 
             <div class="well well-sm">
-                <a title="Click this button to download the content of the canvas in PNG format." class="btn btn-primary btn-block" id="dl">Download PNG</a>
+                <a title="<?php echo $lang['editor_dl_h']; ?>" class="btn btn-primary btn-block" id="dl"><?php echo $lang['editor_dl']; ?></a>
                 <canvas style="display: none" id="canvas" width="2000px" height="2000px"></canvas>
                 <div id="png-container"></div>
             </div>
@@ -252,24 +257,24 @@ $description="";
 
         <div class="col-sm-2 sidenav">
 
-            <h2>Settings</h2>
+            <h2><?php echo $lang['editor_settings']; ?></h2>
             <div>
                 <!---<label class="myLabelForm" for="IDinput">Element ID</label></br>
                 <input class="myInputForm" id="IDinput" disabled type="text" name="fname"><br>--->
-                <label class="myLabelForm" for="IDtext">Text (short)</label></br>
+                <label class="myLabelForm" for="IDtext"><?php echo $lang['editor_ts']; ?></label></br>
                 <input class="myInputForm"disabled id="IDtext" type="text" maxlength="100"></br>
-                <label class="myLabelForm" for="IDdesc">Text (long)</label></br>
+                <label class="myLabelForm" for="IDdesc"><?php echo $lang['editor_tl']; ?></label></br>
                 <textarea class="myInputForm" rows="6" cols="20" disabled id="IDdesc" type="text"></textarea>
                 <div class="well well-sm">
-                    <label class="myLabelForm" for="color">Element color</label></br>
+                    <label class="myLabelForm" for="color"><?php echo $lang['editor_ec']; ?></label></br>
                     <input class="myInputForm" disabled id="color" type="color" onchange="saveColor(event, this)">
                 </div>
                 <div class="well well-sm">
-                    <label class="myLabelForm" for="color">Hide attribute<span style="color: red"><sup title="Adds an element that allows hiding algorithm sections by color.">?</sup></span></label></br>
+                    <label class="myLabelForm" for="color"><?php echo $lang['editor_ha']; ?><span style="color: red"><sup title="<?php echo $lang['editor_ha_h']; ?>">?</sup></span></label></br>
                     <input class="myInputForm" disabled id="leadColor" type="checkbox" onchange="saveLead(event, this)">
                 </div>
                 <div class="well well-sm" style="margin-top: 20px">
-                    <button title="Click this button to show the help modal." type="button" data-toggle="modal" data-target="#helpModal" id = "help_btn" class="btn btn-block btn-info">Help</button>
+                    <button title="<?php echo $lang['editor_help_h']; ?>" type="button" data-toggle="modal" data-target="#helpModal" id = "help_btn" class="btn btn-block btn-info"><?php echo $lang['editor_help']; ?></button>
                 </div>
             </div>
         </div>
@@ -285,15 +290,13 @@ $description="";
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 id="h4ID" class="modal-title">
-                    Detailed node description
-                    <!---<script>document.getElementById('h4ID').innerText=document.getElementById('IDtext').value</script>--->
                 </h4>
             </div>
             <div class="modal-body">
                 <pre><span style="word-wrap: break-word" id="descText"></span></pre>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo $lang['diagnosis_close']; ?></button>
             </div>
         </div>
 
@@ -308,29 +311,29 @@ $description="";
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Edit graph information</h4>
+                <h4 class="modal-title"><?php echo $lang['editor_save-modal-title']; ?></h4>
             </div>
             <div class="modal-body modal-body-graph">
                 <form name="gForm" class="form-horizontal" role="form">
                     <div class="form-group">
                         <label  class="col-sm-2 control-label"
-                                for="graphName">Algorithm name<label style="color: red">*</label></label>
+                                for="graphName"><?php echo $lang['editor_save-modal-an']; ?><label style="color: red">*</label></label>
                         <div class="col-sm-10">
                             <input name="gName" type="text" class="form-control"
-                                   id="graphName" placeholder="Graph name"/>
+                                   id="graphName" placeholder="<?php echo $lang['editor_save-modal-an_h']; ?>"/>
                             <label style="color: red; font-size: 14px" id="nameLab"></label>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label"
 
-                               for="private" >Access<label style="color: red">*</label></label>
+                               for="private" ><?php echo $lang['editor_save-modal-ac']; ?><label style="color: red">*</label></label>
                         <div class="col-sm-10">
                             <div>
-                                <label class="radio-inline" for="private"><input class="radio" id="private" type="radio" name="access" value="1">Private</label>
+                                <label class="radio-inline" for="private"><input class="radio" id="private" type="radio" name="access" value="1"><?php echo $lang['editor_save-modal-ac-op1']; ?></label>
                             </div>
                             <div>
-                                <label class="radio-inline" for="public"><input class="radio" type="radio" id="public" name="access" value="0">Public</label>
+                                <label class="radio-inline" for="public"><input class="radio" type="radio" id="public" name="access" value="0"><?php echo $lang['editor_save-modal-ac-op2']; ?></label>
 
                             </div>
                             <label style="color: red; font-size: 14px" id="accessLab"></label>
@@ -339,43 +342,43 @@ $description="";
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label"
-                               for="graphDescritption" >Algorithm description</label>
+                               for="graphDescritption" ><?php echo $lang['editor_save-modal-ad']; ?></label>
                         <div class="col-sm-10">
                             <pre><textarea class="form-control"
-                                   id="graphDescritption" placeholder="Graph description" rows="6" cols="20" id="graphDescritption" type="text"></textarea></pre>
+                                   id="graphDescritption" placeholder="<?php echo $lang['editor_save-modal-ad_h']; ?>" rows="6" cols="20" id="graphDescritption" type="text"></textarea></pre>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-sm-2 control-label"
 
-                               for="graphType" >Intended for<label style="color: red">*</label></label>
+                               for="graphType" ><?php echo $lang['editor_save-modal-for']; ?><label style="color: red">*</label></label>
                         <div class="col-sm-10">
                             <div>
-                                <label class="radio-inline" for="typeVisual"><input class="radio" id="typeVisual" type="radio" name="gType" value="visual">Doctors</label>
+                                <label class="radio-inline" for="typeVisual"><input class="radio" id="typeVisual" type="radio" name="gType" value="visual"><?php echo $lang['editor_save-modal-for-op1']; ?></label>
                             </div>
                             <div>
-                                <label class="radio-inline" for="typeDiagnostic"><input class="radio" type="radio" id="typeDiagnostic" name="gType" value="diagnostic">Patients</label>
+                                <label class="radio-inline" for="typeDiagnostic"><input class="radio" type="radio" id="typeDiagnostic" name="gType" value="diagnostic"><?php echo $lang['editor_save-modal-for-op2']; ?></label>
 
                             </div>
                         </div>
 
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label" for="sel1">Algorithm type (ctrl+click to select multiple types)</label>
+                        <label class="col-sm-2 control-label" for="sel1"><?php echo $lang['editor_save-modal-type']; ?></label>
                         <div class="col-sm-10">
                             <select required multiple class="form-control" id="sel1">
-                                <option value="diagnostic" id="opt1">Diagnostic</option>
-                                <option value="treatment" id="opt2">Treatment</option>
-                                <option value="other" id="opt3">Other</option>
+                                <option value="diagnostic" id="opt1"><?php echo $lang['editor_save-modal-type-op1']; ?></option>
+                                <option value="treatment" id="opt2"><?php echo $lang['editor_save-modal-type-op2']; ?></option>
+                                <option value="other" id="opt3"><?php echo $lang['editor_save-modal-type-op3']; ?></option>
                             </select>
                         </div>
 
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">Request curation</label>
+                        <label class="col-sm-2 control-label"><?php echo $lang['editor_save-modal-rq']; ?></label>
                         <div class="col-sm-10">
                             <div class="form-group form-inline">
-                                <label class="radio-inline" for="curation"><input style="margin-right: 5px" class="radio" type="checkbox" id="curation" name="curation" value="1">Yes, request curation of algorithm</label>
+                                <label class="radio-inline" for="curation"><input style="margin-right: 5px" class="radio" type="checkbox" id="curation" name="curation" value="1"><?php echo $lang['editor_save-modal-rq_h']; ?></label>
                             </div>
 
                             <label style="color: red; font-size: 14px" id="typeLab"></label>
@@ -385,8 +388,8 @@ $description="";
                 </form>
             </div>
             <div class="modal-footer">
-                <button id="modal-save-graph" type="button" class="btn btn-success">Save</button>
-                <button id="modal-cancel-graph" type="button" class="btn btn-warning" data-dismiss="modal">Cancel</button>
+                <button id="modal-save-graph" type="button" class="btn btn-success"><?php echo $lang['editor_save-modal-save']; ?></button>
+                <button id="modal-cancel-graph" type="button" class="btn btn-warning" data-dismiss="modal"><?php echo $lang['editor_save-modal-cancel']; ?></button>
             </div>
         </div>
 
@@ -401,7 +404,7 @@ $description="";
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h2 align="center" class="modal-title">ViDis help</h2>
+                <h2 align="center" class="modal-title">ViDis help (English only)</h2>
             </div>
             <div class="modal-body modal-body-graph">
                 <div id="top" class="well well-sm">
@@ -519,3 +522,13 @@ $description="";
 <!---<footer class="container-fluid text-center fixed_bottom">
     <p>©DiaGenKri</p>
 </footer>--->
+
+<script type="text/javascript" src="../../app/res/js/david/notify.min.js"></script>
+<script type="text/javascript" src="../../app/res/js/david/raphael.pan-zoom.js"></script>
+<script type="text/javascript" src="../../app/res/js/raphael/raphael.export.js"></script>
+<script type="text/javascript" src="../../app/res/js/david/david.js"></script>
+<script type="text/javascript" src="../../app/res/js/nermin/test.js"></script>
+<script type="text/javascript" src="../../app/res/js/david/getdata.js"></script>
+<script type="text/javascript" src="../../app/res/js/david/tree.js"></script>
+<script src="../../app/res/js/curations.js"></script>
+<link rel="stylesheet" href="../../app/res/css/main.css">

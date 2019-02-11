@@ -3,10 +3,15 @@ require_once '../app/database/DBfunctions.php';
 if(isset($_SESSION["user"])){
     header("Location: ../../public/home");
 }
+// include language array
+if(file_exists('../app/language/lang/lang_' . $_SESSION["lang"] . '.php'))
+    require_once '../app/language/lang/lang_' . $_SESSION["lang"] . '.php';
+else
+    require_once '../app/language/lang/lang_en.php';
 ?>
 
 <!DOCTYPE html>
-<html lang="sl">
+<html lang="<?php echo $lang["lang"]?>">
 <head>
     <title>Register</title>
     <meta charset="utf-8">
@@ -50,8 +55,19 @@ if(isset($_SESSION["user"])){
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
-                <li><a href="../../public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
+                <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-sign-language"></i> <?php echo $_SESSION["lang"]; ?><span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <?php
+                        foreach ($_SESSION["available_languages"] as $key => $value) {
+                            if ($value == $_SESSION["lang"])
+                                continue;
+                            echo "<li><a href=../../public/register/confirm?lang=$value>$value</a></li>";
+                        }
+                        ?>
+                    </ul>
+                </li>
+                <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span><?php echo $lang["algorithm_list"]; ?></a></li>
+                <li><a href="../../public/logIn"><span class="glyphicon glyphicon-user"></span> <?php echo $lang["user_log_in"]; ?></a></li>
             </ul>
         </div>
     </div>
@@ -61,7 +77,7 @@ if(isset($_SESSION["user"])){
 <div class="container-fluid text-center">
     <div class="row content">
         <div class="col-sm-2 sidenav">
-            <h3>LINKS</h3>
+            <h3><?php echo $lang["links_page"]; ?></h3>
             <p><a href="http://www.limfom-levkemija.org/domov.html" target="_blank"><img class="image img-responsive img-thumbnail" src="../../app/res/photos/logo_LL.png"></a></p>
             <p><a href="http://lrss.fri.uni-lj.si/bio/" target="_blank"><img class="image img-responsive img-thumbnail" src="../../app/res/photos/BG-logo.PNG"></a></p>
         </div>
@@ -73,28 +89,27 @@ if(isset($_SESSION["user"])){
                         $_GET["hash"] = htmlspecialchars($_GET["hash"]);
                         $res = DBfunctions::confirmActivation($_GET["email"], $_GET["hash"]);
                         if($res){
-                            echo "<p>Thank you for confirming your registration, please log into the application at the log in page!</p>";
+                            echo "<p>".$lang['confirm_registration-OK']."</p>";
                         }
                         else{
-                            echo "<p>Something went wrong, please contact our user support for help. We apologise for the inconvenience!</p>";
+                            echo "<p>".$lang['confirm_registration-NOK']."</p>";
                         }
                     ?>
 
                 <?php else: ?>
                 <p>
-                    A verification e-mail has ben sent to your e-mail address, please follow the instructions provided to confirm your registration.
+                    <?php echo  $lang['confirm_mail-sent']; ?>
                 </p>
                 <div class="form-group">
                     <p>
-                        If the email has not arrived after 5 minutes from completing the registration process, please enter your email below and try again.
-                        <br>Thank you for your patience!
+                        <?php echo  $lang['confirm_mail-resend']; ?>
                     </p>
                     <form action = "<?= "resend" ?>" method = "post">
                         <div class="form-group">
-                            <label for="email-resend">E-mail:</label>
+                            <label for="email-resend"><?php echo  $lang['confirm_enter-mail']; ?></label>
                             <input type = "email" class="form-control" id="email-resend" name = "email-resend"/>
                         </div>
-                        <button class="btn btn-default row-increased-bottom" type="submit" value ="Oddaj">Submit</button>
+                        <button class="btn btn-default row-increased-bottom" type="submit" value ="Oddaj"><?php echo $lang['submit-btn']; ?></button>
                     </form>
                 </div>
                 <?php endif; ?>

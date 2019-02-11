@@ -65,6 +65,7 @@ $(function(){
 	                className: 'error',
 	                gap: 5 }
 	            );
+	           	//console.log(data, status);
 			}
 		}
 		);

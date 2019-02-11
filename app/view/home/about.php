@@ -1,83 +1,101 @@
+<?php
+// include language array
+if(file_exists('../app/language/lang/lang_' . $_SESSION["lang"] . '.php'))
+    require_once '../app/language/lang/lang_' . $_SESSION["lang"] . '.php';
+else
+    require_once '../app/language/lang/lang_en.php';
+?>
 <!DOCTYPE html>
-<html lang="sl">
-
+<html lang="<?php echo $lang["lang"]?>">
 <head>
-    <title>Graphs table</title>
+    <title><?php echo $lang["title_document_home-about"]?></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="../../app/res/css/main.css">
     <script src="../../app/res/js/filter.js"></script>
-    <script src="../../app/res/js/curations.js"></script>
 
 
 </head>
 
 
 <nav class="navbar navbar-inverse">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
 
-            <div class="logo-wrap">
-                <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-                <svg class="svg-link" version="1.1" height="35px" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                     viewBox="280 250 280 190" style="enable-background:new 0 0 841.9 595.3;" xml:space="preserve">
+                <div class="logo-wrap">
+                    <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+                    <svg class="svg-link" version="1.1" height="35px" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                         viewBox="280 250 280 190" style="enable-background:new 0 0 841.9 595.3;" xml:space="preserve">
                         <a href="../../public/home">
-                            <g id="XMLID_1783_">
-                                <text id="XMLID_1_" transform="matrix(1.244 0 0 1 291.3076 436.5898)" class="st0 st1 st2">ViDis</text>
-                                <g id="XMLID_2190_">
-                                    <line id="XMLID_2192_" class="st3" x1="487.9" y1="375.4" x2="487.9" y2="391.2"/>
-                                    <line id="XMLID_2191_" class="st3" x1="477.3" y1="383.3" x2="498.6" y2="383.3"/>
-                                </g>
+                        <g id="XMLID_1783_">
+                            <text id="XMLID_1_" transform="matrix(1.244 0 0 1 291.3076 436.5898)" class="st0 st1 st2">ViDis</text>
+                            <g id="XMLID_2190_">
+                                <line id="XMLID_2192_" class="st3" x1="487.9" y1="375.4" x2="487.9" y2="391.2"/>
+                                <line id="XMLID_2191_" class="st3" x1="477.3" y1="383.3" x2="498.6" y2="383.3"/>
                             </g>
-                            <path id="XMLID_12_" class="st0" d="M538.7,315.5c-116.8,116.9-247.4,0-247.4,0S421.9,198.7,538.7,315.5z"/>
-                            <ellipse id="XMLID_11_" class="st4" cx="418" cy="315.5" rx="53.2" ry="43.4"/>
-                            <ellipse id="XMLID_10_" class="st0" cx="418" cy="315.5" rx="30" ry="24.5"/>
-                            <g id="XMLID_14_">
-                                <rect id="XMLID_22_" x="416.5" y="302.6" class="st4" width="3" height="25.9"/>
-                                <rect id="XMLID_15_" x="405" y="314" class="st4" width="25.9" height="3"/>
-                            </g>
+                        </g>
+                        <path id="XMLID_12_" class="st0" d="M538.7,315.5c-116.8,116.9-247.4,0-247.4,0S421.9,198.7,538.7,315.5z"/>
+                        <ellipse id="XMLID_11_" class="st4" cx="418" cy="315.5" rx="53.2" ry="43.4"/>
+                        <ellipse id="XMLID_10_" class="st0" cx="418" cy="315.5" rx="30" ry="24.5"/>
+                        <g id="XMLID_14_">
+                            <rect id="XMLID_22_" x="416.5" y="302.6" class="st4" width="3" height="25.9"/>
+                            <rect id="XMLID_15_" x="405" y="314" class="st4" width="25.9" height="3"/>
+                        </g>
                         </a>
                     </svg>
 
+                </div>
+
             </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown"><a id="myLanId" class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-sign-language"></i> <?php echo $_SESSION["lang"]; ?><span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <?php 
+                            foreach ($_SESSION["available_languages"] as $key => $value) {
+                                if ($value == $_SESSION["lang"])
+                                    continue;
+                                echo "<li><a href=../../public/home/about?lang=$value>$value</a></li>";
+                            }
+                            ?>
+                        </ul>
+                    </li>
 
-        </div>
-        <div class="collapse navbar-collapse" id="myNavbar">
-            <ul class="nav navbar-nav navbar-right">
-
-                <?php if(isset($_SESSION["user"]) && isset($_SESSION["user-add"]) && $_SESSION["user-add"] == 1): ?>
-                    <li><a href="../../public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
-                    </span> Create algorithm</a></li>
+                    <?php if(isset($_SESSION["user"]) && isset($_SESSION["user-add"]) && $_SESSION["user-add"] == 1): ?>
+                <li><a href="../../public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
+                    </span> <?php echo $lang["algorithm_create"]; ?></a></li>
                 <?php endif; ?>
 
 
-                <?php if(isset($_SESSION["user"]) && $_SESSION["user-confirm"] == 1): ?>
-                    <li><a href="../../public/visualisation/curations">
-                            <span class="label label-pill label-danger count"></span> <span class="glyphicon glyphicon-bell" ></span> Curation requests</a></li>
-                <?php endif; ?>
-
-                <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
-
-                <?php if(isset($_SESSION["user"])): ?>
-
-                    <?php if(isset($_SESSION["user-admin"]) && $_SESSION["user-admin"] == 1): ?>
-                        <li><a href="../../public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
+                    <?php if(isset($_SESSION["user"]) && $_SESSION["user-confirm"] == 1): ?>
+                        <li><a href="../../public/visualisation/curations">
+                                <span class="label label-pill label-danger count"></span> <span class="glyphicon glyphicon-bell" ></span> <?php echo $lang["algorithm_curation_request"]; ?></a></li>
                     <?php endif; ?>
+
+                            <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span> <?php echo $lang["algorithm_list"]; ?></a></li>
+
+                    <?php if(isset($_SESSION["user"])): ?>
+
+                        <?php if(isset($_SESSION["user-admin"]) && $_SESSION["user-admin"] == 1): ?>
+                            <li><a href="../../public/administrate"><span class="glyphicon glyphicon-cog"></span> <?php echo $lang["user_administrate"]; ?></a></li>
+                        <?php endif; ?>
 
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             <span class="glyphicon glyphicon-user"></span> 
                             <strong><?php
                                 echo $_SESSION["user-name"];
-                                ?>
+                            ?>
                             </strong>
                             <span class="glyphicon glyphicon-chevron-down"></span>
                         </a>
@@ -92,27 +110,27 @@
                                                 <?php
                                                 $userMail = $_SESSION["user"];
                                                 if(file_exists("../app/res/photos/profilePhotos/" . $userMail . ".jpg")){
-                                                    $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".jpg";
+                                                    $picture = "../app/res/photos/profilePhotos/" . $userMail . ".jpg";
                                                     echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
                                                 }
                                                 elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".JPG")){
-                                                    $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".JPG";
+                                                    $picture = "../app/res/photos/profilePhotos/" . $userMail . ".JPG";
                                                     echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
                                                 }
                                                 elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".png")){
-                                                    $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".png";
+                                                    $picture = "../app/res/photos/profilePhotos/" . $userMail . ".png";
                                                     echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
                                                 }
                                                 elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".PNG")){
-                                                    $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".PNG";
+                                                    $picture = "../app/res/photos/profilePhotos/" . $userMail . ".PNG";
                                                     echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
                                                 }
                                                 elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".jpeg")){
-                                                    $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".jpeg";
+                                                    $picture = "../app/res/photos/profilePhotos/" . $userMail . ".jpeg";
                                                     echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
                                                 }
                                                 elseif (file_exists("../app/res/photos/profilePhotos/" . $userMail . ".JPEG")){
-                                                    $picture = "../../app/res/photos/profilePhotos/" . $userMail . ".JPEG";
+                                                    $picture = "../app/res/photos/profilePhotos/" . $userMail . ".JPEG";
                                                     echo "<img class=\"row-increased-top img-responsive img-thumbnail\" src=$picture style=\"max-width: 90%\">";
                                                 }
                                                 else{
@@ -123,15 +141,15 @@
                                         </div>
                                         <div class="col-lg-8">
                                             <p class="text-left"><strong><?php
-                                                    echo $_SESSION["user-name"] . " " . $_SESSION["user-surname"];
-                                                    ?>
-                                                </strong></p>
+                                                echo $_SESSION["user-name"] . " " . $_SESSION["user-surname"];
+                                            ?>
+                                            </strong></p>
                                             <p class="text-left small"><?php
                                                 echo $_SESSION["user"];
-                                                ?>
+                                            ?>
                                             </p>
                                             <p class="text-left">
-                                                <a href="../../public/profile" class="btn btn-primary btn-block btn-sm">My profile</a>
+                                                <a href="../../public/profile" class="btn btn-primary btn-block btn-sm"><?php echo $lang["profile_link"]; ?></a>
                                             </p>
                                         </div>
                                     </div>
@@ -144,7 +162,7 @@
                                         <div class="col-lg-12">
                                             <p>
 
-                                                <a href="../../public/logIn/logOutUser/" class="btn btn-danger btn-block">Log out</a>
+                                                <a href="../../public/logIn/logOutUser/" class="btn btn-danger btn-block"><?php echo $lang["user_log_out"]; ?></a>
 
                                             </p>
                                         </div>
@@ -153,20 +171,20 @@
                             </li>
                         </ul>
                     </li>
-                <?php else: ?>
+                    <?php else: ?>
+                    
+                    <li><a href="../../public/register"><span class="glyphicon glyphicon-log-in"></span> <?php echo $lang["user_registrate"]; ?></a></li>
+                    <li><a href="../../public/logIn"><span class="glyphicon glyphicon-user"></span> <?php echo $lang["user_log_in"]; ?></a></li>
 
-                    <li><a href="../../public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
-                    <li><a href="../../public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
-
-                <?php endif; ?>
-            </ul>
+                    <?php endif; ?>
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 <div class="col-sm-12">
     <div  class="col-sm-10">
         <article style="overflow: hidden" class="well">
-            <h1>ViDis: Web-based tool for the visualisation of diagnostic algorithms</h1>
+            <h1><?php echo $lang["about_title1"]; ?></h1>
 
             <div class="well">
                 <p>
@@ -250,3 +268,4 @@
 <!-- <footer class="container-fluid text-center">
     <p>©DiaGenKri</p>
 </footer> -->
+<script src="../../app/res/js/curations.js"></script>
