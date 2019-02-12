@@ -196,7 +196,7 @@ $data = DBfunctions::getGraphs();
                 style="width:100%;">
                 <div>
                     <br><label for="gName"><?php echo $lang['list_crtd']?></label>
-                    <label class="radio-inline" for="curated"><input onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" class="radio" type="checkbox" id="curated" name="curated" value="0"><?php echo $lang['list_crtd_h']?></label>
+                    <label class="radio-inline" for="curated"><input onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" class="radio" type="checkbox" id="curated" name="curated" <?php if(!isset($_SESSION["user"])) {echo "disabled checked";} ?> value="0"><?php echo $lang['list_crtd_h']?></label>
                 </div>
             </div>
             <!-- <div>
@@ -207,20 +207,16 @@ $data = DBfunctions::getGraphs();
             <label class="col-sm-6 control-label"><?php echo $lang['list_for']?></label>
 
             <div class="col-sm-6">
-                <?php if(isset($_SESSION["user"])): ?>
                 <div>
                     <label class="radio-inline" for="typeDAll"><input onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" checked class="radio" type="radio" id="typeDAll" name="gType" value="all"><?php echo $lang['list_for-op1']?></label>
                 </div>
-                <?php endif; ?>
                 <div>
 
-                    <label class="radio-inline" for="typeVisual"><input onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" class="radio" id="typeVisual" type="radio" name="gType" value="visual" <?php if(!isset($_SESSION["user"])): ?> checked="checked" <?php endif; ?> ><?php echo $lang['list_for-op2']?></label>
+                    <label class="radio-inline" for="typeVisual"><input onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" class="radio" id="typeVisual" type="radio" name="gType" value="visual" <?php if(!isset($_SESSION["user"])): ?> <?php endif; ?> ><?php echo $lang['list_for-op2']?></label>
                 </div>
-                <?php if(isset($_SESSION["user"])): ?>
                 <div>
                     <label class="radio-inline" for="typeDiagnostic"><input onchange="filterTable('<?php if(isset($_SESSION["user"])){echo $_SESSION['user'];} ?>')" class="radio" type="radio" id="typeDiagnostic" name="gType" value="diagnostic"><?php echo $lang['list_for-op3']?></label>
                 </div>
-                <?php endif; ?>
 
 
                 <label style="color: red; font-size: 14px" id="typeLab"></label>
@@ -276,6 +272,7 @@ $data = DBfunctions::getGraphs();
 
                     <?php if(isset($_SESSION["user"])): ?>
                     <th><?php echo $lang['list_ed']?></th>
+                    <th><?php echo $lang['list_cp']?></th>
                     <th><?php echo $lang['list_del']?></th>
                     <?php endif; ?>
 
@@ -300,10 +297,10 @@ $data = DBfunctions::getGraphs();
 
                     $wholename = "";
                     if(isset($_SESSION["user"]) && isset($_SESSION["user-read"])){
-                        $wholename = $uname . " " . $usurname . " - " . $email;
+                        $wholename = $uname[0] . ". " . $usurname[0] . ". - " . $email;
                     }
                     else{
-                        $wholename = $uname . " " . $usurname;
+                        $wholename = $uname[0] . ". " . $usurname[0] . ".";
                     }
 
                     if($curated === '0'){
@@ -357,12 +354,17 @@ $data = DBfunctions::getGraphs();
                     $tv = $lang['list_vi_h-yes'].$name;
                     $te = $lang['list_ed_h-yes'].$name;
                     $td = $lang['list_del_h-yes'].$name;
+                    $tc = $lang['list_cp_h-yes'].$name;
 
                     $button_edit = "<button class='btn btn-block btn-primary edit-graph-button' id='$id'>".$lang['list_ed']."</button>";
+                    $button_copy = "<button class='btn btn-block btn-primary copy-graph-button' id='$id'>".$lang['list_cp']."</button>";
+
 
                     if((!isset($_SESSION["user"]) ||  (isset($_SESSION["user-edit"]) && $_SESSION["user-edit"] != 1)) && (isset($_SESSION["user"]) && $_SESSION["user"] !== $email)){
                         $button_edit = "";
+                        $button_copy = "";
                         $te = $lang['list_ed_h-no'];
+                        $tc = $lang['list_cp_h-no'];
                     }
 
                     $delete_alg = "<i id='$id' class='fa fa-times'></i>";
@@ -381,45 +383,43 @@ $data = DBfunctions::getGraphs();
 
                     $output = "";
 
-                    // doctors algorithms shouldnt be visible to public
-                    if("$visual" === $lang["list_for-op2"] || isset($_SESSION["user"])){
-                        // output string, start
-                        $styleClass = " class='tr-graphTable'>";
-                        if(isset($_SESSION["user"]) && $private === '1' && $_SESSION["user"] === $email){
-                            $styleClass = "id='tr-private'>";
-                        }
-                        $output = "<tr " . $styleClass;
 
-                        $output = "$output" . "<td>" . "$ctr" . "</td>";
-                        $output = "$output" . "<td>" . "$wholename" . "</td>";
-                        $output = "$output" . "<td>" . "$name" . "</td>";
-                        $output = "$output" . "<td>" . "$curated" . "</td>";
+                    $styleClass = " class='tr-graphTable'>";
+                    if(isset($_SESSION["user"]) && $private === '1' && $_SESSION["user"] === $email){
+                        $styleClass = "id='tr-private'>";
+                    }
+                    $output = "<tr " . $styleClass;
 
-                        // if("$visual" === 'Doctors')
-                        //     if(isset($_SESSION["user"]))
-                        //         $output = "$output" . "<td class='je-seja'>" . "$visual" . "</td>";
-                        // else
-                        $output = "$output" . "<td>" . "$visual" . "</td>";
+                    $output = "$output" . "<td>" . "$ctr" . "</td>";
+                    $output = "$output" . "<td>" . "$wholename" . "</td>";
+                    $output = "$output" . "<td>" . "$name" . "</td>";
+                    $output = "$output" . "<td>" . "$curated" . "</td>";
 
-                        $output = "$output" . "<td>" . "$algorithmType" . "</td>";
+                    $output = "$output" . "<td>" . "$visual" . "</td>";
 
-                        if(isset($_SESSION["user"])){
-                            $output = "$output" . "<td title=\"dd. mm. yyyy\">" . "$created" . "</td>";
-                            $output = "$output" . "<td title=\"dd. mm. yyyy\">" . "$edited" . "</td>";
-                        }
+                    $output = "$output" . "<td>" . "$algorithmType" . "</td>";
 
-                        $output = "$output" . "<td title='$tv'>" . "$button_view" . "</td>";
-
-                        if(isset($_SESSION["user"])){
-                            $output = "$output" . "<td title='$te'>" . "$button_edit" . "</td>";
-                            $output = "$output" . "<td title='$td' class='center-me'>" . "$delete_alg" . "</td>";
-                        }
-
-                        $output = "$output" . "<td hidden>$private</td>" . "</tr>";
-
+                    if(isset($_SESSION["user"])){
+                        $output = "$output" . "<td title=\"dd. mm. yyyy\">" . "$created" . "</td>";
+                        $output = "$output" . "<td title=\"dd. mm. yyyy\">" . "$edited" . "</td>";
                     }
 
-                    if((isset($_SESSION["user"]) && $private === '1' && $_SESSION["user"] === $email) || $private === '0'){
+                    $output = "$output" . "<td title='$tv'>" . "$button_view" . "</td>";
+
+                    if(isset($_SESSION["user"])){
+                        $output = "$output" . "<td title='$te'>" . "$button_edit" . "</td>";
+                        $output = "$output" . "<td title='$tc'>" . "$button_copy" . "</td>";
+                        $output = "$output" . "<td title='$td' class='center-me'>" . "$delete_alg" . "</td>";
+                    }
+
+                    $output = "$output" . "<td hidden>$private</td>" . "</tr>";
+
+
+                    if((isset($_SESSION["user"]) && $private === '1' && $_SESSION["user"] === $email) || (isset($_SESSION["user"]) && $private === '0')){
+                        echo "$output";
+                        $ctr++;
+                    }
+                    else if(!isset($_SESSION["user"]) && $curated === $lang['list_yes']){
                         echo "$output";
                         $ctr++;
                     }

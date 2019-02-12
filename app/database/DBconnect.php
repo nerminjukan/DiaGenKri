@@ -9,8 +9,8 @@
 class DBconnect {
 
     private static $host = "localhost";
-    private static $user = "user1";
-    private static $password = "secretvidis123.";
+    private static $user = "root";
+    private static $password = "";
     private static $schema = "diagenkri";
     private static $instance = null;
 

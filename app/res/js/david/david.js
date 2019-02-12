@@ -1,9 +1,10 @@
 let dicti = {};
-dicti["en"] = ['Node description: '];
-dicti["sl"] = ['Opis vozlišča: '];
+dicti["en"] = ['Node description'];
+dicti["sl"] = ['Opis vozlišča'];
 window.onload = function () {
     try {
         lang = document.getElementById('myLanId').innerText.trim();
+        console.log(lang);
     } catch (e) {
         //console.log(e);
     }
@@ -1282,8 +1283,10 @@ function rectEvents(item, type){
             //console.log(document.getElementById("myLanId").innerHTML);
             if(!dragging_set && !line_first_shape_id && !line_second_shape_id && !delete_shape){
                 document.getElementById('descText').innerHTML = item.data('desc');
-                document.getElementById('h4ID').innerHTML = item.id;
-                $("#longText").modal();
+                document.getElementById('h4ID').innerHTML = dicti[lang][0];
+                if(item.data('desc') !== "default-text"){
+                    $("#longText").modal();
+                }
                 //console.log("[longText modal] showing");
             }
         });
@@ -2234,8 +2237,10 @@ function shapeDraw(arg, ev) {
             // display only if shape was not dragged
             if(!dragging_set && !line_first_shape_id && !line_second_shape_id && !delete_shape){
                 document.getElementById('descText').innerHTML = shape.data('desc');
-                document.getElementById('h4ID').innerHTML = dicti[lang][0] +  shape.id;
-                $("#longText").modal();
+                document.getElementById('h4ID').innerHTML = dicti[lang][0];
+                if(shape.data('desc') !== "default-text"){
+                    $("#longText").modal();
+                }
                 // console.log("[longText modal] showing");
             }
         });

@@ -140,6 +140,20 @@ class DBfunctions {
         }
     }
 
+    public static function copyGraph($usr, $id){
+        $gr = self::loadGraph($id);
+        $cp_id = null;
+        try {
+            $cp_id = self::saveGraph($usr, $gr["data"], $gr["name"]."-copy", $gr["description"], $gr["private"], $gr["visual"], $gr["algorithm_type"]);
+            if($cp_id != null){
+                return self::loadGraph($cp_id);
+            }
+            return $cp_id;
+        } catch(Exception $e){
+            echo 'Caught exception: ',  $e->getMessage(), "\n";
+        }
+    }
+
     // return height of $vertex in tree, which is max($vertex.left, $vertex.right) + 1
     private function heightOfTree($vertex){
         if($vertex.left != null && $vertex.right != null)

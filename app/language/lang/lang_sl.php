@@ -212,13 +212,16 @@
     $lang['list_edt'] = 'Urejen';
     $lang['list_vi'] = 'Preglej';
     $lang['list_ed'] = 'Uredi';
+    $lang['list_cp'] = "Kopiraj";
     $lang['list_del'] = 'Izbriši';
     $lang['list_del_h-no'] = 'Nimate dovoljenja za brisanje tega algoritma.';
     $lang['list_ed_h-no'] = 'Nimate dovoljenja za urejanje tega algoritma.';
     $lang['list_vi_h-no'] = 'Nimate dovoljenja za pregled tega algoritma.';
+    $lang['list_cp_h-no'] = 'Nimate dovoljenja za kopiranje tega algoritma.';
     $lang['list_del_h-yes'] = 'Izbriši algoritem: ';
     $lang['list_ed_h-yes'] = 'Uredi algoritem: ';
     $lang['list_vi_h-yes'] = 'Preglej algoritem: ';
+    $lang['list_cp_h-yes'] = 'Kopiraj algoritem: ';
     $lang['list_yes'] = 'Da';
     $lang['list_no'] = 'Ne';
     $lang['list_edited'] = 'Ni urejen';

@@ -211,11 +211,14 @@
     $lang['list_edt'] = 'Edited';
     $lang['list_vi'] = 'View';
     $lang['list_ed'] = 'Edit';
+    $lang['list_cp'] = "Copy";
     $lang['list_del'] = 'Delete';
     $lang['list_del_h-no'] = 'You do not have permission to delete this algorithm.';
     $lang['list_ed_h-no'] = 'You do not have permission to edit this algorithm.';
+    $lang['list_cp_h-no'] = 'You do not have permission to copy this algorithm.';
     $lang['list_vi_h-no'] = 'You do not have permission to view this algorithm.';
     $lang['list_del_h-yes'] = 'Delete algorithm: ';
+    $lang['list_cp_h-yes'] = 'Copy algorithm: ';
     $lang['list_ed_h-yes'] = 'Edit algorithm: ';
     $lang['list_vi_h-yes'] = 'View algorithm: ';
     $lang['list_yes'] = 'Yes';

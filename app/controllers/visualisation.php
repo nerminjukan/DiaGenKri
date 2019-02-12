@@ -50,6 +50,14 @@ class Visualisation extends Controller
         echo $result;
     }
 
+    public function copy() {
+        $result = null;
+        if(isset($_SESSION["user"]) && isset($_POST["id"]))
+            $result = DBfunctions::copyGraph($_SESSION["user"], $_POST['id']);
+
+        return $result;
+    }
+
 
     public function edit(){
         if(isset($_SESSION["user"]) && isset($_POST["data"]) && isset($_POST["name"]) && isset($_POST["description"]) && isset($_POST["access"]) && isset($_POST["gtype"]) && isset($_POST["atype"]) && isset($_POST["id"]) && isset($_POST["curation"])){
