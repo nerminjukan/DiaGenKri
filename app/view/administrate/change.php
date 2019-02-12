@@ -1,8 +1,12 @@
 <?php
 
 if(!isset($_SESSION["user"]) && $_SESSION["user-admin"] != 1){
-    header("Location: ../../public/home");
+    header("Location: ../../public/administrate/");
 }
+if(file_exists('../app/language/lang/lang_' . $_SESSION["lang"] . '.php'))
+    require_once '../app/language/lang/lang_' . $_SESSION["lang"] . '.php';
+else
+    require_once '../app/language/lang/lang_en.php';
 
 require_once '../app/database/DBfunctions.php';
 include_once '../app/controllers/administrate.php';
@@ -13,10 +17,10 @@ $data = DBfunctions::getUsersData();
 ?>
 
 <!DOCTYPE html>
-<html lang="sl">
+<html lang="<?php echo $lang["lang"]?>">
 
 <head>
-    <title>Administration</title>
+    <title><?php echo $lang['administrate_title']?></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -26,7 +30,7 @@ $data = DBfunctions::getUsersData();
 
     <script type="text/javascript" src="../../app/res/js/david/notify.min.js"></script>
     <script type="text/javascript" src="../../app/res/js/david/permissions.js"></script>
-    <script src="../../app/res/js/curations.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
 
 
 
@@ -67,14 +71,25 @@ $data = DBfunctions::getUsersData();
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown"><a id="myLanId" class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-sign-language"></i> <?php echo $_SESSION["lang"]; ?><span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <?php
+                        foreach ($_SESSION["available_languages"] as $key => $value) {
+                            if ($value == $_SESSION["lang"])
+                                continue;
+                            echo "<li><a href=../../public/administrate/change?lang=$value>$value</a></li>";
+                        }
+                        ?>
+                    </ul>
+                </li>
                 <?php if(isset($_SESSION["user"]) && isset($_SESSION["user-add"]) && $_SESSION["user-add"] == 1): ?>
                     <li><a href="../../public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
-                    </span> Create algorithm</a></li>
+                    </span><?php echo $lang["algorithm_create"]; ?></a></li>
                 <?php endif; ?>
                 <?php if(isset($_SESSION["user"]) && $_SESSION["user-confirm"] == 1): ?>
-                    <li><a href="../../public/visualisation/curations"><span class="label label-pill label-danger count"></span> <span class="glyphicon glyphicon-bell" ></span> Curation requests</a></li>
+                    <li><a href="../../public/visualisation/curations"><span class="label label-pill label-danger count"></span> <span class="glyphicon glyphicon-bell" ></span><?php echo $lang["algorithm_curation_request"]; ?></a></li>
                 <?php endif; ?>
-                <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
+                <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span><?php echo $lang["algorithm_list"]; ?></a></li>
                 <?php if(isset($_SESSION["user"])): ?> <!-- && $_SESSION[user_level] === 6, which is admin for example-->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -133,7 +148,7 @@ $data = DBfunctions::getUsersData();
                                                 ?>
                                             </p>
                                             <p class="text-left">
-                                                <a href="../../public/profile" class="btn btn-primary btn-block btn-sm">My profile</a>
+                                                <a href="../../public/profile" class="btn btn-primary btn-block btn-sm"><?php echo $lang["profile_link"]; ?></a>
                                             </p>
                                         </div>
                                     </div>
@@ -145,7 +160,7 @@ $data = DBfunctions::getUsersData();
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <p>
-                                                <a href="../../public/logIn/logOutUser/" class="btn btn-danger btn-block">Log out</a>
+                                                <a href="../../public/logIn/logOutUser/" class="btn btn-danger btn-block"><?php echo $lang["user_log_out"]; ?></a>
                                             </p>
                                         </div>
                                     </div>
@@ -154,8 +169,8 @@ $data = DBfunctions::getUsersData();
                         </ul>
                     </li>
                 <?php else: ?>
-                    <li><a href="../../public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
-                    <li><a href="../../public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
+                    <li><a href="../../public/register"><span class="glyphicon glyphicon-log-in"></span> <?php echo $lang["user_register"]; ?></a></li>
+                    <li><a href="../../public/logIn"><span class="glyphicon glyphicon-user"></span><?php echo $lang["user_log_in"]; ?></a></li>
                 <?php endif; ?>
             </ul>
         </div>
@@ -165,7 +180,7 @@ $data = DBfunctions::getUsersData();
 <div class="container-fluid">
     <div class="row content">
         <div class="col-sm-12 text-left" style="margin-bottom: 0">
-            <a href="../../public/administrate" type="button" class="btn btn-primary row-increased-bottom row-increased-top" style="width: 100%;">Done</a>
+            <a href="../../public/administrate" type="button" class="btn btn-primary row-increased-bottom row-increased-top" style="width: 100%;"><?php echo $lang['administrate_edit-privileges-done-btn']?></a>
         </div>
        <!--  <div class="col-sm-12 text-left flex-wrap" style="margin-bottom: 0; margin-top: 0">
             <a href="../../public/administrate" type="button" class="btn btn-danger row-increased-bottom" style="width: 100%; max-width: 960px;">Cancel</a>
@@ -174,9 +189,9 @@ $data = DBfunctions::getUsersData();
             <table id="graphTable" class="table table-hover table-bordered" style="margin-top: 0px;">
                 <thead>
                 <tr>
-                    <th>User</th>
-                    <th>E-mail</th>
-                    <th>Privileges</th>
+                    <th><?php echo $lang['administrate_user']?></th>
+                    <th><?php echo $lang['administrate_email']?></th>
+                    <th><?php echo $lang['administrate_privileges']?></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -196,32 +211,32 @@ $data = DBfunctions::getUsersData();
                     $adminString = "<div class='flex-div'><input type='checkbox' id='admin"."$i'";
                     if($admin == 1)
                         $adminString = $adminString . " checked='checked' ";
-                    $adminString = $adminString . "><label for='admin"."$i'>admin</label></input></div>";
+                    $adminString = $adminString . "><label for='admin"."$i'>".$lang['administrate_admin']."</label></input></div>";
 
                     $readString = "<div class='flex-div'><input type='checkbox' id='read"."$i'";
                     if($readPR == 1)
                         $readString = $readString . " checked='checked' ";
-                    $readString = $readString . "><label for='read"."$i'>read</label></input></div>";
+                    $readString = $readString . "><label for='read"."$i'>".$lang['administrate_read']."</label></input></div>";
 
                     $editString = "<div class='flex-div'><input type='checkbox' id='edit"."$i'";
                     if($editPR == 1)
                         $editString = $editString . " checked='checked' ";
-                    $editString = $editString . "><label for='edit"."$i'>edit</label></input></div>";
+                    $editString = $editString . "><label for='edit"."$i'>".$lang['administrate_edit']."</label></input></div>";
 
                     $deleteString = "<div class='flex-div'><input type='checkbox' id='delete"."$i'";
                     if($deletePR == 1)
                         $deleteString = $deleteString . " checked='checked' ";
-                    $deleteString = $deleteString . "><label for='delete"."$i'>delete</label></input></div>";
+                    $deleteString = $deleteString . "><label for='delete"."$i'>".$lang['administrate_delete']."</label></input></div>";
 
                     $addString = "<div class='flex-div'><input type='checkbox' id='add"."$i'";
                     if($addPR == 1)
                         $addString = $addString . " checked='checked' ";
-                    $addString = $addString . "><label for='add"."$i'>add</label></input></div>";
+                    $addString = $addString . "><label for='add"."$i'>".$lang['administrate_add']."</label></input></div>";
 
                     $confirmString = "<div class='flex-div'><input type='checkbox' id='confirm"."$i'";
                     if($confirmPR == 1)
                         $confirmString = $confirmString . " checked='checked' ";
-                    $confirmString = $confirmString . "><label for='confirm"."$i'>confirm</label></input></div>";
+                    $confirmString = $confirmString . "><label for='confirm"."$i'>".$lang['administrate_confirm']."</label></input></div>";
 
 
                     // $privileges = "<form class='form-inline' action='savePR' method='post'>";
@@ -229,11 +244,11 @@ $data = DBfunctions::getUsersData();
                     $privileges = $adminString . $readString . $editString . $deleteString . $addString . $confirmString; 
 
                     if($email === $_SESSION["user"]){
-                        $button = "<button disabled title='You cannot change your own user privileges.' type='button' class='btn btn-primary' name='$i' id='$email'>Save</button>";
+                        $button = "<button disabled title=\'".$lang['administrate_change-save-btn-disabled']."\' type='button' class='btn btn-primary' name='$i' id='$email'>".$lang['administrate_change-save-btn']."</button>";
 
                     }
                     else{
-                        $button = "<button type='button' class='btn btn-primary save-permissions' name='$i' id='$email'>Save</button>";
+                        $button = "<button type='button' class='btn btn-primary save-permissions' name='$i' id='$email'>".$lang['administrate_change-save-btn']."</button>";
                     }
                     // output string, start
                     $output = "<tr class='tr-graphTable'>";
@@ -260,3 +275,4 @@ $data = DBfunctions::getUsersData();
 <!-- <footer class="container-fluid text-center">
     <p>©DiaGenKri</p>
 </footer> -->
+<script src="../../app/res/js/curations.js"></script>

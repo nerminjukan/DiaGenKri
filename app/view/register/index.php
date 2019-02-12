@@ -2,12 +2,17 @@
     if(isset($_SESSION["user"])){
         header("Location: ../../public/home");
     }
+    // include language array
+    if(file_exists('../app/language/lang/lang_' . $_SESSION["lang"] . '.php'))
+        require_once '../app/language/lang/lang_' . $_SESSION["lang"] . '.php';
+    else
+        require_once '../app/language/lang/lang_en.php';
 ?>
 
 <!DOCTYPE html>
-<html lang="sl">
+<html lang="<?php echo $lang["lang"]?>">
 <head>
-    <title>Register</title>
+    <title><?php echo $lang['register_title']?></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -49,8 +54,19 @@
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
-                <li><a href="../../public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
+                <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-sign-language"></i> <?php echo $_SESSION["lang"]; ?><span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <?php
+                        foreach ($_SESSION["available_languages"] as $key => $value) {
+                            if ($value == $_SESSION["lang"])
+                                continue;
+                            echo "<li><a href=../../public/register?lang=$value>$value</a></li>";
+                        }
+                        ?>
+                    </ul>
+                </li>
+                <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span><?php echo $lang["algorithm_list"]; ?></a></li>
+                <li><a href="../../public/logIn"><span class="glyphicon glyphicon-user"></span><?php echo $lang["user_log_in"]; ?></a></li>
             </ul>
         </div>
     </div>
@@ -60,9 +76,10 @@
 <div class="container-fluid text-center">
     <div class="row content">
         <div class="col-sm-2 sidenav">
-            <h3>LINKS</h3>
+            <h3><?php echo $lang["links_page"]; ?></h3>
             <p><a href="http://www.limfom-levkemija.org/domov.html" target="_blank"><img class="image img-responsive img-thumbnail" src="../../app/res/photos/logo_LL.png"></a></p>
             <p><a href="http://lrss.fri.uni-lj.si/bio/" target="_blank"><img class="image img-responsive img-thumbnail" src="../../app/res/photos/BG-logo.PNG"></a></p>
+	<p><a href="http://www.mf.uni-lj.si/" target="_blank"><img class="image img-responsive img-thumbnail" src="../../app/res/photos/mf-logo.png"></a></p>
         </div>
         <div class="col-sm-8 text-left">
             <div class="container-fluid row-increased-top">
@@ -81,39 +98,39 @@
                 ?>
                 <form class="well" action = "<?= "register/add/" ?>" method = "post" content="">
                     <div class="form-group">
-                        <label for="name">Name:</label>
-                        <input placeholder="Enter your name" <?php if(isset($_SESSION["uname"])){echo "value=\"" . $_SESSION["uname"] . "\"";} ?> type ="text" class="form-control" id="name" name ="name"/>
+                        <label for="name"><?php echo $lang['register_name']; ?></label>
+                        <input placeholder="<?php echo $lang['register_name_h']; ?>" <?php if(isset($_SESSION["uname"])){echo "value=\"" . $_SESSION["uname"] . "\"";} ?> type ="text" class="form-control" id="name" name ="name"/>
                     </div>
                     <div class="form-group">
-                        <label for="surname">Surname:</label>
-                        <input placeholder="Enter your surname" <?php if(isset($_SESSION["usurname"])){echo "value=\"" . $_SESSION["usurname"] . "\"";} ?> type ="text" class="form-control" id="surname" name ="surname"/>
+                        <label for="surname"><?php echo $lang['register_surname']; ?></label>
+                        <input placeholder="<?php echo $lang['register_surname_h']; ?>" <?php if(isset($_SESSION["usurname"])){echo "value=\"" . $_SESSION["usurname"] . "\"";} ?> type ="text" class="form-control" id="surname" name ="surname"/>
                     </div>
                     <div class="form-group">
-                        <label for="email">E-mail:</label>
-                        <input placeholder="Enter your E-mail address" <?php if(isset($_SESSION["usemail"])){echo "value=\"" . $_SESSION["usemail"] . "\"";} ?> type = "email" class="form-control" id="email" name = "email"/>
+                        <label for="email"><?php echo $lang['register_e-mail']; ?></label>
+                        <input placeholder="<?php echo $lang['register_e-mail_h']; ?>" <?php if(isset($_SESSION["usemail"])){echo "value=\"" . $_SESSION["usemail"] . "\"";} ?> type = "email" class="form-control" id="email" name = "email"/>
                     </div>
                     <div class="form-group">
-                        <label for="password1">Password:</label>
-                        <input placeholder="Enter your password" type="password" class="form-control" id="password1" name="password1"/>
+                        <label for="password1"><?php echo $lang['register_password']; ?></label>
+                        <input placeholder="<?php echo$lang['register_password_h']; ?>" type="password" class="form-control" id="password1" name="password1"/>
                     </div>
                     <div class="form-group">
-                        <label for="password2">Password (repeat):</label>
-                        <input placeholder="Repeat your password" type="password" class="form-control" id="password2" name="password2"/>
+                        <label for="password2"><?php echo $lang['register_password-repeat']; ?></label>
+                        <input placeholder="<?php echo $lang['register_paseord-repeat_h']; ?>" type="password" class="form-control" id="password2" name="password2"/>
                     </div>
                     <div class="form-group">
-                        <label class="control-label" for="sel1">Field of work</label>
+                        <label class="control-label" for="sel1"><?php echo $lang['register_fow']; ?></label>
                         <div>
                             <select required class="form-control" id="sel1" name="sel1">
-                                <option disabled selected hidden>Choose your field of work</option>
-                                <option value="Doctor" id="opt1">Doctor</option>
-                                <option value="Scientist" id="opt2">Scientist</option>
-                                <option value="Researcher" id="opt3">Researcher</option>
-                                <option value="Other" id="opt4">Other</option>
+                                <option disabled selected hidden><?php echo $lang['register_fow_h']; ?></option>
+                                <option value="Doctor" id="opt1"><?php echo $lang['register_fow-op1']; ?></option>
+                                <option value="Scientist" id="opt2"><?php echo $lang['register_fow-op2']; ?></option>
+                                <option value="Researcher" id="opt3"><?php echo $lang['register_fow-op3']; ?></option>
+                                <option value="Other" id="opt4"><?php echo $lang['register_fow-op4']; ?></option>
                             </select>
                         </div>
 
                     </div>
-                    <button class="btn btn-default row-increased-bottom" type="submit" value ="Oddaj">Submit</button>
+                    <button class="btn btn-default row-increased-bottom" type="submit" value ="Oddaj"><?php echo $lang['submit-btn']; ?></button>
                 </form>
             </div>
         </div>

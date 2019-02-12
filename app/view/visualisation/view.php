@@ -7,16 +7,20 @@
 
 require_once '../app/database/DBfunctions.php';
 include_once '../app/controllers/administrate.php';
-
+// include language array
+if(file_exists('../app/language/lang/lang_' . $_SESSION["lang"] . '.php'))
+    require_once '../app/language/lang/lang_' . $_SESSION["lang"] . '.php';
+else
+    require_once '../app/language/lang/lang_en.php';
 $data = DBfunctions::getGraphs();
 
 ?>
 
 <!DOCTYPE html>
-<html lang="sl">
+<html lang="<?php echo $lang["lang"]?>">
 
 <head>
-    <title>View graph only</title>
+    <title><?php echo $lang['view_title']; ?></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -24,6 +28,7 @@ $data = DBfunctions::getGraphs();
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="../../app/res/css/main.css">
     <script src="../../app/res/js/filter.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 
     <script src="../../app/res/js/raphael/raphael.min.js"></script>
@@ -32,11 +37,8 @@ $data = DBfunctions::getGraphs();
     <script type="text/javascript" src="../../app/res/js/david/notify.min.js"></script>
     <script type="text/javascript" src="../../app/res/js/david/raphael.pan-zoom.js"></script>
 
-    <script type="text/javascript" src="../../app/res/js/david/tree.js"></script>
-    <script type="text/javascript" src="../../app/res/js/david/david.js"></script>
-    <script type="text/javascript" src="../../app/res/js/david/viewonly.js"></script>
 
-    <script src="../../app/res/js/curations.js"></script>
+
 </head>
 
 
@@ -75,17 +77,28 @@ $data = DBfunctions::getGraphs();
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown"><a id="myLanId" class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-sign-language"></i> <?php echo $_SESSION["lang"]; ?><span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <?php
+                        foreach ($_SESSION["available_languages"] as $key => $value) {
+                            if ($value == $_SESSION["lang"])
+                                continue;
+                            echo "<li><a href=../../public/visualisation/viewonly?lang=$value>$value</a></li>";
+                        }
+                        ?>
+                    </ul>
+                </li>
                 <?php if(isset($_SESSION["user"]) &&  isset($_SESSION["user-add"]) && $_SESSION["user-add"] == 1): ?>
                 <li><a href="../../public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
-                    </span> Create algorithm</a></li>
+                    </span> <?php echo $lang["algorithm_create"]; ?></a></li>
                 <?php endif; ?>
                 <?php if(isset($_SESSION["user"]) && $_SESSION["user-confirm"] == 1): ?>
-                    <li><a href="../../public/visualisation/curations"><span class="label label-pill label-danger count"></span> <span class="glyphicon glyphicon-bell" ></span> Curation requests</a></li>
+                    <li><a href="../../public/visualisation/curations"><span class="label label-pill label-danger count"></span> <span class="glyphicon glyphicon-bell" ></span> <?php echo $lang["algorithm_curation_request"]; ?></a></li>
                 <?php endif; ?>
-                <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
+                <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span><?php echo $lang["algorithm_list"]; ?></a></li>
                 <?php if(isset($_SESSION["user"])): ?> <!-- && $_SESSION[user_level] === 6, which is admin for example-->
                     <?php if(isset($_SESSION["user-admin"]) && $_SESSION["user-admin"] == 1): ?>
-                        <li><a href="../../public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
+                        <li><a href="../../public/administrate"><span class="glyphicon glyphicon-cog"></span> <?php echo $lang["user_administrate"]; ?></a></li>
                     <?php endif; ?>                <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <span class="glyphicon glyphicon-user"></span> 
@@ -143,7 +156,7 @@ $data = DBfunctions::getGraphs();
                                         ?>
                                         </p>
                                         <p class="text-left">
-                                            <a href="../../public/profile" class="btn btn-primary btn-block btn-sm">My profile</a>
+                                            <a href="../../public/profile" class="btn btn-primary btn-block btn-sm"><?php echo $lang["profile_link"]; ?></a>
                                         </p>
                                     </div>
                                 </div>
@@ -155,7 +168,7 @@ $data = DBfunctions::getGraphs();
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <p>
-                                            <a href="../../public/logIn/logOutUser/" class="btn btn-danger btn-block">Log out</a>
+                                            <a href="../../public/logIn/logOutUser/" class="btn btn-danger btn-block"><?php echo $lang["user_log_out"]; ?></a>
                                         </p>
                                     </div>
                                 </div>
@@ -164,8 +177,8 @@ $data = DBfunctions::getGraphs();
                     </ul>
                 </li>
                 <?php else: ?>
-                <li><a href="../../public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
-                <li><a href="../../public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
+                <li><a href="../../public/register"><span class="glyphicon glyphicon-log-in"></span> <?php echo $lang["user_register"]; ?></a></li>
+                <li><a href="../../public/logIn"><span class="glyphicon glyphicon-user"></span><?php echo $lang["user_log_in"]; ?></a></li>
 
                 <?php endif; ?>
             </ul>
@@ -183,7 +196,7 @@ $data = DBfunctions::getGraphs();
             <table id="viewonlyTable" class="table table-hover table-responsive table-bordered">
                 <thead>
                 <tr>
-                    <th>Algorithm</th>
+                    <th><?php echo $lang['view_alg']; ?></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -266,3 +279,7 @@ $data = DBfunctions::getGraphs();
 <!-- <footer class="container-fluid text-center">
     <p>©DiaGenKri</p>
 </footer> -->
+<script src="../../app/res/js/curations.js"></script>
+<script type="text/javascript" src="../../app/res/js/david/tree.js"></script>
+<script type="text/javascript" src="../../app/res/js/david/david.js"></script>
+<script type="text/javascript" src="../../app/res/js/david/viewonly.js"></script>

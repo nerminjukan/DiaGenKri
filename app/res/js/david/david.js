@@ -1,3 +1,15 @@
+let dicti = {};
+dicti["en"] = ['Node description'];
+dicti["sl"] = ['Opis vozlišča'];
+window.onload = function () {
+    try {
+        lang = document.getElementById('myLanId').innerText.trim();
+        console.log(lang);
+    } catch (e) {
+        //console.log(e);
+    }
+}
+
 // connection implementation between two objects
 Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000") {
     if (obj1.line && obj1.from && obj1.to) {
@@ -1265,14 +1277,17 @@ function rectEvents(item, type){
     } else {
         item.data('connections', true);
         // item.data('desc', 'default-text');
-
         item.mouseup(function () {
             // display only if shape was not dragged
+
+            //console.log(document.getElementById("myLanId").innerHTML);
             if(!dragging_set && !line_first_shape_id && !line_second_shape_id && !delete_shape){
                 document.getElementById('descText').innerHTML = item.data('desc');
-                document.getElementById('h4ID').innerHTML = 'Node description: ' +  item.id;
-                $("#longText").modal();
-                console.log("[longText modal] showing");
+                document.getElementById('h4ID').innerHTML = dicti[lang][0];
+                if(item.data('desc') !== "default-text"){
+                    $("#longText").modal();
+                }
+                //console.log("[longText modal] showing");
             }
         });
         item.data('rotate', false);
@@ -1514,7 +1529,7 @@ function getHeights(){
 // iterate through shapes and connections and build tree
 // its useful for /bolniki tab where progress bar is needed
 function buildTree(){
-    console.log("BUILDING TREE BUILDING TREE BUILDING TREE BUILDING TREE");
+    // console.log("BUILDING TREE BUILDING TREE BUILDING TREE BUILDING TREE");
     tree_vertices = {};
     for (let i = 0; i < shapes.length; i++) {
         const shape = shapes[i];
@@ -1530,8 +1545,8 @@ function buildTree(){
         tree_vertices[conn.to.id].parent = tree_vertices[conn.from.id].vertex_id;
 
     }
-    console.log("[buildTree] tree done!")
-    console.log(tree_vertices);
+    // console.log("[buildTree] tree done!")
+    // console.log(tree_vertices);
 }
 
 // returns height of tree, starting at first vertex
@@ -1539,17 +1554,17 @@ function buildTree(){
 // there can be mutliple vertices without incoming connections so for every vertex that doesnt have
 // incoming connections treeHeight should be calculated
 function getHeights(){
-    console.log("GETING HEIGHTS GETING HEIGHT GETING HEIGHT");
+    // console.log("GETING HEIGHTS GETING HEIGHT GETING HEIGHT");
     for (const [id, vertex] of Object.entries(tree_vertices)) {
-        console.log("id:", id, "height:", vertex.height, "possible root(?):", !vertex.incomingConns);
+        // console.log("id:", id, "height:", vertex.height, "possible root(?):", !vertex.incomingConns);
         // if there are no incoming connections, it is possible that this vertex is root so lets calculate tree height
         if(!vertex.incomingConns){
             Vertex.treeHeight(vertex);
-            console.log("calculating height for", vertex.vertex_id);
+            // console.log("calculating height for", vertex.vertex_id);
         }
     }
 
-    console.log("[getHeights] heights done!")
+    // console.log("[getHeights] heights done!")
     // Vertex.treeHeight("prvi vertex");
     // napolni še za vse ostale vertexe, najdi boljši način kot da n krat kličeš treeHeight(shrajevanje v array)
 }
@@ -2049,7 +2064,7 @@ function getTreeRoot(possible_roots){
     // vertex with most outgoing connections is the one that has most children
     // children of vertex are stored in dictionary, therfore length of dictionary needs to be checked
     for (const [id, vertex] of Object.entries(possible_roots)) {
-        console.log("checking:", id, vertex);
+        // console.log("checking:", id, vertex);
         // if(vertex.incomingConns_count < min){
         //     min_vertex_id = id;
         //     min = vertex.incomingConns_count;
@@ -2059,7 +2074,7 @@ function getTreeRoot(possible_roots){
         if(number_of_children > max){
             max_vertex_id = id;
             max = number_of_children;
-            console.log("found new vertex with highest number of outgoing connections")
+            // console.log("found new vertex with highest number of outgoing connections")
         }
     }
 
@@ -2067,7 +2082,7 @@ function getTreeRoot(possible_roots){
         // if(possible_roots[shapes[i].id] != null && possible_roots[shapes[i].id].root){
         if(possible_roots[shapes[i].id] != null && max_vertex_id == shapes[i].id){
             shapes[i].data("root", true);
-            console.log(shapes[i], "is the root!");
+            // console.log(shapes[i], "is the root!");
             break;
         }
     }
@@ -2222,8 +2237,10 @@ function shapeDraw(arg, ev) {
             // display only if shape was not dragged
             if(!dragging_set && !line_first_shape_id && !line_second_shape_id && !delete_shape){
                 document.getElementById('descText').innerHTML = shape.data('desc');
-                document.getElementById('h4ID').innerHTML = 'Node description: ' +  shape.id;
-                $("#longText").modal();
+                document.getElementById('h4ID').innerHTML = dicti[lang][0];
+                if(shape.data('desc') !== "default-text"){
+                    $("#longText").modal();
+                }
                 // console.log("[longText modal] showing");
             }
         });

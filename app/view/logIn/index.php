@@ -2,9 +2,14 @@
     if(isset($_SESSION["user"])){
         header("Location: ../../public/home");
     }
+// include language array
+if(file_exists('../app/language/lang/lang_' . $_SESSION["lang"] . '.php'))
+    require_once '../app/language/lang/lang_' . $_SESSION["lang"] . '.php';
+else
+    require_once '../app/language/lang/lang_en.php';
 ?>
 <!DOCTYPE html>
-<html lang="sl">
+<html lang="<?php echo $lang["lang"]?>">
 <head>
     <title>Log in</title>
     <meta charset="utf-8">
@@ -48,8 +53,19 @@
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
-                <li><a href="../../public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
+                <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-sign-language"></i> <?php echo $_SESSION["lang"]; ?><span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <?php
+                        foreach ($_SESSION["available_languages"] as $key => $value) {
+                            if ($value == $_SESSION["lang"])
+                                continue;
+                            echo "<li><a href=../../public/logIn?lang=$value>$value</a></li>";
+                        }
+                        ?>
+                    </ul>
+                </li>
+                <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span><?php echo $lang["algorithm_list"]; ?></a></li>
+                <li><a href="../../public/register"><span class="glyphicon glyphicon-log-in"></span><?php echo $lang["user_register"]; ?></a></li>
             </ul>
         </div>
     </div>
@@ -58,9 +74,10 @@
 <div class="container-fluid text-center">
     <div class="row content">
         <div class="col-sm-2 sidenav">
-            <h3>LINKS</h3>
+            <h3><?php echo $lang["links_page"]; ?></h3>
             <p><a href="http://www.limfom-levkemija.org/domov.html" target="_blank"><img class="image img-responsive img-thumbnail" src="../../app/res/photos/logo_LL.png"></a></p>
             <p><a href="http://lrss.fri.uni-lj.si/bio/" target="_blank"><img class="image img-responsive img-thumbnail" src="../../app/res/photos/BG-logo.PNG"></a></p>
+	<p><a href="http://www.mf.uni-lj.si/" target="_blank"><img class="image img-responsive img-thumbnail" src="../../app/res/photos/mf-logo.png"></a></p>
         </div>
         <div class="col-sm-8 text-left">
             <div>
@@ -83,18 +100,18 @@
 
                             <form class="well" action = "<?= "logIn/loginUser/" ?>" method = "post" content="">
                                 <div class="form-group">
-                                <label for="login-email">E-pošta</label>
-                                <input type="email" name = "email" class="form-control" id="login-email" aria-describedby="emailHelp" placeholder="e-poštni naslov" value="<?php if(isset($_COOKIE["email"])){echo $_COOKIE["email"];} ?>">
-                                <label for="login-password" style="margin-top: 0.8em">Geslo</label>
-                                <input type="password" name = "password" class="form-control" id="login-password" placeholder="geslo"
+                                <label for="login-email"><?php echo $lang['login_mail']; ?></label>
+                                <input type="email" name = "email" class="form-control" id="login-email" aria-describedby="emailHelp" placeholder="<?php echo $lang['login_mail_h']; ?>" value="<?php if(isset($_COOKIE["email"])){echo $_COOKIE["email"];} ?>">
+                                <label for="login-password" style="margin-top: 0.8em"><?php echo $lang['login_password']; ?></label>
+                                <input type="password" name = "password" class="form-control" id="login-password" placeholder="<?php echo $lang['login_password_h']; ?>"
                                 value = "<?php if(isset($_COOKIE["password"])){echo $_COOKIE["password"];} ?>">
                               </div>
                               <div class="form-check">
                                 <input type="checkbox" name = "remember-me" class="form-check-input" id="remember-me-input"
                                 <?php if(isset($_COOKIE["email"])){ ?> checked <?php } ?>>
-                                <label class="form-check-label" for="remember-me-input">Ostani prijavljen</label>
+                                <label class="form-check-label" for="remember-me-input"><?php echo $lang['login_remember']; ?></label>
                               </div>
-                              <button type="submit" class="btn btn-primary" style="margin-top: 0.8em">Prijavi se</button>
+                              <button type="submit" class="btn btn-primary" style="margin-top: 0.8em"><?php echo $lang['login_login-btn']; ?></button>
                             </form>
                         </div>
 

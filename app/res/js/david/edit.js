@@ -27,6 +27,39 @@ $(function(){
        let win = window.open("../../public/visualisation/viewonly?id=" + id_graph, '_blank');
        win.focus();
    });
+    $('button.copy-graph-button').click(function(){
+        var el = this;
+        var id_graph_copy = this.id;
+        console.log("[copy algorithm]", id_graph_copy);
+
+        let confirmation = confirm("Copy this graph?");
+        if(!confirmation)
+            return;
+
+        $.post("../../public/visualisation/copy",
+            {
+                id: id_graph_copy
+            },
+            function(data, status){
+                if(data !== null){
+                    location.reload()
+
+                    $.notify("Algorithm successfuly copied",
+                        { position: 'bottom center',
+                            className: 'success',
+                            gap: 5 }
+                    );
+                } else {
+                    $.notify("Something went wrong, try again",
+                        { position: 'bottom center',
+                            className: 'error',
+                            gap: 5 }
+                    );
+                    //console.log(data, status);
+                }
+            }
+        );
+    });
 
 
    // delete algorithm
@@ -65,6 +98,7 @@ $(function(){
 	                className: 'error',
 	                gap: 5 }
 	            );
+	           	//console.log(data, status);
 			}
 		}
 		);

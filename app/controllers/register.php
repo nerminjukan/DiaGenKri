@@ -4,6 +4,9 @@ $status = session_status();
 if($status == PHP_SESSION_NONE){
     //There is no active session
     session_start();
+    // set language
+    require_once '../app/language/set_lang.php';
+    require_once '../app/language/available_lang.php';
 }
 
 /**
@@ -34,8 +37,8 @@ class Register extends Controller
     }
 
     public function add(){
-        var_dump($_POST);
-        var_dump($_SESSION);
+        // var_dump($_POST);
+        // var_dump($_SESSION);
 
         $validData = true;
 
@@ -111,7 +114,7 @@ class Register extends Controller
             $_SESSION["usurname"] = $_POST["surname"];
             $_SESSION["usemail"] = $_POST["email"];
             $_SESSION["sel1"] = $_POST["sel1"];
-            //ViewHelper::redirect('../../register');
+            ViewHelper::redirect('../../register');
         }
         $_POST["name"] = "";
         $_POST["surname"] = "";

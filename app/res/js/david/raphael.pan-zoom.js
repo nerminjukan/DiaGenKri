@@ -15,7 +15,7 @@ var scale = null;
         x:1,
         y:1
     }
-    console.log("INIT scale:", scale);
+    // console.log("INIT scale:", scale);
     'use strict';
     /*jslint browser: true*/
     /*global Raphael*/
