@@ -11,5 +11,5 @@
         // set cookie for one year
         setcookie("lang", $_SESSION["lang"], time() + (3600 * 24 * 365));
     }
-    //var_dump("Lang: " . $_SESSION["lang"]);
+    // var_dump("Lang: " . $_SESSION["lang"]);
 ?>

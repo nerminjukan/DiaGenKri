@@ -60,11 +60,11 @@ class Visualisation extends Controller
 
 
     public function edit(){
-        if(isset($_SESSION["user"]) && isset($_POST["data"]) && isset($_POST["name"]) && isset($_POST["description"]) && isset($_POST["access"]) && isset($_POST["gtype"]) && isset($_POST["atype"]) && isset($_POST["id"]) && isset($_POST["curation"])){
+        if(isset($_SESSION["user"]) && isset($_POST["data"]) && isset($_POST["name"]) && isset($_POST["description"]) && isset($_POST["access"]) && isset($_POST["gtype"]) && isset($_POST["atype"]) && isset($_POST["id"]) && isset($_POST["curation"]) && isset($_POST["algorithm_language"])){
 
 
             DBfunctions::editGraph($_SESSION["user"], $_POST["data"], $_POST["name"], $_POST["description"], $_POST["access"], $_POST["gtype"], $_POST["atype"],
-                $_POST["id"]);
+                $_POST["id"], $_POST["algorithm_language"]);
 
             if($_POST["curation"] === "1"){
 
@@ -88,10 +88,10 @@ class Visualisation extends Controller
 
         //var_dump($_POST);
 
-        if(isset($_SESSION["user"]) && isset($_POST["data"]) && isset($_POST["name"]) && isset($_POST["description"]) && isset($_POST["access"]) && isset($_POST["gtype"]) && isset($_POST["atype"]) && isset($_POST["curation"])){
+        if(isset($_SESSION["user"]) && isset($_POST["data"]) && isset($_POST["name"]) && isset($_POST["description"]) && isset($_POST["access"]) && isset($_POST["gtype"]) && isset($_POST["atype"]) && isset($_POST["curation"]) && isset($_POST["algorithm_language"])){
 
 
-            $graphId = DBfunctions::saveGraph($_SESSION["user"], $_POST["data"], $_POST["name"], $_POST["description"], $_POST["access"], $_POST["gtype"], $_POST["atype"]);
+            $graphId = DBfunctions::saveGraph($_SESSION["user"], $_POST["data"], $_POST["name"], $_POST["description"], $_POST["access"], $_POST["gtype"], $_POST["atype"], $_POST["algorithm_language"]);
 
             if($_POST["curation"] === "1"){
 

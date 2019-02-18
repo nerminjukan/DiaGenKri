@@ -1,14 +1,20 @@
 let dicti = {};
 dicti["en"] = ['Node description'];
 dicti["sl"] = ['Opis vozlišča'];
-window.onload = function () {
-    try {
-        lang = document.getElementById('myLanId').innerText.trim();
-        console.log(lang);
-    } catch (e) {
-        //console.log(e);
-    }
-}
+let lang = document.getElementById('myLanId').innerText.trim() || "sl"; 
+console.log("lang", lang);
+// window.onload = function () { // v 1690. vrstici je že ena onload funkcija
+//     // try {
+//         lang = document.getElementById('myLanId').innerText.trim();
+//         console.log("language:", lang);
+//         console.log("HOWHOWH");
+//     // } catch (e) {
+//         //console.log(e);
+//     // }
+// }
+// window.onload = function() {
+//     console.log("loaded!");
+// };
 
 // connection implementation between two objects
 Raphael.fn.connection = function (obj1, obj2, line, id_c, color_user = "#000") {
@@ -1407,7 +1413,8 @@ function getGraphData(id_graph_load) {
 
                 intended: myArray["visual"], // 1 are doctors
 
-                algorithm_type: myArray["algorithm_type"]
+                algorithm_type: myArray["algorithm_type"],
+                algorithm_language: myArray["algorithm_language"]
             };
             // console.log("info about graph, without data:", info);
 
@@ -1425,6 +1432,11 @@ function populateForm(name, data){
         document.getElementById("graphName").value = data.name;
         document.getElementById("graphDescritption").value = data.description;
         //console.log("data intended", data.intended);
+
+        // check language of algorithm
+        let $language = $('input:radio[name=algorithm_language]');
+        $language.filter('[value=' + data.algorithm_language + ']').prop('checked', true);
+        // console.log("[populateForm] language:", data.algorithm_language);
 
         if(data.access == 0){
             document.getElementById("public").checked = true;
@@ -2519,6 +2531,9 @@ function getGraphDescriptionData(){
 
     data['description'] = document.getElementById('graphDescritption').value;
 
+    // also save language, if its undefined save it as "sl"
+    data['algorithm_language'] = $('input[name=algorithm_language]:checked').val() || "sl";
+
     if(document.forms["gForm"]["access"][0].checked === true){
         data['access'] = 1;
     }
@@ -2741,7 +2756,8 @@ function saveGraph() {
                 access: graphDescription['access'],
                 gtype: graphDescription['gtype'],
                 atype: graphDescription['atype'],
-                curation: graphDescription['curation']
+                curation: graphDescription['curation'],
+                algorithm_language: graphDescription['algorithm_language']
             },
             success: function(data, status){
                 // console.log('[saveGraph] save', status === "success" ? "saved successfuly" : "not saved successfuly", "\ndata:", data);
@@ -2775,7 +2791,8 @@ function saveGraph() {
                 description: graphDescription['description'],
                 gtype: graphDescription['gtype'],
                 atype: graphDescription['atype'],
-                curation: graphDescription['curation']
+                curation: graphDescription['curation'],
+                algorithm_language: graphDescription['algorithm_language']
             },
             success: function(data, status){
                 // console.log('[saveGraph] EDIT:', status === "success" ? "saved successfuly" : "not saved successfuly", "\ndata:", data);

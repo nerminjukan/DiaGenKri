@@ -166,6 +166,7 @@
     $lang['editor_save-modal-rq_h'] = 'Yes, request curation of algorithm';
     $lang['editor_save-modal-save'] = 'Save';
     $lang['editor_save-modal-cancel'] = 'Cancel';
+    $lang['editor_save-modal-language'] = 'Algorithm language';
     //todo
     /*$lang['editor_help-modal-'] = 'Other';
     $lang['editor_help-modal-'] = 'Other';

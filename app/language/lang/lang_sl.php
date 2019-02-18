@@ -167,6 +167,7 @@
     $lang['editor_save-modal-rq_h'] = 'Da, pošlji zahtevek za kuracijo algoritma';
     $lang['editor_save-modal-save'] = 'Shrani';
     $lang['editor_save-modal-cancel'] = 'Prekliči';
+    $lang['editor_save-modal-language'] = 'Jezik algoritma';
     //todo
     /*$lang['editor_help-modal-'] = 'Other';
     $lang['editor_help-modal-'] = 'Other';

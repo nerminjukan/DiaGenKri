@@ -10,13 +10,13 @@ require_once "DBconnect.php";
 
 class DBfunctions {
 
-    public static function saveGraph($email, $data, $name, $description, $access, $gtype, $atype){
+    public static function saveGraph($email, $data, $name, $description, $access, $gtype, $atype, $algorithm_language){
 
         $db = DBconnect::getInstance();
 
         try {
-            $statement = $db->prepare("INSERT INTO diagenkri.graph (`e-mail`, `name`, `description`, `private`, `visual`, `algorithm_type`, `data`)
-                                                 VALUES (:email, :name, :description, :private, :gtype, :atype, :data)");
+            $statement = $db->prepare("INSERT INTO diagenkri.graph (`e-mail`, `name`, `description`, `private`, `visual`, `algorithm_type`, `data`, `algorithm_language`)
+                                                 VALUES (:email, :name, :description, :private, :gtype, :atype, :data, :algorithm_language)");
             $statement->bindParam(":email", $email);
             $statement->bindParam(":name", $name);
             $statement->bindParam(":description", $description);
@@ -24,6 +24,7 @@ class DBfunctions {
             $statement->bindParam(":gtype", $gtype);
             $statement->bindParam(":atype", $atype);
             $statement->bindParam(":data", $data);
+            $statement->bindParam(":algorithm_language", $algorithm_language);
 
             // echo "<pre>";
             // var_dump($data);
@@ -84,13 +85,13 @@ class DBfunctions {
         }
     }
 
-    public static function editGraph($email, $data, $name, $description, $access, $gtype, $atype, $id){
+    public static function editGraph($email, $data, $name, $description, $access, $gtype, $atype, $id, $algorithm_language){
 
         $db = DBconnect::getInstance();
 
         try {
             $statement = $db->prepare("UPDATE diagenkri.graph SET `name`=:name,`description`=:description, `private`=:private, `visual`=:gtype,
-            `algorithm_type`=:atype,`data`=:data WHERE `id`=:id ");
+            `algorithm_type`=:atype,`data`=:data, `algorithm_language`=:algorithm_language WHERE `id`=:id ");
             $statement->bindParam(":name", $name);
             $statement->bindParam(":description", $description);
             $statement->bindParam(":private", $access);
@@ -98,6 +99,7 @@ class DBfunctions {
             $statement->bindParam(":atype", $atype);
             $statement->bindParam(":data", $data);
             $statement->bindParam(":id", $id);
+            $statement->bindParam(":algorithm_language", $algorithm_language);
 
             $result = $statement->execute();
             // var_dump("first", $result);
@@ -144,7 +146,7 @@ class DBfunctions {
         $gr = self::loadGraph($id);
         $cp_id = null;
         try {
-            $cp_id = self::saveGraph($usr, $gr["data"], $gr["name"]."-copy", $gr["description"], $gr["private"], $gr["visual"], $gr["algorithm_type"]);
+            $cp_id = self::saveGraph($usr, $gr["data"], $gr["name"]."-copy", $gr["description"], $gr["private"], $gr["visual"], $gr["algorithm_type"], $gr["algorithm_language"]);
             if($cp_id != null){
                 return self::loadGraph($cp_id);
             }

@@ -12,7 +12,7 @@ include_once '../app/controllers/administrate.php';
 
 $data = DBfunctions::getGraphs();
 
-//var_dump($data);
+// var_dump($data);
 ?>
 
 <!DOCTYPE html>
@@ -292,6 +292,11 @@ $data = DBfunctions::getGraphs();
                     $visual = $value["visual"];
                     $uname = $value["uname"];
                     $usurname = $value["usurname"];
+                    $language = $value["algorithm_language"];
+
+                    // if languages are not the same just skip this algorithm
+                    if ($_SESSION["lang"] != $language)
+                        continue;
 
 
 

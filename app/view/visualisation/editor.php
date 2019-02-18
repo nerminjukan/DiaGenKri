@@ -325,6 +325,21 @@ $description="";
                         </div>
                     </div>
                     <div class="form-group">
+                        <label class="col-sm-2 control-label"><?php echo $lang['editor_save-modal-language']; ?><label style="color: red">*</label></label>
+
+                        <div class="col-sm-10">
+                            <?php
+                        foreach ($_SESSION["available_languages"] as $key => $value) {
+                            $output = "<div>" .
+                            "<label class='radio-inline' for='language_". $value . "'><input class='radio' id='language_". $value ."' type='radio' name='algorithm_language' value='". $value ."'>" . $value . "</label>" 
+                            . "</div>";
+                            echo $output;
+                        }
+                        ?>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
                         <label class="col-sm-2 control-label"
 
                                for="private" ><?php echo $lang['editor_save-modal-ac']; ?><label style="color: red">*</label></label>
@@ -340,6 +355,7 @@ $description="";
                         </div>
 
                     </div>
+                    
                     <div class="form-group">
                         <label class="col-sm-2 control-label"
                                for="graphDescritption" ><?php echo $lang['editor_save-modal-ad']; ?></label>

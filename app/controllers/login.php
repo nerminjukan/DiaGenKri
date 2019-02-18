@@ -79,13 +79,13 @@ class LogIn extends Controller
                 $_SESSION["user-confirm"] = $data['confirmPR'];
 
                 // check if user is remembered
-                if (!empty($_POST["remember-me"])){
-                    setcookie("email", $_POST["email"], time() + (7 * 24 * 60 * 60), "/");
-                    setcookie("password", $_POST["password"], time() + (7 * 24 * 60 * 60), "/");
-                } else {
-                    setcookie("email", $_POST["email"], 1, "/");
-                    setcookie("password", $_POST["password"], 1, "/");
-                }
+                // if (!empty($_POST["remember-me"])){
+                //     setcookie("email", $_POST["email"], time() + (7 * 24 * 60 * 60), "/");
+                //     setcookie("password", $_POST["password"], time() + (7 * 24 * 60 * 60), "/");
+                // } else {
+                //     setcookie("email", $_POST["email"], 1, "/");
+                //     setcookie("password", $_POST["password"], 1, "/");
+                // }
                 ViewHelper::redirect('../../home');
             }
             else{
