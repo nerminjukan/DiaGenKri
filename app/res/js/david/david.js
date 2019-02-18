@@ -1,9 +1,17 @@
 let dicti = {};
 dicti["en"] = ['Node description'];
 dicti["sl"] = ['Opis vozlišča'];
-let lang = document.getElementById('myLanId').innerText.trim() || "sl"; 
-console.log("lang", lang);
-// window.onload = function () { // v 1690. vrstici je že ena onload funkcija
+let lang = "sl";
+try {
+    // statements
+    let lang = document.getElementById('myLanId').innerText.trim() || "sl"; 
+    console.log("lang", lang);
+} catch(e) {
+    // statements
+    // console.log(e);
+}
+
+// window.onload = function () { // v 1700. vrstici je že ena onload funkcija
 //     // try {
 //         lang = document.getElementById('myLanId').innerText.trim();
 //         console.log("language:", lang);
