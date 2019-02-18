@@ -424,7 +424,7 @@ $data = DBfunctions::getGraphs();
                         echo "$output";
                         $ctr++;
                     }
-                    else if(!isset($_SESSION["user"]) && $curated === $lang['list_yes']){
+                    else if(!isset($_SESSION["user"]) && $curated === $lang['list_yes'] && $private === '0'){
                         echo "$output";
                         $ctr++;
                     }
