@@ -1,3 +1,17 @@
+
+
+let dictionary = {};
+dictionary["en"] = ['Curating algorithm: ', "Curation result", "Approve algorithm", "Reject algorithm", "Explanation", "Curated by: ", "Confirm", "Cancel", 'Already curated', 'Closed - OK', 'Closed - NOK'];
+dictionary["sl"] = ['Odobritev algoritma: ', "Status odobritve", "Odobri algoritem", "Zavrni algoritem", "Obrazložitev", "Odobril/a: ", "Potrdi", "Prekliči", 'Že potrjen', 'Zaprt - potrjen', 'Zaprt - zavrnjen'];
+lng = document.getElementById('myLanId').innerText.trim();
+window.onload = function () {
+    try {
+        lng = document.getElementById('myLanId').innerText.trim();
+    } catch (e) {
+
+    }
+}
+
 $(document).ready(function(){
 // updating the view with notifications using ajax
     function load_unseen_notification()
@@ -62,7 +76,7 @@ function fillModal(e, me) {
         modalBodyDiv.classList.add('modal-body');
 
         let algorithmName = document.createElement("h4");
-        algorithmName.innerHTML = 'Curating algorithm: \'' + tr.getElementsByTagName("td")[1].innerHTML + '\'';
+        algorithmName.innerHTML = dictionary[lng][0] + '\'' + tr.getElementsByTagName("td")[1].innerHTML + '\'';
 
         modalHeaderDiv.appendChild(algorithmName);
 
@@ -78,7 +92,7 @@ function fillModal(e, me) {
         labelRadio.classList.add("col-sm-2");
         labelRadio.classList.add("control-label");
         labelRadio.setAttribute('for', 'status'+me.id);
-        labelRadio.innerHTML = 'Curation result';
+        labelRadio.innerHTML = dictionary[lng][1];
         let labelStar = document.createElement("label");
         labelStar.style.color = 'red';
         labelStar.innerHTML = '*';
@@ -101,7 +115,7 @@ function fillModal(e, me) {
 
         rButtonOK.appendChild(labelBOK);
         labelBOK.appendChild(inputBOK);
-        labelBOK.innerHTML = labelBOK.innerHTML + 'Approve algorithm';
+        labelBOK.innerHTML = labelBOK.innerHTML + dictionary[lng][2];
 
         let rButtonNOK = document.createElement("div");
         let labelBNOK = document.createElement("label");
@@ -116,7 +130,7 @@ function fillModal(e, me) {
 
         rButtonNOK.appendChild(labelBNOK);
         labelBNOK.appendChild(inputBNOK);
-        labelBNOK.innerHTML = labelBNOK.innerHTML + 'Reject algorithm';
+        labelBNOK.innerHTML = labelBNOK.innerHTML + dictionary[lng][3];
 
         divRadioB.appendChild(rButtonOK);
         divRadioB.appendChild(rButtonNOK);
@@ -131,7 +145,7 @@ function fillModal(e, me) {
         labelExplanation.classList.add("col-sm-2");
         labelExplanation.classList.add("control-label");
         labelExplanation.setAttribute('for', 'status'+me.id);
-        labelExplanation.innerHTML = 'Explanation';
+        labelExplanation.innerHTML = dictionary[lng][4];
         let labelStarEx = document.createElement("label");
         labelStarEx.style.color = 'red';
         labelStarEx.innerHTML = '*';
@@ -143,7 +157,7 @@ function fillModal(e, me) {
         let textField = document.createElement("textArea");
         textField.classList.add('form-control');
         textField.id = 'text-area-'+me.id;
-        textField.setAttribute('placeholder', 'Explanation');
+        textField.setAttribute('placeholder', dictionary[lng][4]);
         textField.setAttribute('rows', '6');
 
         preForm.appendChild(textField);
@@ -167,18 +181,18 @@ function fillModal(e, me) {
 
         btnSend.classList.add('btn');
         btnSend.classList.add('btn-success');
-        btnSend.innerHTML = 'Confirm';
+        btnSend.innerHTML = dictionary[lng][6];
 
         btnCancel.classList.add('btn');
         btnCancel.classList.add('btn-warning');
-        btnCancel.innerHTML = 'Cancel';
+        btnCancel.innerHTML = dictionary[lng][7];
 
         let curator = document.createElement("p");
         curator.style.textAlign = 'left';
         let email = document.getElementById("user-mail-id");
         let name = document.getElementById("user-full-name");
 
-        curator.innerHTML = 'Curated by: ' + name.innerHTML + ', e-mail: '  + email.innerHTML;
+        curator.innerHTML = dictionary[lng][5] + name.innerHTML + ', e-mail: '  + email.innerHTML;
 
         btnSend.addEventListener('click', function () {
             saveCuration(me.id, name.innerHTML, email.innerHTML);
@@ -320,11 +334,11 @@ function updateStatus(id, status, curatorMail) {
     let td5 = tr.getElementsByTagName("td")[5];
     let td7 = tr.getElementsByTagName("td")[7];
     if(status === 1){
-        td4.innerHTML = 'Closed - OK';
+        td4.innerHTML = dictionary[lng][9];
         td4.style.backgroundColor = '#66ff66';
     }
     else{
-        td4.innerHTML = 'Closed - NOK';
+        td4.innerHTML = dictionary[lng][10];
         td4.style.backgroundColor = '#ff6666';
     }
 
@@ -333,7 +347,7 @@ function updateStatus(id, status, curatorMail) {
     let btn = document.getElementsByName('curate-'+id);
 
     btn[0].disabled = true;
-    btn[0].title = 'Already curated'
+    btn[0].title = dictionary[lng][8];
 }
 
 function validateCuration(id) {
@@ -348,3 +362,4 @@ function validateCuration(id) {
     }
     return true;
 }
+

@@ -10,6 +10,9 @@ $status = session_status();
 if($status == PHP_SESSION_NONE){
     //There is no active session
     session_start();
+    // set language
+    require_once '../app/language/set_lang.php';
+    require_once '../app/language/available_lang.php';
 }
 
 require_once '../app/database/DBfunctions.php';

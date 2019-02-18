@@ -4,6 +4,9 @@ $status = session_status();
 if($status == PHP_SESSION_NONE){
     //There is no active session
     session_start();
+    // set language
+    require_once '../app/language/set_lang.php';
+    require_once '../app/language/available_lang.php';
 }
 /**
  * Created by PhpStorm.
@@ -45,6 +48,14 @@ class Visualisation extends Controller
             $result = DBfunctions::deleteGraph($_SESSION["user"], $_POST['id']);
         
         echo $result;
+    }
+
+    public function copy() {
+        $result = null;
+        if(isset($_SESSION["user"]) && isset($_POST["id"]))
+            $result = DBfunctions::copyGraph($_SESSION["user"], $_POST['id']);
+
+        return $result;
     }
 
 
@@ -97,9 +108,6 @@ class Visualisation extends Controller
 
     }
 
-    public function diagnosis(){
-        $this->view('visualisation/diagnosis');
-    }
 
     public function gallery($name = ''){
         $user = $this->model('User');

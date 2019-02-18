@@ -3,7 +3,10 @@
 if(!isset($_SESSION["user"])){
     header("Location: ../../public/home");
 }
-
+if(file_exists('../app/language/lang/lang_' . $_SESSION["lang"] . '.php'))
+    require_once '../app/language/lang/lang_' . $_SESSION["lang"] . '.php';
+else
+    require_once '../app/language/lang/lang_en.php';
 require_once '../app/database/DBfunctions.php';
 include_once '../app/controllers/administrate.php';
 
@@ -15,18 +18,18 @@ $data = DBfunctions::getUserProfile($userMail);
 ?>
 
 <!DOCTYPE html>
-<html lang="sl">
+<html lang="<?php echo $lang["lang"]?>">
 
 <head>
-    <title>Profile</title>
+    <title><?php echo $lang['profile_title']?></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="../../app/res/css/main.css">
-    <script src="../../app/res/js/curations.js"></script>
     <script src="../../app/res/js/upload-image.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
 
 
 </head>
@@ -63,17 +66,28 @@ $data = DBfunctions::getUserProfile($userMail);
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown"><a id="myLanId" class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-sign-language"></i> <?php echo $_SESSION["lang"]; ?><span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <?php
+                        foreach ($_SESSION["available_languages"] as $key => $value) {
+                            if ($value == $_SESSION["lang"])
+                                continue;
+                            echo "<li><a href=../../public/profile/edit?lang=$value>$value</a></li>";
+                        }
+                        ?>
+                    </ul>
+                </li>
                 <?php if(isset($_SESSION["user"]) && isset($_SESSION["user-add"]) && $_SESSION["user-add"] == 1): ?>
                 <li><a href="../../public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
-                    </span> Create algorithm</a></li>
+                    </span><?php echo $lang["algorithm_create"]; ?></a></li>
                 <?php endif; ?>
                 <?php if(isset($_SESSION["user"]) && $_SESSION["user-confirm"] == 1): ?>
-                    <li><a href="../../public/visualisation/curations"><span class="label label-pill label-danger count"></span> <span class="glyphicon glyphicon-bell" ></span> Curation requests</a></li>
+                    <li><a href="../../public/visualisation/curations"><span class="label label-pill label-danger count"></span> <span class="glyphicon glyphicon-bell" ></span><?php echo $lang["algorithm_curation_request"]; ?></a></li>
                 <?php endif; ?>
-                <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
+                <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span><?php echo $lang["algorithm_list"]; ?></a></li>
                 <?php if(isset($_SESSION["user"])): ?> <!-- && $_SESSION[user_level] === 6, which is admin for example-->
                     <?php if(isset($_SESSION["user-admin"]) && $_SESSION["user-admin"] == 1): ?>
-                        <li><a href="../../public/administrate"><span class="glyphicon glyphicon-cog"></span> Administrate</a></li>
+                        <li><a href="../../public/administrate"><span class="glyphicon glyphicon-cog"></span>  <?php echo $lang["user_administrate"]; ?></a></li>
                     <?php endif; ?>                <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <span class="glyphicon glyphicon-user"></span> 
@@ -131,7 +145,7 @@ $data = DBfunctions::getUserProfile($userMail);
                                         ?>
                                         </p>
                                         <p class="text-left">
-                                            <a href="../../public/profile" class="btn btn-primary btn-block btn-sm">My profile</a>
+                                            <a href="../../public/profile" class="btn btn-primary btn-block btn-sm"><?php echo $lang["profile_link"]; ?></a>
                                         </p>
                                     </div>
                                 </div>
@@ -143,7 +157,7 @@ $data = DBfunctions::getUserProfile($userMail);
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <p>
-                                            <a href="../../public/logIn/logOutUser/" class="btn btn-danger btn-block">Log out</a>
+                                            <a href="../../public/logIn/logOutUser/" class="btn btn-danger btn-block"><?php echo $lang["user_log_out"]; ?></a>
                                         </p>
                                     </div>
                                 </div>
@@ -152,8 +166,8 @@ $data = DBfunctions::getUserProfile($userMail);
                     </ul>
                 </li>
                 <?php else: ?>
-                <li><a href="../../public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
-                <li><a href="../../public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
+                <li><a href="../../public/register"><span class="glyphicon glyphicon-log-in"></span><?php echo $lang["user_register"]; ?></a></li>
+                <li><a href="../../public/logIn"><span class="glyphicon glyphicon-user"></span><?php echo $lang["user_log_in"]; ?></a></li>
                 <?php endif; ?>
             </ul>
         </div>
@@ -163,10 +177,10 @@ $data = DBfunctions::getUserProfile($userMail);
 <div class="container text-center">
     <div class="row content">
         <div class="col-sm-4">
-                    <p class="row-increased-top">Select a PNG or JPEG image, having maximum size <span id="max-size"></span> KB.</p>
+                    <p class="row-increased-top"><?php echo $lang['profile_image-instruction']; ?><span id="max-size"></span> KB.</p>
                     <form id="upload-image-form" action="saveImage" method="post" enctype="multipart/form-data">
                         <div id="image-preview-div" style="display: block">
-                            <label for="exampleInputFile">Current image:</label>
+                            <label for="exampleInputFile"><?php echo $lang['profile_image-current']; ?></label>
                             <br>
                             <?php
                             if(file_exists("../app/res/photos/profilePhotos/" . $userMail . ".jpg")){
@@ -205,11 +219,11 @@ $data = DBfunctions::getUserProfile($userMail);
                             <label hidden for="userMail"></label>
                             <input hidden type="text" id="userMail" name="userMail" <?php echo "value=" . $userMail;?>/>
                         </div>
-                        <button class="btn btn-md btn-primary" id="upload-button" type="submit" disabled>Upload image</button>
+                        <button class="btn btn-md btn-primary" id="upload-button" type="submit" disabled><?php echo $lang['profile_img-upload-btn']; ?></button>
                     </form>
                     <br>
                     <div class="alert alert-info" id="loading" style="display: none;" role="alert">
-                        Uploading image...
+                        <?php echo $lang['profile_img-upload-msg']; ?>
                         <div class="progress">
                             <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
                             </div>
@@ -284,45 +298,45 @@ $data = DBfunctions::getUserProfile($userMail);
                         $select = "<div class=\"form - group\">
                         <div>
                             <select required class=\"form-control\" id=\"sel1\" name=\"sel1\">
-                                <option disabled hidden>Choose your field of work</option>";
-                        $opt1 = "<option value=\"Doctor\" id=\"opt1\">Doctor</option>";
-                        $opt2 = "<option value=\"Scientist\" id=\"opt2\">Scientist</option>";
-                        $opt3 = "<option value=\"Researcher\" id=\"opt3\">Researcher</option>";
-                        $opt4 = "<option value=\"Other\" id=\"opt4\">Other</option>";
+                                <option disabled hidden>".$lang['profile_choose_fow']."</option>";
+                        $opt1 = "<option value=\"Doctor\" id=\"opt1\">".$lang['profile_fow_op1']."</option>";
+                        $opt2 = "<option value=\"Scientist\" id=\"opt2\">".$lang['profile_fow_op2']."</option>";
+                        $opt3 = "<option value=\"Researcher\" id=\"opt3\">".$lang['profile_fow_op3']."</option>";
+                        $opt4 = "<option value=\"Other\" id=\"opt4\">".$lang['profile_fow_op4']."</option>";
                         if($fow === "doctor"){
-                            $opt1 = "<option selected value=\"doctor\" id=\"opt1\">Doctor</option>";
+                            $opt1 = "<option selected value=\"doctor\" id=\"opt1\">".$lang['profile_fow_op1']."</option>";
                         }
                         else if($fow === "scientist"){
-                            $opt2 = "<option selected value=\"scientist\" id=\"opt2\">Scientist</option>";
+                            $opt2 = "<option selected value=\"scientist\" id=\"opt2\">".$lang['profile_fow_op2']."</option>";
                         }
                         else if($fow === "researcher"){
-                            $opt3 = "<option selected value=\"researcher\" id=\"opt3\">Researcher</option>";
+                            $opt3 = "<option selected value=\"researcher\" id=\"opt3\">".$lang['profile_fow_op3']."</option>";
                         }
                         else{
-                            $opt4 = "<option selected value=\"other\" id=\"opt4\">Other</option>";
+                            $opt4 = "<option selected value=\"other\" id=\"opt4\">".$lang['profile_fow_op4']."</option>";
                         }
 
                         $selectEnd =     "</select></div></div>";
 
                         $select = $select . $opt1 . $opt2 . $opt3 . $opt4 . $selectEnd;
 
-                        $output =  "<tr><th class='th-st'>Name: </th><td>" .                                  "<div class=\"form-group\">
+                        $output =  "<tr><th class='th-st'>".$lang['profile_name']."</th><td>" .                                  "<div class=\"form-group\">
                                                                                                         <input type=\"text\" class=\"form-control\" id=\"name\" placeholder=" . $name . " value=" . $name . " name=\"name\">
                                                                                                         </div>" . "</td></tr>" . "</td></tr>" .
 
-                            "<tr><th class='th-st'>Surname: </th><td style=\"white-space: nowrap\">" . "<div class=\"form-group\">
+                            "<tr><th class='th-st'>".$lang['profile_surname']."</th><td style=\"white-space: nowrap\">" . "<div class=\"form-group\">
                                                                                                         <input type=\"text\" class=\"form-control\" id=\"surname\" placeholder=" . $surname . " value=" . $surname . " name=\"surname\">
                                                                                                         </div>" . "</td></tr>" .
 
-                            "<tr><th class='th-st'>E-mail: </th><td>" .                                 "<div class=\"form-group\">
-                                                                                                        <input type=\"email\" disabled title='You cannot change your E-mail address.' class=\"form-control\" id=\"email\" placeholder=" . $email . " \"Enter email\" name=\"email\">
+                            "<tr><th class='th-st'>".$lang['profile_e-mail']."</th><td>" .                                 "<div class=\"form-group\">
+                                                                                                        <input type=\"email\" disabled title='".$lang['profile_change-mail-msg']."' class=\"form-control\" id=\"email\" placeholder=" . $email . " \"Enter email\" name=\"email\">
                                                                                                         </div>" . "</td></tr>" . "</td></tr>" .
 
-                            "<tr><th class='th-st'>Field of work: </th><td>" .
+                            "<tr><th class='th-st'>".$lang['profile_fow']."</th><td>" .
 
                             $select .
 
-                            "<tr><th class='th-st'>Administration rights: </th><td style=\"white-space: nowrap\">" . $rights . "</td></tr>";
+                            "<tr><th class='th-st'>".$lang['profile_ar']."</th><td style=\"white-space: nowrap\">" . $rights . "</td></tr>";
 
                         echo $output;
                     }
@@ -330,8 +344,8 @@ $data = DBfunctions::getUserProfile($userMail);
                     </tbody>
                 </table>
                 <div class="btn-group col-md-3">
-                    <button type="submit" class="btn btn-success" name='userChange' <?php echo "value=" . $_GET['email']; ?>>Save</button>
-                    <a href="../../public/profile" type="button" class="btn btn-danger row-increased-bottom">Cancel</a><br>
+                    <button type="submit" class="btn btn-success" name='userChange' <?php echo "value=" . $_GET['email']; ?>><?php echo $lang['profile_save-btn']?></button>
+                    <a href="../../public/profile" type="button" class="btn btn-danger row-increased-bottom"><?php echo $lang['profile_cancel-btn']?></a><br>
                 </div>
                 <div>
                     <?php
@@ -356,3 +370,4 @@ $data = DBfunctions::getUserProfile($userMail);
 <!-- <footer class="container-fluid text-center">
     <p>©DiaGenKri</p>
 </footer> -->
+<script src="../../app/res/js/curations.js"></script>

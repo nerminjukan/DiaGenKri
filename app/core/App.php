@@ -8,6 +8,7 @@
  */
 
 define("BASE_URL", $_SERVER["SCRIPT_NAME"] . "/");
+require_once("../app/core/ViewHelper.php");
 class App{
 
     protected $controller = 'home';
@@ -42,8 +43,8 @@ class App{
 
             }
             else{
-                // TO DO
-
+                ViewHelper::redirect('..');
+                ViewHelper::error404();
             }
         }
         else{

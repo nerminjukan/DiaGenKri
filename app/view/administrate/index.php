@@ -2,8 +2,12 @@
 
 if(!isset($_SESSION["user"]) || $_SESSION["user-admin"] != 1){
     header("Location: ../../public/home");
+    // include language array
 }
-
+if(file_exists('../app/language/lang/lang_' . $_SESSION["lang"] . '.php'))
+    require_once '../app/language/lang/lang_' . $_SESSION["lang"] . '.php';
+else
+    require_once '../app/language/lang/lang_en.php';
 
 require_once '../app/database/DBfunctions.php';
 include_once '../app/controllers/administrate.php';
@@ -13,17 +17,18 @@ $data = DBfunctions::getUsersData();
 ?>
 
 <!DOCTYPE html>
-<html lang="sl">
+<html lang="<?php echo $lang["lang"]?>">
 
 <head>
-    <title>Administration</title>
+    <title><?php echo $lang['administrate_title']?></title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="../../app/res/css/main.css">
-    <script src="../../app/res/js/curations.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+
 
 
 </head>
@@ -63,14 +68,25 @@ $data = DBfunctions::getUsersData();
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown"><a id="myLanId" class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-sign-language"></i> <?php echo $_SESSION["lang"]; ?><span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <?php
+                        foreach ($_SESSION["available_languages"] as $key => $value) {
+                            if ($value == $_SESSION["lang"])
+                                continue;
+                            echo "<li><a href=../../public/administrate?lang=$value>$value</a></li>";
+                        }
+                        ?>
+                    </ul>
+                </li>
                 <?php if(isset($_SESSION["user"]) && isset($_SESSION["user-add"]) && $_SESSION["user-add"] == 1): ?>
                 <li><a href="../../public/visualisation/editor"><span class="glyphicon glyphicon-pencil">
-                    </span> Create algorithm</a></li>
+                    </span><?php echo $lang["algorithm_create"]; ?></a></li>
                 <?php endif; ?>
                 <?php if(isset($_SESSION["user"]) && $_SESSION["user-confirm"] == 1): ?>
-                    <li><a href="../../public/visualisation/curations"><span class="label label-pill label-danger count"></span> <span class="glyphicon glyphicon-bell" ></span> Curation requests</a></li>
+                    <li><a href="../../public/visualisation/curations"><span class="label label-pill label-danger count"></span> <span class="glyphicon glyphicon-bell" ></span> <?php echo $lang["algorithm_curation_request"]; ?></a></li>
                 <?php endif; ?>
-                <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span> List of algorithms</a></li>
+                <li><a href="../../public/visualisation"><span class="glyphicon glyphicon-th"></span><?php echo $lang["algorithm_list"]; ?></a></li>
                 <?php if(isset($_SESSION["user"])): ?> <!-- && $_SESSION[user_level] === 6, which is admin for example-->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -129,7 +145,7 @@ $data = DBfunctions::getUsersData();
                                                 ?>
                                             </p>
                                             <p class="text-left">
-                                                <a href="../../public/profile" class="btn btn-primary btn-block btn-sm">My profile</a>
+                                                <a href="../../public/profile" class="btn btn-primary btn-block btn-sm"><?php echo $lang["profile_link"]; ?></a>
                                             </p>
                                         </div>
                                     </div>
@@ -141,7 +157,7 @@ $data = DBfunctions::getUsersData();
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <p>
-                                                <a href="../../public/logIn/logOutUser/" class="btn btn-danger btn-block">Log out</a>
+                                                <a href="../../public/logIn/logOutUser/" class="btn btn-danger btn-block"><?php echo $lang["user_log_out"]; ?></a>
                                             </p>
                                         </div>
                                     </div>
@@ -150,8 +166,8 @@ $data = DBfunctions::getUsersData();
                         </ul>
                     </li>
                 <?php else: ?>
-                    <li><a href="../../public/register"><span class="glyphicon glyphicon-log-in"></span> Registration</a></li>
-                    <li><a href="../../public/logIn"><span class="glyphicon glyphicon-user"></span> Log in</a></li>
+                    <li><a href="../../public/register"><span class="glyphicon glyphicon-log-in"></span><?php echo $lang["user_register"]; ?></a></li>
+                    <li><a href="../../public/logIn"><span class="glyphicon glyphicon-user"></span> <?php echo $lang["user_log_in"]; ?></a></li>
                 <?php endif; ?>
             </ul>
         </div>
@@ -161,15 +177,15 @@ $data = DBfunctions::getUsersData();
 <div class="container-fluid">
     <div class="row content">
         <div class="col-sm-12 text-left" style="margin-bottom: 0">
-            <button type="button" class="btn btn-primary row-increased-bottom row-increased-top" data-toggle="modal" data-target="#editModal" style="width: 100%;">Edit privileges</button>
+            <button type="button" class="btn btn-primary row-increased-bottom row-increased-top" data-toggle="modal" data-target="#editModal" style="width: 100%;"><?php echo $lang['administrate_edit-privileges-btn']?></button>
         </div>
         <div class="col-sm-12 text-left table-responsive">
             <table id="graphTable" class="table table-hover table-bordered" style="margin-top: 0px;">
                 <thead>
                 <tr>
-                    <th>User</th>
-                    <th>E-mail</th>
-                    <th>Privileges</th>
+                    <th><?php echo $lang['administrate_user']?></th>
+                    <th><?php echo $lang['administrate_email']?></th>
+                    <th><?php echo $lang['administrate_privileges']?></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -189,32 +205,32 @@ $data = DBfunctions::getUsersData();
                     $adminString = "<div class='flex-div'><input disabled type='checkbox' id='admin"."$i'";
                     if($admin == 1)
                         $adminString = $adminString . " checked='checked' ";
-                    $adminString = $adminString . "><label for='admin"."$i'>admin</label></input></div>";
+                    $adminString = $adminString . "><label for='admin"."$i'>".$lang['administrate_admin']."</label></input></div>";
 
                     $readString = "<div class='flex-div'><input disabled type='checkbox' id='read"."$i'";
                     if($readPR == 1)
                         $readString = $readString . " checked='checked' ";
-                    $readString = $readString . "><label for='read"."$i'>read</label></input></div>";
+                    $readString = $readString . "><label for='read"."$i'>".$lang['administrate_read']."</label></input></div>";
 
                     $editString = "<div class='flex-div'><input disabled type='checkbox' id='edit"."$i'";
                     if($editPR == 1)
                         $editString = $editString . " checked='checked' ";
-                    $editString = $editString . "><label for='edit"."$i'>edit</label></input></div>";
+                    $editString = $editString . "><label for='edit"."$i'>".$lang['administrate_edit']."</label></input></div>";
 
                     $deleteString = "<div class='flex-div'><input disabled type='checkbox' id='delete"."$i'";
                     if($deletePR == 1)
                         $deleteString = $deleteString . " checked='checked' ";
-                    $deleteString = $deleteString . "><label for='delete"."$i'>delete</label></input></div>";
+                    $deleteString = $deleteString . "><label for='delete"."$i'>".$lang['administrate_delete']."</label></input></div>";
 
                     $addString = "<div class='flex-div'><input disabled type='checkbox' id='add"."$i'";
                     if($addPR == 1)
                         $addString = $addString . " checked='checked' ";
-                    $addString = $addString . "><label for='add"."$i'>add</label></input></div>";
+                    $addString = $addString . "><label for='add"."$i'>".$lang['administrate_add']."</label></input></div>";
 
                     $confirmString = "<div class='flex-div'><input disabled type='checkbox' id='confirm"."$i'";
                     if($confirmPR == 1)
                         $confirmString = $confirmString . " checked='checked' ";
-                    $confirmString = $confirmString . "><label for='confirm"."$i'>confirm</label></input></div>";
+                    $confirmString = $confirmString . "><label for='confirm"."$i'>".$lang['administrate_confirm']."</label></input></div>";
 
 
                     $privileges = $adminString . $readString . $editString . $deleteString . $addString . $confirmString;
@@ -245,14 +261,14 @@ $data = DBfunctions::getUsersData();
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Administration warning</h4>
+                <h4 class="modal-title"><?php echo $lang['administrate_warning-title']?></h4>
             </div>
             <div class="modal-body">
-                <p>You are about to enter the page for changing user privileges. Please proceed with caution, as changes to user rights may affect the content of the application. Do you wish to continue?</p>
+                <p><?php echo $lang['administrate_modal-body']?></p>
             </div>
             <div class="modal-footer">
-                <a href="../../public/administrate/change" class="btn btn-warning row-increased-bottom btn-block">Yes, continue</a>
-                <button class="btn btn-primary row-increased-bottom btn-block" data-dismiss="modal">No, cancel</button>
+                <a href="../../public/administrate/change" class="btn btn-warning row-increased-bottom btn-block"><?php echo $lang['administrate_change-confirm-btn']?></a>
+                <button class="btn btn-primary row-increased-bottom btn-block" data-dismiss="modal"><?php echo $lang['administrate_change-reject-btn']?></button>
             </div>
         </div>
     </div>
@@ -261,3 +277,4 @@ $data = DBfunctions::getUsersData();
 <!-- <footer class="container-fluid text-center">
     <p>©DiaGenKri</p>
 </footer> -->
+<script src="../../app/res/js/curations.js"></script>

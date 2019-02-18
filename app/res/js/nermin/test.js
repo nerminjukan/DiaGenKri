@@ -18,7 +18,7 @@ let history = {}; // dictionary(key: id of vertex, value: id of previous vertex)
 function setModal(id = null) {
     if(canvasSets.length !== 0){
         let node_data = findNode(id);
-        console.log('FOUND: ', node_data);
+        // console.log('FOUND: ', node_data);
         if(node_data)
             setNode(node_data);
     }
@@ -35,14 +35,14 @@ function setModal(id = null) {
 }
 
 function findNode(node_id) {
-    console.log('node_id: ', node_id);
+    // console.log('node_id: ', node_id);
     if(!node_id){
         for(let i = 0; i < shapes.length; i++){
-            console.log(shapes[i].data("root"));
+            // console.log(shapes[i].data("root"));
             if(shapes[i].data("root") === true){
-                console.log("[findNode] našel sem", shapes[i].id, "višina:", tree_vertices[shapes[i].id].height);
+                // console.log("[findNode] našel sem", shapes[i].id, "višina:", tree_vertices[shapes[i].id].height);
                 _k = tree_vertices[shapes[i].id].height;
-                console.log("KEJ KEJ:", _k);
+                // console.log("KEJ KEJ:", _k);
                 // return shapes[i];
                 return {
                         shape: shapes[i], 
@@ -50,12 +50,12 @@ function findNode(node_id) {
                         };
             }
         }
-        console.log('Couldn\'t find first node.');
+        // console.log('Couldn\'t find first node.');
     }
     else{
         for(let i = 0; i < shapes.length; i++){
             if(shapes[i].id === node_id){
-                console.log("[findNode] našel sem", shapes[i].id, "višina:", tree_vertices[shapes[i].id].height);
+                // console.log("[findNode] našel sem", shapes[i].id, "višina:", tree_vertices[shapes[i].id].height);
 
                 // return shapes[i];
                 return {
@@ -65,14 +65,14 @@ function findNode(node_id) {
                         };
             }
         }
-        console.log('Couldn\'t find correct node.');
+        // console.log('Couldn\'t find correct node.');
     }
 
 }
 
 // k is number of visited nodes before this one(node)
 function setNode(node) {
-    console.log("SET NODE SET NODE SET NODE CALLED WITH node", node.shape);
+    // console.log("SET NODE SET NODE SET NODE CALLED WITH node", node.shape);
     let testdiv = document.getElementById('testdiv');
     let headder = document.getElementById('h3id');
     let question = document.getElementById('question');
@@ -86,7 +86,7 @@ function setNode(node) {
     if(conns.length === 0){
         let p = document.createElement("P");
 
-        console.log('THE END');
+        // console.log('THE END');
     }
 
 
@@ -102,24 +102,33 @@ function setNode(node) {
         headder.innerHTML = set[1].attr("text");
     }
 
+    // dont display question if it's empty
+    if(question.innerHTML.length == 0){
+        question.style.display = "none";
+        document.getElementById("h3id").style.marginBottom = "30px";
+    } else {
+        question.style.display = "block";
+        document.getElementById("h3id").style.marginBottom = "10px";
+    }
+
 
     for(let i = 0; i < conns.length; i++){
         let btn = document.createElement("BUTTON");
         btn.id = conns[i].to.id;
         if(paper.getById(btn.id).data('root') === true){
-            console.log('ZANKA!');
+            // console.log('ZANKA!');
             continue;
         }
         btn.classList.add('btn');
         btn.classList.add('btn-block');
         btn.classList.add('btn-primary');
-        // btn.innerHTML = conns[i].text.attr("text");
-        btn.innerHTML = conns[i].to.id;
+        btn.innerHTML = conns[i].text.attr("text");
+        // btn.innerHTML = conns[i].to.id;
 
         btn.addEventListener('click', restart);
         testdiv.appendChild(btn);
     }
-    headder.innerHTML = headder.innerHTML + " " + node.shape.id;
+    // headder.innerHTML = headder.innerHTML + " " + node.shape.id;
     // previous = node.parent || null;
     // previous = current === node.shape.id ? previous : current;
     // current = node.shape.id;
@@ -141,9 +150,9 @@ function setNode(node) {
     current = node.shape.id;
     previous = history[current][history[current].length - 1];
 
-    console.log("[test.js] history:", history);
-    console.log("[test.js] current:", current);
-    console.log("[test.js] previous:", previous);
+    // console.log("[test.js] history:", history);
+    // console.log("[test.js] current:", current);
+    // console.log("[test.js] previous:", previous);
 
 
 
@@ -160,13 +169,21 @@ function setNode(node) {
         width = Math.min(100, width); // in the last step it excedes 100
         width = round_N(width, 2);
 
-        console.log("HEHEHEHEHEHEHE:", node.shape.id + ", " + width, tree_vertices[node.shape.id].height);
+        // console.log("HEHEHEHEHEHEHE:", node.shape.id + ", " + width, tree_vertices[node.shape.id].height);
         progress.style.width = width + "%"; 
         progress.innerHTML = width * 1 + "%";
 
         // progress.innerHTML = Math.round(width) + "%";
+        // check if user is at the end - display start over button
+        if(width == 100) {
+            document.getElementById("m-footer").classList.add("display-flex");
+            document.getElementById("start_over_button").classList.remove("display-none");
+        } else {
+            document.getElementById("m-footer").classList.remove("display-flex");
+            document.getElementById("start_over_button").classList.add("display-none");
+        }
     } catch(err){
-        console.log(err);
+        // console.log(err);
     }
 
     $("#testmodal").modal();
@@ -191,7 +208,7 @@ function getConns(node) {
 }
 
 function restart() {
-    console.log('RESTART', this.id);
+    // console.log('RESTART', this.id);
     setModal(this.id);
 }
 
@@ -202,12 +219,12 @@ function restart() {
 function checkPresence(node, current){
     for (let i = history[current].length - 1; i >= 0; i--) {
         if(history[current][i] === node){
-            console.log("[test.js checkPresence] return true");
+            // console.log("[test.js checkPresence] return true");
             return true;
         }
     }
 
-    console.log("[test.js checkPresence] return false");
+    // console.log("[test.js checkPresence] return false");
     return false;
 }
 
@@ -216,19 +233,27 @@ function checkPresence(node, current){
 function checkAlreadyInHistory(node, current){
     for (let i = history[node].length - 1; i >= 0; i--) {
         if(history[node][i] === current){
-            console.log("[test.js checkAlreadyInHistory] return true");
+            // console.log("[test.js checkAlreadyInHistory] return true");
             return true;
         }
     }
 
-    console.log("[test.js checkAlreadyInHistory] return false");
+    // console.log("[test.js checkAlreadyInHistory] return false");
     return false;
 }
 
 // add event listener for back button (to move to previous node)
 $( document ).ready(function() {
-    $ ("#go_back_button").click(function(){
-        // alert("lets restart");
-        setModal(previous);
-    });
+    try {
+        $ ("#go_back_button").click(function(){
+            // alert("lets restart");
+            setModal(previous);
+        });
+        $ ("#start_over_button").click(function(){
+            // start over, if no paramter is present in setModal() it will find root and start from there
+            setModal();
+        });
+    } catch(err){
+        
+    }
 });
